@@ -59,7 +59,7 @@ public function customer_mange($offset = 0)
             '4' => '非常好'
         ];
     //查找所有数据
-        public function get_list(){
+        public function get_list($offset='',$limit = 5, $condition = []){
             //用户意向
             if (isset($condition['customer_intention'])) {
                 $condition['cd.customer_intention'] = $condition['customer_intention'];
@@ -154,7 +154,7 @@ public function customer_mange($offset = 0)
                 </dt>
                 <dd class="col-10">
                     <div class="col-7">
-                        <input name="item" class="col-6 txt-autotip">
+                        <input name="query" class="col-6 txt-autotip">
                         <input type="submit" value="搜索" class="btn col-2">
                     </div>
                 </dd>
