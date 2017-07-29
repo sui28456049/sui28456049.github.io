@@ -91,6 +91,8 @@ scheme: Pisces
 # Value is the target link (E.g. GitHub: https://github.com/iissnan)
 #social:
   #LinkLabel: Link
+  #GitHub: https://github.com/taosin 
+ # 微博: http://www.weibo.com/p/1005055164097015/home?from=page_100505&mod=TAB&is_all=1#place 
 
 # Social Links Icons
 # Icon Mapping:
@@ -178,7 +180,7 @@ excerpt_description: true
 # Automatically Excerpt. Not recommend.
 # Please use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
-  enable: false
+  enable: true
   length: 150
 
 # Post meta display settings
