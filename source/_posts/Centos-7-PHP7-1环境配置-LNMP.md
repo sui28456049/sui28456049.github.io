@@ -210,3 +210,62 @@ $ echo $PATH
 ```
 $ php -v
 ```
+#### 安装Nginx
+##### 1.安装nginx源
+```bash
+$ yum localinstall http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+```
+##### 2.安装nginx
+```bash
+$ yum install nginx
+```
+##### 3.启动nginx
+```
+$ service nginx start
+```
+Redirecting to /bin/systemctl start  nginx.service
+
+##### 4.访问http://你的ip/
+```
+如果成功安装会出来nginx默认的欢迎界面
+```
+#### 安装MySQL5.7.*
+##### 1.安装mysql源
+```bash
+$ yum localinstall  http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
+```
+##### 2.安装mysql
+```bash
+$ yum install mysql-community-server
+```
+确认一下mysql的版本，有时可能会提示mysql5.6
+##### 3.安装mysql的开发包，以后会有用
+```bash
+$ yum install mysql-community-devel
+```
+##### 4.启动mysql
+```bash
+$ service mysqld start
+```
+Redirecting to /bin/systemctl start  mysqld.service
+
+##### 5.查看mysql启动状态
+```bash
+$ service mysqld status
+```
+出现pid
+
+证明启动成功
+
+##### 6.获取mysql默认生成的密码
+```bash
+$ grep 'temporary password' /var/log/mysqld.log
+```
+##### 7.换成自己的密码
+```bash
+$ mysql -uroot -p
+```
+##### 8. 更换密码
+```mysql
+mysql>  ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
+```
