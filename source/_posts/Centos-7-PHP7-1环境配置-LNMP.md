@@ -267,5 +267,5 @@ $ mysql -uroot -p
 ```
 ##### 8. 更换密码
 ```mysql
-mysql>  ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
+mysql>  ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass666!';
 ```
