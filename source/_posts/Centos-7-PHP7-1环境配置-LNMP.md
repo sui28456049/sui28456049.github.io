@@ -297,6 +297,16 @@ $ mysql -uroot -p
 ```mysql
 mysql>  ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass666!';
 ```
+注意:本地可以连接MySQL服务器,远程就不行.
+```
+mysql -uroot -p
+use mysql;
+Grant all on *.* to 'root'@'%' identified by 'root用户的密码' with grant option;
+flush privileges;
+然后用以下命令查看哪些用户和host可以访问，%代表任意ip地址
+
+select user,host from user;
+```
 #### php和Nginx互通
 ##### 修改文件
 
