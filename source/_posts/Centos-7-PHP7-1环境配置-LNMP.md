@@ -350,3 +350,50 @@ server
     #}
 }
 ```
+#### 编译安装php扩展
+##### 1.查看自己服务器对象php版本
+```
+php -v
+```
+##### 2.根据版本下载PHP源代码
+```
+$ wget -O php7.tar.gz http://am1.php.net/get/php-7.1.8.tar.gz/from/this/mirror
+```
+##### 3、解压源码压缩包
+```
+$ tar -zxvf php-7.1.8.tar.gz
+```
+##### 4、进入源码中的ext/pcntl目录
+```
+cd pphp-7.1.8/ext/pcntl/
+```
+##### 5、运行 phpize 命令
+```
+phpize
+```
+如果报错:
+Cannot find autoconf. Please check your autoconf installation and the
+$PHP_AUTOCONF environment variable. Then, rerun this script.
+
+注:如果报错,写绝对路径:sudo /usr/local/php/bin/phpize
+
+```bash
+yum install m4 
+yum install autoconf
+```
+##### 6、运行 configure命令
+```
+./configure
+```
+##### 7、makefile
+```
+make && make install
+```
+##### 8.配置ini文件
+```
+通过运行 php --ini查找php.ini文件位置，然后在文件中添加extension=pcntl.so
+```
+##### 也可以使用pecl 安装
+```
+pecl install memcached
+```
