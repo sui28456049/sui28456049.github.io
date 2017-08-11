@@ -6,10 +6,12 @@ tags: php
 > 首先更新系统软件 yum update  
   安装gcc编译器 yum install gcc && yum install gcc-c++
 
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=32303044&auto=1&height=66"></iframe>
+
 #### 编译安装php7.1.8
 
 ##### 1.下载php7源码包
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=32303044&auto=1&height=66"></iframe>
+
 ```bash
 $ cd /root & wget -O php7.tar.gz http://am1.php.net/get/php-7.1.8.tar.gz/from/this/mirror
 ```
@@ -166,6 +168,12 @@ $ yum install gmp gmp-devel
 ```
 $ yum install libmcrypt libmcrypt-devel
 ```
+如果显示无可用的包:
+```bash
+$ yum  install epel-release  //扩展包更新包
+$ yum  update //更新yum源
+$ yum install libmcrypt libmcrypt-devel #继续安装
+```
 10.configure: error: Please reinstall readline - I cannot find readline.h
 
 解决：
@@ -210,6 +218,26 @@ $ echo $PATH
 ```
 $ php -v
 ```
+##### 8.配置php-fpm
+```bash
+$ cp php.ini-production /etc/php.ini
+```
+```bash
+$ cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+$ cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
+```
+```bash 
+$ cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+```
+```bash
+$ chmod +x /etc/init.d/php-fpm
+```
+##### 9.启动php-fpm
+```bash
+$ /etc/init.d/php-fpm start
+```
+
+$ /etc/init.d/php-fpm start
 #### 安装Nginx
 ##### 1.安装nginx源
 ```bash
@@ -268,4 +296,57 @@ $ mysql -uroot -p
 ##### 8. 更换密码
 ```mysql
 mysql>  ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass666!';
+```
+#### php和Nginx互通
+##### 修改文件
+
+```bash
+$ vim /etc/nginx/conf.d/sui.conf
+```
+##### 配置文件
+```
+server 
+{
+    listen       80;
+    server_name  localhost;
+    #charset koi8-r;
+    access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.php index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ \.php$ {
+        root           /usr/share/nginx/html;
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
 ```
