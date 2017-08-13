@@ -3,10 +3,10 @@ title: ' Centos 7 PHP7.1环境配置 LNMP'
 date: 2017-08-09 13:56:53
 tags: php
 ---
-> 首先更新系统软件 yum update  
+> 首先更新系统软件 yum update
   安装gcc编译器 yum install gcc && yum install gcc-c++
 
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=32303044&auto=1&height=66"></iframe>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=4341314&auto=1&height=66"></iframe>
 
 #### 编译安装php7.1.8
 
@@ -206,7 +206,7 @@ export PATH
 ```bash
 $ ./etc/profile
 ```
-或 
+或
 ```bash
 $ source /etc/profile
 ```
@@ -226,7 +226,7 @@ $ cp php.ini-production /etc/php.ini
 $ cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 $ cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
 ```
-```bash 
+```bash
 $ cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
 ```
 ```bash
@@ -315,7 +315,7 @@ $ vim /etc/nginx/conf.d/sui.conf
 ```
 ##### 配置文件
 ```
-server 
+server
 {
     listen       80;
     server_name  localhost;
@@ -388,7 +388,7 @@ $PHP_AUTOCONF environment variable. Then, rerun this script.
 注:如果报错,写绝对路径:sudo /usr/local/php/bin/phpize
 
 ```bash
-yum install m4 
+yum install m4
 yum install autoconf
 ```
 ##### 6、运行 configure命令
