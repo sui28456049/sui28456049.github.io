@@ -23,3 +23,9 @@ http://www.ruanyifeng.com/blog/2012/06/internet_protocol_suite_part_ii.html
 http://www.ruanyifeng.com/blog/2017/06/tcp-protocol.html
 ```
 ### 3.了解tcp三次握手,而不是四次,五次...熟读一,二文档,好好研读.
+
+### 4最后,来几张图片.
+![tcp](/uploads/0814-1.png)
+![tcp](/uploads/0814-2.png)
+
+
