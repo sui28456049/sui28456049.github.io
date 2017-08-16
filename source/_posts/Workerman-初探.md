@@ -127,15 +127,46 @@ hello sui
 ```
 注意：如果出现无法访问的情况，请检查服务器防火墙。
 
-##  重要(本人觉得特别重要)
+##  Worker类(主容器)
 <b>
-Connection类提供的接口
 WorkerMan中有两个重要的类Worker与Connection。
 
-每个客户端连接对应一个Connection对象，可以设置对象的onMessage、onClose等回调，同时提供了向客户端发送数据send接口与关闭连接close接口，以及其它一些必要的接口。
+Worker类用于实现端口的监听，并可以设置客户端连接事件、连接上消息事件、连接断开事件的回调函数，从而实现业务处理。
 
-可以说Worker是一个监听容器，负责接受客户端连接，并把连接包装成connection对象式提供给开发者操作。
+可以设置Worker实例的进程数（count属性），Worker主进程会fork出count个子进程同时监听相同的端口，并行的接收客户端连接，处理连接上的事件。
 </b>
+
+###  worker例子
+
+```php
+use Workerman\Worker;
+require_once __DIR__ . '/Workerman/Autoloader.php';
+
+$worker = new Worker('http://0.0.0.0:8484');
+
+
+$worker->onWorkerStart = function($worker)
+{
+    echo "Worker starting...\n";
+};
+
+$worker->onWorkerStop = function($worker)
+{
+    echo "Worker stopping...\n";
+};
+
+$worker->onConnect = function($connection)
+{
+    echo "new connection from ip " . $connection->getRemoteIp() . "\n";
+};
+
+$worker->onClose = function($connection)
+{
+    echo "connection closed\n";
+};
+// 运行worker
+Worker::runAll();
+```
 
 ### 小测试
 ```php
@@ -274,3 +305,113 @@ Workerman\Connection\TcpConnection Object
 ```
 
 返回的结果是一个TcpConnection Object对象,里面有许多连接的信息.
+
+##  TcpConnection类(连接对象)
+
+> WorkerMan中有两个重要的类Worker与Connection。
+每个客户端连接对应一个Connection对象，可以设置对象的onMessage、onClose等回调，同时提供了向客户端发送数据send接口与关闭连接close接口，以及其它一些必要的接口。
+可以说Worker是一个监听容器，负责接受客户端连接，并把连接包装成connection对象式提供给开发者操作。
+
+```php
+use Workerman\Worker;
+require_once __DIR__ . '/Workerman/Autoloader.php';
+
+$worker = new Worker('websocket://0.0.0.0:8484');
+// 当有客户端连接事件时
+$worker->onConnect = function($connection)
+{
+    // 设置连接的onMessage回调
+    $connection->onMessage = function($connection, $data)
+    {
+        var_dump($data);
+        $connection->send('receive success\n');
+    };
+    
+     // 设置连接的onClose回调
+    $connection->onClose = function($connection)
+    {
+        echo "connection closed\n";
+    };
+};
+// 运行worker
+Worker::runAll();
+
+```
+
+## AsyncTcpConnection(TcpConnection的子类)
+> AsyncTcpConnection是TcpConnection的子类，拥有与TcpConnection一样的属性与接口。AsyncTcpConnection用于异步创建一个TcpConnection连接。
+### Mysql代理
+```php
+use \Workerman\Worker;
+use \Workerman\Connection\AsyncTcpConnection;
+require_once __DIR__ . '/Workerman/Autoloader.php';
+
+// 真实的mysql地址，假设这里是本机3306端口
+$REAL_MYSQL_ADDRESS = 'tcp://127.0.0.1:3306';
+
+// 代理监听本地4406端口
+$proxy = new Worker('tcp://0.0.0.0:4406');
+
+$proxy->onConnect = function($connection)
+{
+    global $REAL_MYSQL_ADDRESS;
+    // 异步建立一个到实际mysql服务器的连接
+    $connection_to_mysql = new AsyncTcpConnection($REAL_MYSQL_ADDRESS);
+    // mysql连接发来数据时，转发给对应客户端的连接
+    $connection_to_mysql->onMessage = function($connection_to_mysql, $buffer)use($connection)
+    {
+        $connection->send($buffer);
+    };
+    // mysql连接关闭时，关闭对应的代理到客户端的连接
+    $connection_to_mysql->onClose = function($connection_to_mysql)use($connection)
+    {
+        $connection->close();
+    };
+    // mysql连接上发生错误时，关闭对应的代理到客户端的连接
+    $connection_to_mysql->onError = function($connection_to_mysql)use($connection)
+    {
+        $connection->close();
+    };
+    // 执行异步连接
+    $connection_to_mysql->connect();
+
+    // 客户端发来数据时，转发给对应的mysql连接
+    $connection->onMessage = function($connection, $buffer)use($connection_to_mysql)
+    {
+        $connection_to_mysql->send($buffer);
+    };
+    // 客户端连接断开时，断开对应的mysql连接
+    $connection->onClose = function($connection)use($connection_to_mysql)
+    {
+        $connection_to_mysql->close();
+    };
+    // 客户端连接发生错误时，断开对应的mysql连接
+    $connection->onError = function($connection)use($connection_to_mysql)
+    {
+        $connection_to_mysql->close();
+    };
+
+};
+// 运行worker
+Worker::runAll();
+```
+
+### 测试
+
+```
+mysql -uroot -P4406 -h127.0.0.1 -p
+
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 25004
+Server version: 5.5.31-1~dotdeb.0 (Debian)
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+```
