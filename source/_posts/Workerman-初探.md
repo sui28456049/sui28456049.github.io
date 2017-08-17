@@ -340,6 +340,41 @@ Worker::runAll();
 
 ## AsyncTcpConnection(TcpConnection的子类)
 > AsyncTcpConnection是TcpConnection的子类，拥有与TcpConnection一样的属性与接口。AsyncTcpConnection用于异步创建一个TcpConnection连接。
+### 异步访问外部http服务
+```php
+use \Workerman\Worker;
+use \Workerman\Connection\AsyncTcpConnection;
+require_once __DIR__ . '/Workerman/Autoloader.php';
+
+$task = new Worker();
+// 进程启动时异步建立一个到www.baidu.com连接对象，并发送数据获取数据
+$task->onWorkerStart = function($task)
+{
+    $connection_to_baidu = new AsyncTcpConnection('tcp://www.baidu.com:80');
+    // 当连接建立成功时，发送http请求数据
+    $connection_to_baidu->onConnect = function($connection_to_baidu)
+    {
+        echo "connect success\n";
+        $connection_to_baidu->send("GET / HTTP/1.1\r\nHost: www.baidu.com\r\nConnection: keep-alive\r\n\r\n");
+    };
+    $connection_to_baidu->onMessage = function($connection_to_baidu, $http_buffer)
+    {
+        echo $http_buffer;
+    };
+    $connection_to_baidu->onClose = function($connection_to_baidu)
+    {
+        echo "connection closed\n";
+    };
+    $connection_to_baidu->onError = function($connection_to_baidu, $code, $msg)
+    {
+        echo "Error code:$code msg:$msg\n";
+    };
+    $connection_to_baidu->connect();
+};
+
+// 运行worker
+Worker::runAll();
+```
 ### Mysql代理
 ```php
 use \Workerman\Worker;
@@ -414,4 +449,52 @@ owners.
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 mysql>
-```
+```
+
+## 定时器Timer类
+
+### 定时函数为匿名函数，利用闭包传递参数```php
+use \Workerman\Worker;
+use \Workerman\Lib\Timer;
+require_once __DIR__ . '/Workerman/Autoloader.php';
+
+$ws_worker = new Worker('websocket://0.0.0.0:8080');
+$ws_worker->count = 8;
+// 连接建立时给对应连接设置定时器
+$ws_worker->onConnect = function($connection)
+{
+    // 每10秒执行一次
+    $time_interval = 10;
+    $connect_time = time();
+    // 给connection对象临时添加一个timer_id属性保存定时器id
+    $connection->timer_id = Timer::add($time_interval, function()use($connection, $connect_time)
+    {
+         $connection->send($connect_time);
+    });
+};
+// 连接关闭时，删除对应连接的定时器
+$ws_worker->onClose = function($connection)
+{
+    // 删除定时器
+    Timer::del($connection->timer_id);
+};
+
+// 运行worker
+Worker::runAll();
+```
+
+测试
+打开chrome浏览器，按F12打开调试控制台，在Console一栏输入(或者把下面代码放入到html页面用js运行)
+```php
+// 假设服务端ip为127.0.0.1
+ws = new WebSocket("ws://127.0.0.1:8080");
+ws.onopen = function() {
+    alert("连接成功");
+    ws.send('我要当前时间');
+    //alert("给服务端发送一个字符串：sui");
+};
+ws.onmessage = function(e) {
+    alert("收到服务端的消息：" + e.data);
+};
+```
+
