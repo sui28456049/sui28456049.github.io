@@ -102,3 +102,58 @@ end$
     insert into `t_b` (`username`,`groupid`) values (old.username,'5555');
    end$
 ```
+## 存储过程
+> 存储过程和函数是在数据库中定义一些SQL语句的集合，然后直接调用这些存储过程和函数来执行已经定义好的SQL语句。存储过程和函数可以避免开发人员重复的编写相同的SQL语句。而且，存储过程和函数是在MySQL服务器中存储和执行的，可以减少客户端和服务器端的数据传输。
+
+### 基本语法
+
+#### 查看
+
+```
+show procedure status; //存储过程 
+
+show function status; //函数 
+
+查看存储过程或函数的创建代码 
+show create procedure proc_name; 
+show create function func_name; 
+```
+
+#### 创建
+```
+create procedure p1 () 
+begin 
+    select concat('查找东西.....'); 
+end;   
+``` 
+存储过程用create procedure 创建， 业务逻辑和sql写在begin和end之间。mysql中可用call porcedureName ();来调用过程。
+#### 执行
+
+```
+-- 调用过程 
+call p1;  
+```
+#### 删除
+```
+drop procedure if exists p1; 
+```
+### in/out/
+
+```
+--打印1到n的和
+
+create procedure p3(in n int)
+begin
+ declare total int default 0;
+ declare num int default 0;
+while(num < n) do
+
+	set num=num+1;
+	set total = num+total;
+end while;
+
+select total;
+end;
+
+call p3(100); #5050
+```
