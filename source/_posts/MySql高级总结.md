@@ -51,7 +51,7 @@ DELIMITER;
 ### 示例
 
 #### 新建表
-```
+```SQL
 CREATE TABLE `t_a` (
   `id` smallint(1) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(20) DEFAULT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `t_a` (
 ) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 ```
 
-```
+```SQL
 CREATE TABLE `t_b` (
   `id` smallint(1) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(20) DEFAULT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `t_b` (
 ) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
 ```
 #### insert 操作
-```
+```SQL
 create trigger t1
 after 
 insert on t_a 
@@ -79,7 +79,7 @@ insert into t_b set username = new.username,groupid=new.groupid;
 end$
 ```
 #### update 操作
-```
+```SQL
 # Trigger触发后，当t_a表groupid,username数据有更改时，对t_b表同步一条更新后的数据
    create trigger t2
    after
@@ -92,7 +92,7 @@ end$
    end$
 ```
 #### delete 操作
-```
+```SQL
  create trigger t3
    after
    delete on t_a
@@ -120,7 +120,7 @@ show create function func_name;
 ```
 
 #### 创建
-```
+```SQL
 create procedure p1 () 
 begin 
     select concat('查找东西.....'); 
@@ -129,7 +129,7 @@ end;
 存储过程用create procedure 创建， 业务逻辑和sql写在begin和end之间。mysql中可用call porcedureName ();来调用过程。
 #### 执行
 
-```
+```SQL
 -- 调用过程 
 call p1;  
 ```
@@ -137,23 +137,115 @@ call p1;
 ```
 drop procedure if exists p1; 
 ```
-### in/out/
 
-```
---打印1到n的和
+### in/out/inout(不常用)
 
+#### in
+
+```SQL
 create procedure p3(in n int)
 begin
  declare total int default 0;
  declare num int default 0;
 while(num < n) do
-
 	set num=num+1;
 	set total = num+total;
 end while;
-
 select total;
 end;
-
 call p3(100); #5050
+```
+
+##### out 
+
+```SQL
+ create procedure p5(in pid int, out name VARCHAR(20))
+  begin
+ select username into name from table where id = pid;
+  end
+ call p5(1,@sui)
+ select @sui;
+```
+
+## 游标
+
+### 概念
+
+```SQL
+      # declare 声明变量,set赋值变量
+	   -- 一条sql,对应N条结果集的资源,取出资源的接口/句柄,就是游标.
+	   -- 沿着游标,可以一次取出一行.
+
+	     -- declare 声明;  declare 游标名 cursor for select select_statement
+        -- open 打开;     open 游标名
+        -- fetch 取值;    fetch 游标名;   into var1,var2[,.....]
+        -- close 关闭;    close 游标名
+```
+
+### NOT FOUND 事件触发[exit]
+
+```SQL
+create procedure p9()
+begin
+	declare row_gid int;
+	declare row_num int;
+    declare row_name varchar(20);
+
+	declare you int default 1;
+	declare getgoods cursor for select gid,num,name from goods;
+	declare exit handler for NOT FOUND set you = 0;
+
+	open getgoods;
+	epeat
+	    fetch getgoods into row_gid,row_num,row_name;
+	    select row_num,row_name;
+	until you=0 end repeat;
+
+	close getgoods;
+end;$
+```
+
+# NOT FOUND 事件触发[continue]
+
+```SQL
+create procedure p10()
+begin
+     declare row_gid int;
+     declare row_num int;
+     declare row_name varchar(20);
+     		
+     declare you int default 1;
+     declare getgoods cursor for select gid,num,name from goods;
+     declare continue handler for NOT FOUND set you := 0;
+
+     open getgoods;
+       fetch getgoods into row_gid,row_num,row_name;
+       	
+     repeat
+     	select row_num,row_name;
+     	fetch getgoods into row_gid,row_num,row_name;
+     until you=0 end repeat;
+
+     close getgoods;
+
+end;$
+```
+
+## mysql权限管理
+
+### mysql.user表
+
+```SQL
+#创建test用户授权所有数据库和表
+ grant all privileges on *.* to test@localhost identified by 'Myd*d123456';
+ # 刷新权限表
+ flush privileges;
+ # 修改密码
+ SET PASSWORD FOR 'username'@'host' = PASSWORD('newpassword');
+ # 撤销授权
+ REVOKE privilege ON databasename.tablename FROM 'username'@'host';
+ #查看用户授权
+  show grants for test@localhost;
+ #删除用户
+  DROP USER 'test'@'localhost'
 ```
