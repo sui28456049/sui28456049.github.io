@@ -151,3 +151,10 @@ Register类其实也是基于基础的Worker开发的。Gateway进程和Business
 注意，客户端不要连接Register服务的端口，Register服务是GatewayWorker内部通讯用的。
 
 Register类只能定制监听的ip和端口，并且目前只能使用text协议。
+
+## Lib\Gateway类提供的接口
+文件位置：GatewayWorker/Lib/Gateway.php
+
+Lib\Gateway类是Gateway/BusinessWorker模型中给客户端发送数据的类。
+
+提供了单发、群发以及关闭客户端连接的接口。

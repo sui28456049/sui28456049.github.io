@@ -251,3 +251,64 @@ end;$
 ```
 
 ## 主从复制
+
+### 关闭防火墙
+```bash
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+```
+### 主服务器(192.168.2.135)(vim /etc/my.conf)
+```
+# 这个101是唯一标识你这个mysql服务器的，一般取你电脑ip的最后几位，以便好区分。
+   server-id = 135
+# 注意mysql-bin是一个存放二进制log文件的路径，我这里指定了一个mysql当前安装目录的mysql-bin文件夹 如这种格式 mysql-bin.000**(/var/lib/mysql/mysql.bin.0000001)
+   log-bin=mysql-bin     
+# 二进制日志的文件格式 mixed/row/statement
+   binlog-format=mixed
+```
+查看主服服务器状态:show master status
+
+### 从服务器(192.168.2.136)(vim /etc/my.conf)
+```
+   server-id = 135
+   log-bin=mysql-bin     
+   binlog-format=mixed
+   relay-log=mysql-relay
+```
+查看从服务器状态:show slave status
+
+### 主从关联
+
+#### 授权(读取主服务器二进制文件)
+```SQL
+grant replication client,replication slave on *.* to repl@'192.168.2.%' identified by 'MyPassSui666*';
+flush privileges;
+```
+#### 从服务器操作
+
+```SQL
+   change master to master_host='192.168.2.135',
+   master_user='repl',
+   master_password='MyPassSui666*',
+   master_log_file='mysql-bin.000001',
+   master_log_pos=1392;
+```
+   启动:start slave;(一定要启动!!!!!)
+   查看状态:show slave status \G;
+
+#### 注意
+> Fatal error: The slave I/O thread stops because master and slave have equal MySQL server UUIDs; these UUIDs must be different for replication to work.
+
+mysql5.6后的复制引入了uuid的概念，各个复制结构中的server_uuid得保证不一样，但是查看到直接copy  data文件夹后server_uuid是相同的，
+'show variables like '%server_uuid%';
+
+解决方法：
+
+找到data文件夹下的auto.cnf文件，修改里面的uuid值，保证各个db的uuid不一样，重启db即可
+```
+find / -name auto.cnf
+```
+![tcp](/uploads/0903_4.jpg)
+出现2个yes主从成功,主服务器操作同步到从服务器;
+   
+
