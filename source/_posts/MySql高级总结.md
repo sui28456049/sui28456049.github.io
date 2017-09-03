@@ -310,5 +310,9 @@ find / -name auto.cnf
 ```
 ![tcp](/uploads/0903_4.jpg)
 出现2个yes主从成功,主服务器操作同步到从服务器;
+
+### (放一首灵感音乐,哈哈哈)
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=819491&auto=1&height=66"></iframe>
    
 
