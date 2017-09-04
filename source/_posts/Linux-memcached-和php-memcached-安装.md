@@ -49,3 +49,15 @@ php的扩展memcached，因为该扩展是依赖libmemcached的API
 #### vim /etc/php.ini 添加 extension=memcached.so
 #### 重启php-fpm    service php-fpm restart
 ####  查看模块       php -m
+
+## 测试
+#### memcached服务后台运行 memcached -u test -d
+
+    $mem  = new Memcached();  
+    $mem->addServer('127.0.0.1',11211);
+    if( $mem->add("mystr","this is a memcache test!",3600)){
+        echo  '原始数据缓存成功!';
+    }else{
+        echo '数据已存在：'.$mem->get("mystr");
+    }
+
