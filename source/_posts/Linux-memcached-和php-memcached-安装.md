@@ -52,12 +52,48 @@ php的扩展memcached，因为该扩展是依赖libmemcached的API
 
 ## 测试
 #### memcached服务后台运行 memcached -u test -d
-
+    
     $mem  = new Memcached();  
     $mem->addServer('127.0.0.1',11211);
     if( $mem->add("mystr","this is a memcache test!",3600)){
         echo  '原始数据缓存成功!';
     }else{
         echo '数据已存在：'.$mem->get("mystr");
-    }
+    }        
+## redis (附)
+Linux redis 客户端:
 
+Installation
+	Download, extract and compile Redis with:
+	$ wget http://download.redis.io/releases/redis-4.0.1.tar.gz
+	$ tar xzf redis-4.0.1.tar.gz
+	$ cd redis-4.0.1
+	$ make
+	The binaries that are now compiled are available in the src directory. Run Redis with:
+	$ src/redis-server
+
+You can interact with Redis using the built-in client:
+	$ src/redis-cli
+	redis> set foo bar
+	OK
+	redis> get foo
+	"bar"
+
+
+
+
+php扩展redis安装
+
+下载:wget https://pecl.php.net/get/redis-3.1.3.tgz   
+
+   find / -name php-config
+
+编译: ./configure --with-php-config=/usr/bin/php-config
+      make && make install
+
+
+配置文件: find / -name php.ini
+         vim /etc/php.ini   添加 extension=redis.so
+
+重启php :service php-fpm restartis
+ 
