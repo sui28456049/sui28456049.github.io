@@ -22,7 +22,7 @@ tags: mysql
      c.  调整Mysql并发相关参数
           
 ## 4.应用优化
-     a.   数据库连接池
+     a.   数据库连接池(php-cp(php-connect-pool)是用php扩展写的一个数据库连接池。)
      b.   使用缓存减少压力
      c.   负载均衡建立集群
      d.   主主同步  主从复制 
@@ -66,3 +66,73 @@ create table test(
     -> key in_username(username)
     -> );
 ```
+
+# 数据对象优化
+
+## 优化表数据类型
+
+  使用procedure analyse()对当前应用的表进行分析,他会优化建议,用户根据实际情况优化.
+
+ ```sql
+ select * from test procedure analyse();
+ ```
+
+ ## 表拆分
+
+  *   垂直拆分(针对某些列常用,某些列可能不常用)
+
+  *   水平拆分(首先表很大.表中数据有独立性,能简单分类,需要把表存放在多种介质.)
+
+ ## 使用中间表
+
+  *   数据查询量大
+  *   数据统计,数据分析
+
+# 调整mysql参数优化
+
+## Myisam 内存优化
+
+  *    key_buffer_size
+  决定MYISAM索引缓存区的大小,直接影响MyISAM表的存取效率,建议1/4内存
+
+  ```SQL
+  show variables like  "%key%"
+  SHOW GLOBAL STATUS LIKE '%key_read%';
+  ```
+  *    read_buffer_size(读缓存)
+
+## Innodb 内存优化
+
+  *    innodb_buffer_pool_size
+  存储引擎表数据和索引数据的最大缓存区大小
+
+```SQL
+SELECT @@innodb_buffer_pool_size;
+```
+
+  *     innodb_old_blocks_pct LRU   (决定old sublist 的比例) 
+        innodb_old_blocks_time LRU  (数据转移间隔时间)
+
+
+```SQL
+SELECT variables like %old_blocks%;
+```
+
+## mysql并发参数
+
+![mysql](/uploads/0924.png)
+ 
+# Mysql应用优化
+
+## 使用连接池
+
+## 减少对Mysql的真实连接
+  
+  *   避免相同数据的重复执行
+  *   使用Mysql缓存
+  *   增加系统数据cache
+
+## 负载均衡
+
+  *   LVS分布式
+  *  读写分离,主从复制
