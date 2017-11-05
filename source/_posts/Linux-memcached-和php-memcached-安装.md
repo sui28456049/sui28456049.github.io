@@ -2,6 +2,7 @@
 title: Linux memcached 和php memcached 安装
 date: 2017-09-04 14:28:35
 tags: php
+category: php
 ---
 > 注意:这里所有软件都是默认位置,需自行判断软件位置(--prefix=/usr/local)
 

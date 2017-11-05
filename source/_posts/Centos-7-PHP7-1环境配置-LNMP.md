@@ -2,6 +2,7 @@
 title: ' Centos 7 PHP7.1环境配置 LNMP'
 date: 2017-08-09 13:56:53
 tags: php
+category: php
 ---
 > 首先更新系统软件 yum update
   安装gcc编译器 yum install gcc && yum install gcc-c++

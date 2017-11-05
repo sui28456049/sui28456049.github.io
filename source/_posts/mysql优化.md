@@ -2,6 +2,7 @@
 title: mysql优化
 date: 2017-09-19 14:30:52
 tags: mysql
+category: mysql
 ---
 
 # mysql 优化方向

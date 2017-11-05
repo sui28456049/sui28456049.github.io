@@ -2,6 +2,7 @@
 title: Workerman 初探
 date: 2017-08-15 11:17:28
 tags: php
+category: php
 ---
 > Workerman是一个高性能的PHP socket 服务器框架，workerman基于PHP多进程以及libevent事件轮询库，PHP开发者只要实现一两个接口，便可以开发出自己的网络应用，例如Rpc服务、聊天室服务器、手机游戏服务器等。
 
@@ -339,9 +340,9 @@ Worker::runAll();
 ```
 
 ## AsyncTcpConnection(TcpConnection的子类)
-> AsyncTcpConnection是TcpConnection的子类，拥有与TcpConnection一样的属性与接口。AsyncTcpConnection用于异步创建一个TcpConnection连接。
-### 异步访问外部http服务
-```php
+> AsyncTcpConnection是TcpConnection的子类，拥有与TcpConnection一样的属性与接口。AsyncTcpConnection用于异步创建一个TcpConnection连接。
+### 异步访问外部http服务
+```php
 use \Workerman\Worker;
 use \Workerman\Connection\AsyncTcpConnection;
 require_once __DIR__ . '/Workerman/Autoloader.php';
@@ -375,9 +376,10 @@ $task->onWorkerStart = function($task)
 // 运行worker
 Worker::runAll();
 ```
-### Mysql代理
-```php
-use \Workerman\Worker;
+
+### Mysql代理
+```php
+use \Workerman\Worker;
 use \Workerman\Connection\AsyncTcpConnection;
 require_once __DIR__ . '/Workerman/Autoloader.php';
 
@@ -453,7 +455,9 @@ mysql>
 
 ## 定时器Timer类
 
-### 定时函数为匿名函数，利用闭包传递参数```php
+### 定时函数为匿名函数，利用闭包传递参数
+
+```php
 use \Workerman\Worker;
 use \Workerman\Lib\Timer;
 require_once __DIR__ . '/Workerman/Autoloader.php';
@@ -481,7 +485,7 @@ $ws_worker->onClose = function($connection)
 
 // 运行worker
 Worker::runAll();
-```
+```
 
 测试
 打开chrome浏览器，按F12打开调试控制台，在Console一栏输入(或者把下面代码放入到html页面用js运行)
@@ -497,4 +501,3 @@ ws.onmessage = function(e) {
     alert("收到服务端的消息：" + e.data);
 };
 ```
-

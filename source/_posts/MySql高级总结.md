@@ -2,6 +2,7 @@
 title: MySql高级总结
 date: 2017-08-29 10:31:01
 tags: Mysql
+category: mysql
 ---
 
 ## 触发器

@@ -2,6 +2,7 @@
 title: php SPL 标准库
 date: 2017-11-03 15:57:39
 tags: 设计模式
+category: php
 ---
 
 PHP标准库（SPL）

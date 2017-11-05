@@ -2,6 +2,7 @@
 title: 开发一个PSR-0的基础框架
 date: 2017-11-03 20:29:19
 tags: 设计模式
+category: 设计模式
 ---
 
 PSR-0规范

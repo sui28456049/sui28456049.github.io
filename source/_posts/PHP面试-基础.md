@@ -2,6 +2,7 @@
 title: PHP面试 - 基础
 date: 2015-10-07 11:10:44
 tags: 面试
+category: 面试
 ---
 
 # php 引用变量

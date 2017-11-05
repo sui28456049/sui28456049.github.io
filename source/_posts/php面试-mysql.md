@@ -2,6 +2,7 @@
 title: php面试 - mysql
 date: 2015-10-08 08:36:59
 tags: 面试
+category: 面试
 ---
 
 # mysql 数据类型
