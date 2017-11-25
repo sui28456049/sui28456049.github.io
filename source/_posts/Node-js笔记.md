@@ -83,12 +83,12 @@ cnpm install express
 Node.js 提供了`exports` 和` require` 两个对象，其中 exports 是模块公开的接口，require 用于从外部获取一个模块的接口，即所获取模块的 exports 对象。
 
 ```js
-# main.js
 
+// main.js
 var hello = require('./hello');
 hello.world();
 
-# hello.js
+// hello.js
 
 exports.world = function() 
 {
@@ -101,6 +101,7 @@ exports.world = function()
 有时候我们只是想把一个对象封装到模块中
 
 ```js
+
 //hello.js 
 function Hello() 
 { 
@@ -114,12 +115,13 @@ function Hello()
 }; 
 module.exports = Hello;
 
-# 直接获得这个对象了
-/main.js 
+// 直接获得这个对象了
+//main.js 
 var Hello = require('./hello'); 
 hello = new Hello(); 
 hello.setName('BYVoid'); 
 hello.sayHello(); 
+
 ```
 
 模块接口的唯一变化是使用 module.exports = Hello 代替了exports.world = function(){}。 在外部引用该模块时，其接口对象就是要输出的 Hello 对象本身，而不是原先的 exports。
@@ -202,6 +204,182 @@ readerStream.on('error', function(err){
 
 console.log("程序执行完毕");
 ```
+# Node.js 文件系统
+
+Node.js 文件系统封装在 fs 模块是中，它提供了文件的读取、写入、更名、删除、遍历目录、链接等POSIX 文件系统操作。
+与其他模块不同的是，fs 模块中所有的操作都提供了异步的和 同步的两个版本，例如读取文件内容的函数有异步的 fs.readFile() 和同步的 fs.readFileSync()。
+
+```js
+var fs = require('fs'); 
+    fs.readFile('content.txt', 'utf-8', function(err, data) { 
+    if (err) { 
+       console.error(err); 
+  } else { 
+     console.log(data); 
+   } 
+}); 
+```
+
+# Express框架
+
+安装 Express 并将其保存到依赖列表中
+
+```bash
+$ npm install express --save
+```
+
+几个重要的模块是需要与 express 框架一起安装的：
+
+* body-parser - node.js 中间件，用于处理 JSON, Raw, Text 和 URL 编码的数据。
+
+* cookie-parser - 这就是一个解析Cookie的工具。通过req.cookies可以取到传过来的cookie，并把它们转成对象。
+
+* multer - node.js 中间件，用于处理 enctype="multipart/form-data"（设置表单的MIME编码）的表单数据。
+
+```bash
+$ npm install body-parser --save
+$ npm install cookie-parser --save
+$ npm install multer --save
+```
+
+## 第一个 Express 框架实例
+
+```js
+//express_demo.js 文件
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+   res.send(suisuisui);
+})
+
+var server = app.listen(8081, function () {
+
+  var host = server.address().address
+  var port = server.address().port
+
+  console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+```
+
+### Request 对象 
+Request 对象 - request 对象表示 HTTP 请求，包含了请求查询字符串，参数，内容，HTTP 头部等属性。常见属性有：
+req.app：当callback为外部文件时，用req.app访问express的实例
+req.baseUrl：获取路由当前安装的URL路径
+req.body / req.cookies：获得「请求主体」/ Cookies
+req.fresh / req.stale：判断请求是否还「新鲜」
+req.hostname / req.ip：获取主机名和IP地址
+req.originalUrl：获取原始请求URL
+req.params：获取路由的parameters
+req.path：获取请求路径
+req.protocol：获取协议类型
+req.query：获取URL的查询参数串
+req.route：获取当前匹配的路由
+req.subdomains：获取子域名
+req.accpets（）：检查请求的Accept头的请求类型
+req.acceptsCharsets / req.acceptsEncodings / req.acceptsLanguages
+req.get（）：获取指定的HTTP请求头
+req.is（）：判断请求头Content-Type的MIME类型
+
+### Response 对象
+
+Response 对象 - response 对象表示 HTTP 响应，即在接收到请求时向客户端发送的 HTTP 响应数据。常见属性有：
+res.app：同req.app一样
+res.append（）：追加指定HTTP头
+res.set（）在res.append（）后将重置之前设置的头
+res.cookie（name，value [，option]）：设置Cookie
+opition: domain / expires / httpOnly / maxAge / path / secure / signed
+res.clearCookie（）：清除Cookie
+res.download（）：传送指定路径的文件
+res.get（）：返回指定的HTTP头
+res.json（）：传送JSON响应
+res.jsonp（）：传送JSONP响应
+res.location（）：只设置响应的Location HTTP头，不设置状态码或者close response
+res.redirect（）：设置响应的Location HTTP头，并且设置状态码302
+res.send（）：传送HTTP响应
+res.sendFile（path [，options] [，fn]）：传送指定路径的文件 -会自动根据文件extension设定Content-Type
+res.set（）：设置HTTP头，传入object可以一次设置多个头
+res.status（）：设置HTTP状态码
+res.type（）：设置Content-Type的MIME类型
+
+## 路由
+
+创建 express_demo2.js 文件
+
+```js
+var express = require('express');
+var app = express();
+
+//  主页输出 "Hello World"
+app.get('/', function (req, res) {
+   console.log("主页 GET 请求");
+   res.send('Hello GET');
+})
 
 
+//  POST 请求
+app.post('/', function (req, res) {
+   console.log("主页 POST 请求");
+   res.send('Hello POST');
+})
 
+//  /del_user 页面响应
+app.delete('/del_user', function (req, res) {
+   console.log("/del_user 响应 DELETE 请求");
+   res.send('删除页面');
+})
+
+//  /list_user 页面 GET 请求
+app.get('/list_user', function (req, res) {
+   console.log("/list_user GET 请求");
+   res.send('用户列表页面');
+})
+
+// 对页面 abcd, abxcd, ab123cd, 等响应 GET 请求
+app.get('/ab*cd', function(req, res) {   
+   console.log("/ab*cd GET 请求");
+   res.send('正则匹配');
+})
+
+
+var server = app.listen(8081, function () {
+
+  var host = server.address().address
+  var port = server.address().port
+
+  console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+```
+
+很简单,比php的路由差很多,很轻松~~
+
+## 静态文件
+
+Express 提供了内置的中间件 express.static 来设置静态文件如：图片， CSS, JavaScript 等。
+你可以使用 express.static 中间件来设置静态文件路径。将图片， CSS, JavaScript 文件放在 public 目录下,就放在public/images/logo.png一张图片
+
+```js
+var express = require('express');
+var app = express();
+
+app.use(express.static('public'));
+
+app.get('/', function (req, res) {
+   res.send('Hello World');
+})
+
+var server = app.listen(8081, function () {
+
+  var host = server.address().address
+  var port = server.address().port
+
+  console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+```
+
+```
+在浏览器中访问 http://127.0.0.1:8081/images/logo.png,即可得到logo
+```
