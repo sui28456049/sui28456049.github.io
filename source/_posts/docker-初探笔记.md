@@ -11,6 +11,20 @@ category: 云计算
 
  运行容器比较重要
 
+
+### 安装ubuntu
+
+```bash
+docker pull ubuntu
+
+docker run -i -t docker.io/ubuntu /bin/bash
+```
+
+ -t:在新容器内指定一个伪终端或终端。
+
+ -i:允许你对容器内的标准输入 (STDIN) 进行交互。
+
+
 ### 安装lamp
 ```bash
 
@@ -18,7 +32,8 @@ sudo docker run -p 80:80 -p 3306:3306 -v /your/path/www : /var/www
 -v /your/path/apache2.conf : /etc/apache2/apache2.conf 
 -v /your/path/my.cnf : /etc/mysql/my.cnf 
 -t 
--i linode/lamp /bin/bash
+-i 
+linode/lamp /bin/bash
 ```
 
 docker run：运行一个container，如果后面要绑定宿主主机的0-1024端口需要使用sudo
