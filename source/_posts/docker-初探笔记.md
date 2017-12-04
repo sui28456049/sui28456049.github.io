@@ -70,7 +70,6 @@ docker run：运行一个container，如果后面要绑定宿主主机的0-1024�
   docker run --name tomcat 
   -p 8888:8080 
   -v $PWD/test:/usr/local/tomcat/webapps/test 
-  --rm
   -d tomcat  
  ```
 
@@ -208,9 +207,88 @@ docker inspect 容器ID或容器名 |grep '"IPAddress"'
 ```
 
 
-# Dockerfile 定制镜像
+# Dockerfile 安装Node
 
-抽空在学.......
+## 创建Node.js程序
+
+1. 创建 package.json，并写入相关信息和依赖(/usr/local/src/node下)
+
+```js
+{
+  "name": "suiweb",
+  "version": "0.0.1",
+  "description": "Node.js on Docker",
+  "author": "MRsui",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
+```
+
+2. 创建服务端程序server.js(/usr/local/src/node下)
+
+```js
+    var express = require('express');
+
+    var PORT = 8888;
+
+    var app = express();
+    app.get('/', function (req, res) {
+            res.send('Hello world\n');
+          });
+
+    app.listen(PORT);
+    console.log('Running on http://localhost:' + PORT);
+```
+
+## 创建Dockerfile
+
+```
+#docker.io服务器pull镜像
+FROM node
+
+#创建app目录,保存我们的代码
+RUN mkdir -p /usr/local/src/node
+#设置工作目录
+WORKDIR /usr/local/src/node
+
+#复制所有文件到 工作目录。
+COPY . /usr/local/src/node
+
+#编译运行node项目，使用npm安装程序的所有依赖,利用taobao的npm安装
+
+WORKDIR /usr/local/src/node
+
+RUN npm install --registry=https://registry.npm.taobao.org
+
+#暴露container的端口
+EXPOSE 8888
+
+#运行命令
+CMD ["npm", "start"]
+```
+
+## 构建Image
+
+```bash
+sudo docker build -t sui_node .
+```
+## 运行镜像
+
+```bash
+sudo docker run -d --name sui_node -p 8888:8888 sui_node
+```
+
+## 测试
+
+```bash
+curl -i localhost:8888 
+```
+
 
 
 
