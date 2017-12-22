@@ -97,3 +97,95 @@ sleep(150);
 ```
 
 PHP程序需要转为后台运行时，只需要调用一次封装好的函数daemonize()即可
+
+# 后台建立简单服务器
+
+```php
+/* 设置不显示任何错误 */
+// error_reporting(0);
+
+/* 脚本超时为无限 */
+set_time_limit(0);
+
+/* 开始固定清除 */
+ob_implicit_flush();
+
+/* 本机的IP和需要开放的端口 */
+$address = '127.0.0.1';
+$port = 10000;
+
+/* 产生一个Socket */
+if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) < 0) {
+    echo "socket_create() failed: reason: " . socket_strerror($sock) . "\n";
+}
+
+/* 把IP地址端口进行绑定 */
+if (($ret = socket_bind($sock, $address, $port)) < 0) {
+    echo "socket_bind() failed: reason: " . socket_strerror($ret) . "\n";
+}
+
+/* 监听Socket连接 */
+if (($ret = socket_listen($sock, 5)) < 0) {
+    echo "socket_listen() failed: reason: " . socket_strerror($ret) . "\n";
+}
+
+/* 永远循环监接受用户连接 */
+do {
+    if (($msgsock = socket_accept($sock)) < 0) {
+        echo "socket_accept() failed: reason: " . socket_strerror($msgsock) . "\n";
+        break;
+    }
+    /* 发送提示信息给连接上来的用户 */
+    $msg = "==========================================\r\n" .
+ " Welcome to the PHP Test Server. \r\n\r\n".
+        " To quit, type 'quit'. \r\n" .
+ " To shut down the server type 'shutdown'.\r\n" .
+ " To get help message type 'help'.\r\n" .
+ "==========================================\r\n" .
+ "php> ";
+    socket_write($msgsock, $msg, strlen($msg));
+
+    do {
+        if (false === ($buf = socket_read($msgsock, 2048, PHP_NORMAL_READ))) {
+            echo "socket_read() failed: reason: " . socket_strerror($ret) . "\n";
+            break 2;
+        }
+        if (!$buf = trim($buf)) {
+            continue;
+        }
+  /* 客户端输入quit命令时候关闭客户端连接 */
+        if ($buf == 'quit') {
+            break;
+        }
+  /* 客户端输入shutdown命令时候服务端和客户端都关闭 */
+        if ($buf == 'shutdown') {
+            socket_close($msgsock);
+            break 2;
+        }
+  /* 客户端输入help命令时候输出帮助信息 */
+  if ($buf == 'help') {
+   $msg = " PHP Server Help Message \r\n\r\n".
+   " To quit, type 'quit'. \r\n" .
+   " To shut down the server type 'shutdown'.\r\n" .
+   " To get help message type 'help'.\r\n" .
+   "php> ";
+    socket_write($msgsock, $msg, strlen($msg));
+    continue;
+  }
+  /* 客户端输入命令不存在时提示信息 */
+        $talkback = "PHP: unknow command '$buf'.\r\nphp> ";
+        socket_write($msgsock, $talkback, strlen($talkback));
+        echo "$buf\n";
+    } while (true);
+    socket_close($msgsock);
+} while (true);
+
+/* 关闭Socket连接 */
+socket_close($sock);
+```
+
+测试
+
+```bash
+telnet 127.0.0.1 10000
+```
