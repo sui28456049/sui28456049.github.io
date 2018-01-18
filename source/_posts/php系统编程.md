@@ -48,7 +48,7 @@ root     16934 14333  0 08:55 pts/2    00:00:00 grep --color=auto pcntl
 
 ## 使用 supervisor
 
-## nohub
+## nohup
 
 ```bash
 nohup php test.php > log.txt &
