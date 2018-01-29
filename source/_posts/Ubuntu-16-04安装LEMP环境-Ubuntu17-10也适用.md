@@ -195,6 +195,32 @@ sudo systemctl enable php7.2-fpm
 ```
 原理类似.........
 
+# 安装node.js
+
+# 仓库安装(不推荐)
+ubuntu 仓库有二进制包,可以快捷安装,不过版本太老了,不推荐...
+
+```bash
+sudo apt-get install nodejs
+sudo apt-get install npm
+```
+
+## 编译安装(推荐)
+
+```bash
+sudo git clone https://github.com/nodejs/node.git
+
+sudo chmod -R 755 node
+
+cd node
+
+sudo ./configure
+
+sudo make
+
+sudo make install     # 默认安装位置 /usr/local/bin 目录下 whereis node 
+```
+
 可以愉快的使用乌班图了,哈哈哈~~~
 
 
