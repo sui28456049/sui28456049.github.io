@@ -197,7 +197,9 @@ sudo systemctl enable php7.2-fpm
 
 # 安装node.js
 
-# 仓库安装(不推荐)
+## nvm 安装
+
+## 仓库安装(不推荐)
 ubuntu 仓库有二进制包,可以快捷安装,不过版本太老了,不推荐...
 
 ```bash
@@ -208,7 +210,7 @@ sudo apt-get install npm
 ## 编译安装(推荐)
 
 ```bash
-sudo git clone https://github.com/nodejs/node.git
+sudo git clone https://github.com/nodejs/node.git node
 
 sudo chmod -R 755 node
 
