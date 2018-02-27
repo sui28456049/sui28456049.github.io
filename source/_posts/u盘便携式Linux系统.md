@@ -33,9 +33,4 @@ category: 娱乐
 
 # 用法
 
-UltraISO 刻录WinPe到U盘,设置bios U盘为第一启动项,加载linux live cd iso镜像.
-
-
-
-
-官网网址: http://www.minilinux.net
+UltraISO 刻录WinPe到U盘,设置bios U盘为第一启动项,加载linux live cd iso镜像

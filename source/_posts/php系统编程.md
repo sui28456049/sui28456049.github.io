@@ -48,6 +48,53 @@ root     16934 14333  0 08:55 pts/2    00:00:00 grep --color=auto pcntl
 
 ## 使用 supervisor
 
+### 安装
+
+```bash
+ sudo apt-get install supervisor
+```
+
+### 命令
+
+Supervisor 有两个可执行程序 – supervisord 和 supervisorctl:
+
+`supervisord` 是后台管理服务器, 用来依据配置文件的策略管理后台守护进程, 它会随系统自动启动
+`supervisorctl` 用于管理员向后台管理程序发送 启动/重启/停止 等指令;
+它们之间的关系就相当于 Apache 的 httpd 和 apachectl.
+
+### 配置文件
+
+主配置文件 的路径位于 /etc/supervisor/supervisord.conf, 主配置文件中的末尾两行文本:
+
+```
+[include]
+files = /etc/supervisor/conf.d/*.conf
+````
+
+指明了 Supervisor 会去 /etc/supervisor/conf.d/ 目录下查找以 .conf 结尾的子配置文件, 也就是说, 我们只需在 /etc/supervisor/conf.d/ 目录下为每个后台守护应用新建一个配置文件即可.
+
+子配置文件示例
+
+```bash
+[program:php]
+command = /usr/bin/php /home/sui/test.php
+```
+### 运行
+
+注意: 每次 修改主配置文件 或 增改子配置文件 都需要执行 supervisorctl update 使新配置生效
+
+```bash
+    # 控制所有进程
+    sudo supervisorctl start all
+    sudo supervisorctl stop all
+    sudo supervisorctl restart all
+
+    # 定向控制指定进程
+    sudo supervisorctl stop php
+    sudo supervisorctl start php
+    sudo supervisorctl restart php
+```
+
 ## nohup
 
 ```bash
