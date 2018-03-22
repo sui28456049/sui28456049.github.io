@@ -101,6 +101,8 @@ docker rm  容器名(或者容器id)
 docker restart 容器名(或者容器id)  # 重启容器
 
 docker start  容器名(或者容器id) # 启动容器
+
+docker container prune  # 清除所有的容器
 ```
 
 ## 进入容器
@@ -288,6 +290,8 @@ sudo docker run -d --name sui_node -p 8888:8888 sui_node
 ```bash
 curl -i localhost:8888 
 ```
+
+备注: Dockerfile创建镜像,不推荐build
 
 
 
