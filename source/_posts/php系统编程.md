@@ -7,6 +7,12 @@ category: php
 
 > PHP的进程控制支持实现了Unix方式的进程创建, 程序执行, 信号处理以及进程的中断。 进程控制不能被应用在Web服务器环境，当其被用于Web服务环境时可能会带来意外的结果。
 
+
+
+#  PHP进程
+
+
+
 新建一个pcntl.php 文件
 
 ```php
@@ -44,6 +50,58 @@ root     16932 16931  0 08:55 pts/1    00:00:00 php pcntl.php
 root     16934 14333  0 08:55 pts/2    00:00:00 grep --color=auto pcntl
 ```
 
+##  孤儿进程
+
+```php
+//模拟 父进程先退出,子进程变成孤儿进程,被init1 收养
+
+echo "本程序的进程pid:".getmypid().PHP_EOL;
+
+	$pid = pcntl_fork();
+	if($pid == 0)
+	{
+		//子进程
+		echo "子进程pid为:".getmypid().PHP_EOL;
+	    system("ps -ef|grep fork");
+        sleep(10);
+        system("ps -ef|grep fork");
+		
+	}else{
+		//父进程
+		echo "父进程pid为:".getmypid().PHP_EOL;
+		sleep(3);
+		exit(0);		
+	}
+
+```
+
+## 僵尸进程
+
+```php
+//模拟 子进程先退出,子进程变成僵尸进程
+
+echo "本程序的进程pid:".getmypid().PHP_EOL;
+
+	$pid = pcntl_fork();
+	if($pid == 0)
+	{
+		//子进程
+		echo "子进程pid为:".getmypid().PHP_EOL;
+		 system("ps -f");
+		 exit(0);
+	}else{
+		//父进程
+		echo "父进程pid为:".getmypid().PHP_EOL;
+		# pcntl_wait($status);
+		sleep(30);
+		echo PHP_EOL;
+		system("ps axu|grep Z");
+	
+	}
+```
+
+
+
 # PHP程序守护进程化
 
 ## 使用 supervisor
@@ -69,13 +127,12 @@ Supervisor 有两个可执行程序 – supervisord 和 supervisorctl:
 ```
 [include]
 files = /etc/supervisor/conf.d/*.conf
-````
+
 
 指明了 Supervisor 会去 /etc/supervisor/conf.d/ 目录下查找以 .conf 结尾的子配置文件, 也就是说, 我们只需在 /etc/supervisor/conf.d/ 目录下为每个后台守护应用新建一个配置文件即可.
 
 子配置文件示例
 
-```bash
 [program:php]
 command = /usr/bin/php /home/sui/test.php
 ```

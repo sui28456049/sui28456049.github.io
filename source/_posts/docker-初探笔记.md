@@ -91,6 +91,19 @@ docker run --name sui-mysql -p 3307:3306 -v /var/data:/var/lib/mysql -e MYSQL_RO
 docker run --name sui-wordpress --link sui-mysql:mysql -p 8080:80 -d wordpress
 ```
 
+### 安装gitlab
+
+```bash
+sudo docker run --detach \
+    --hostname www.sui.com \
+    --publish 443:443 --publish 8080:80 --publish 2222:22 \
+    --restart always \
+    --name gitlab \
+    --volume /srv/gitlab/config:/etc/gitlab \
+    --volume /srv/gitlab/logs:/var/log/gitlab \
+    --volume /srv/gitlab/data:/var/opt/gitlab \
+      gitlab/gitlab-ce:latest
+```
 
 ## 查看正在运行的容器
 
@@ -116,6 +129,8 @@ docker restart 容器名(或者容器id)  # 重启容器
 docker start  容器名(或者容器id) # 启动容器
 
 docker container prune  # 清除所有的容器
+
+docker stop $(docker ps -q) & docker rm $(docker ps -aq)   #停止删除容器
 ```
 
 ## 进入容器
@@ -173,6 +188,7 @@ docker pull
 
 ```bash
 docker rmi (名或id)
+docker rmi $(docker images -q)  # 删除所有镜像
 ```
 
 # 使用网络
