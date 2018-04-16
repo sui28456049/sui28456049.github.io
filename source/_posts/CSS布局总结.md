@@ -134,3 +134,311 @@ c. 底边居中: 与多行内联文本垂直处理方式一致,vertical-align:bo
 
 
 
+# 单列布局
+
+## 头主尾等宽
+
+```html
+
+<style>
+		.container {
+			max-width: 960px; /*设置最大宽度为固定值*/
+			margin: 0 auto;  /*设置内部子块元素左右居中*/
+		}
+		.header {
+			height: 50px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #21FF80;
+		}
+		.main {
+			height: 600px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #80007F;
+		}
+		.footer {
+			height: 50px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #21FF06;
+		}
+	</style>
+
+<h4>基本思路:</h4>
+	<p>1.头部,主体,尾部全部放在一个容器内统一设置</p>
+	<p>2.子块只须设置高度即可</p>
+	<!-- DOM结构 -->
+	<div class="container">
+		<div class="header">头部</div>
+		<div class="main">主体</div>
+		<div class="footer">尾部</div>
+	</div>
+```
+
+## 头尾自适应主体固宽
+
+```html
+<style>
+		.container {
+			max-width: 960px; /*设置最大宽度为固定值*/
+			margin: 0 auto;  /*设置内部子块元素左右居中*/
+		}
+		.header {
+			height: 50px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #21FF80;
+		}
+		.main {
+			height: 600px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #80007F;
+		}
+		.footer {
+			height: 50px;  /*只需设置高度,宽度继承父元素*/
+			background-color: #21FF06;
+		}
+	</style>
+
+<h4>基本思路:</h4>
+	<p>1.头部,尾部单独放在一个容器内,仅设置height高度</p>
+	<p>2.头部,尾部内容区仍与主体等宽</p>
+	<p>3.主体单独放在一个容器内,并设置左右自动margin: auto</p>
+	<h4>CSS样式无需修改,只需调整一下DOM结构即可</h4>
+	<!-- DOM结构 -->
+	
+		<div class="header">
+			<div class="container">头部</div>
+		</div>
+		<div class="main">
+			<div class="container">主体</div>
+		</div>
+		<div class="footer">
+			<div class="container">尾部</div>
+		</div>
+```
+
+# 两列布局
+
+## 左侧固定,右主体自适应
+
+```html
+<style>
+	.left {
+		width: 200px;
+		height: 600px;
+		background-color: skyblue;
+		float: left;
+	}
+	.main {
+		height: 600px;
+		background-color: cyan; 
+		margin-left: 200px;
+	}
+</style>
+
+
+<h4>基本思路:</h4>
+	<p>1.左侧固定宽度,并设置左浮动</p>
+	<p>2.右侧主体仅设置margin-left,将区块向右拉过左侧宽度即可</p>
+	<div class="left">左侧</div>
+	<div class="main">主体</div>
+```
+
+##  右侧固定,左边主体自适应
+
+```
+<style>
+	.right {
+		width: 200px;
+		height: 600px;
+		background-color: skyblue;
+		float: right;
+	}
+	.main {
+		height: 600px;
+		background-color: cyan; 
+		margin-right: 200px;
+	}
+</style>
+
+<h4>基本思路:</h4>
+	<p>1.右侧固定宽度,并设置右浮动</p>
+	<p>2.左侧主体仅设置margin-right,将区块向右拉过右侧宽度即可</p>
+	<div class="right">右侧</div>
+	<div class="main">主体</div>
+```
+
+## 左右二列宽度固定[浮动]
+
+```html
+<style>
+	.container {
+		width: 960px; 	
+		margin: 0 auto;
+		background-color: yellow;
+		overflow: hidden; /*允许子元素撑开父级区块*/
+	}
+	.clear {
+		-ms-zoom: 1;
+	}
+	.clear:after {
+		content: '';
+		display: block;
+		clear:both;
+	}
+	.left {
+		width: 200px;
+		height: 600px;
+		background-color: skyblue;
+		float: left;  /*向左浮动*/
+	}
+	.right {
+		width: 750px;
+		height: 600px;
+		background-color: cyan; 
+		float:right;  /*向右浮动*/
+	}
+</style>
+
+<h4>基本思路:</h4>
+	<p>1.要给左右二列添加一个父级区块</p>
+	<p>2.给左右二个区块设置浮动float:left/right</p>
+	<p>3.给父区块添加after伪类让子块撑开父级</p>
+
+	<div class="container">
+		<div class="left">左侧</div>
+		<div class="right">右侧</div>
+	</div>
+```
+
+## 左右二列宽度固定[绝对定位]
+
+```html
+<style>
+	.container {
+		/*父区块必须设置绝对定位*/
+		position: absolute;
+		left:0;  /*左边起始定位点*/
+		right:0; /*右边起始定位点*/
+		margin: auto; /*左右边距自动挤压,即自动居中*/
+
+		max-width: 960px; /*宽度一定要设置*/
+	}
+	.left {
+		/*设置左边栏定位起始点*/
+		position: absolute;
+		top:0;
+		left:0;
+
+		width: 200px;
+		height: 600px;
+		background-color: skyblue;
+	}
+	.right {
+		/*设置右边栏定位起始点*/
+		position: absolute;
+		top:0;
+		right:0;
+
+		width: 750px;
+		height: 600px;
+		background-color: cyan; 
+	}
+</style>
+
+<h4>基本思路:</h4>
+	<p>1.要给左右二列添加一个父级区块,并设置定位属性 <br>
+	2.给左右二个区块分别使用绝对定位<br>
+	3.父区块一定要设置宽度width</p>
+
+	<div class="container">
+		<div class="left">左侧</div>
+		<div class="right">右侧</div>
+	</div>
+```
+
+# 三列布局
+
+## float+margin
+
+```html
+<style>
+		.left {
+			width: 200px; 
+			height:600px;
+			background-color: cyan;
+			float:left;  /*左侧向左浮动对齐*/
+		}
+		.right {
+			width: 200px; 
+			height:600px;
+			background-color: cyan;
+			float:right; /*右侧向右浮动对齐*/
+		}
+		.main {
+			height:600px;
+			margin-left: 200px;  /*从左边挤出200px*/
+			margin-right: 200px; /*从右边挤出200px*/
+			background-color: #FD8008;
+		}
+
+	</style>
+
+<h4>基本思路:<span style="color:red">float+margin</span></h4>
+	<p>1.与二列布局极相似 <br>
+	2.左右二列采用浮动+宽度布局<br>
+	3.中间内容区使用margin挤区来<br>
+	4.DOM顺序:<span style="color:red">必须先写二侧,再写主体,否则右侧会被挤下去</span><br>
+	5.二列布局其实也是由它修改而来:去掉右侧.right,并去掉主体中的maring-right即可</p>
+
+	<div class="left">左侧</div>
+	<div class="right">右侧</div>
+	<div class="main">内容</div>
+```
+
+## position+margin
+
+```html
+	<style>
+		.container {  /*定位父级*/
+			position: absolute;
+			left:0;
+			right:0;
+		}
+		.left {
+			width: 200px; 
+			height:600px;
+			background-color: cyan;
+			position: absolute;
+			top:0;
+			left:0;
+		}
+		.right {
+			width: 200px; 
+			height:600px;
+			background-color: cyan;
+			position: absolute;
+			top:0;
+			right:0;
+		}
+		.main {
+			height:600px;
+			margin-left: 200px;  /*从左边挤出200px*/
+			margin-right: 200px; /*从右边挤出200px*/
+			background-color: #FD8008;
+		}
+
+	</style>
+
+<h4>基本思路:<span style="color:red">postion+margin</span></h4>
+	<p>1.与二列定位布局极相似 <br>
+	2.左右二列绝对定位+宽度布局<br>
+	3.中间内容区使用margin挤区来<br>
+	4.二列布局其实也是由它修改而来:去掉右侧.right,并去掉主体中的maring-right即可<br>
+	5.推荐添加一个定位父级</p>
+
+
+	<div class="container">
+		<div class="left">左侧</div>
+		<div class="right">右侧</div>
+		<div class="main">内容</div>
+	</div>
+```
+
+
+
+
+
