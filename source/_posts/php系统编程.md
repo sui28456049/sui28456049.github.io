@@ -1,5 +1,5 @@
 ---
-title: php系统编程
+title: php守护进程
 date: 2017-12-22 18:57:40
 tags: php
 category: php
@@ -123,6 +123,15 @@ Supervisor 有两个可执行程序 – supervisord 和 supervisorctl:
 ### 配置文件
 
 主配置文件 的路径位于 /etc/supervisor/supervisord.conf, 主配置文件中的末尾两行文本:
+
+```php
+while (true) 
+{    
+file_put_contents('/var/www/log.txt',date('Y-m-d H:i:s',time()).PHP_EOL,FILE_APPEND);
+sleep(1);
+}
+```
+
 
 ```
 [include]
