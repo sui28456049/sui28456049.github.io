@@ -25,6 +25,18 @@ category: 娱乐
 
 官网网址: http://www.minilinux.net
 
+# kail
+
+# 路由器系统
+
+ros os 路由器系統
+
+u盘 持久化存储 
+
+[](https://docs.kali.org/downloading/kali-linux-live-usb-persistence)
+[](https://chenjiehua.me/linux/make-a-persistent-encryped-usb-kali-linux.html)
+[](http://www.secist.com/archives/1265.html)
+
 # WinPE推荐
 
 ## 天意(个人最爱)
