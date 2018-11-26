@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 16.04安装LEMP环境(Ubuntu17.10也适用)
+title: Ubuntu 16.04安装LNMP环境(Ubuntu17.10也适用)
 date: 2018-01-26 14:55:36
 tags: Linux
 category: Linux
