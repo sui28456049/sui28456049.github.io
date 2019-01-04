@@ -235,6 +235,128 @@ sub vcl_deliver {
 }
 
 ```
+例子2:
+```sh
+vcl 4.0;
+ 
+# 后端服务器配置
+backend default {
+  .host = "127.0.0.1"; # 后端服务器的域名或 IP
+  .port = "8080";                    # 端口
+  .connect_timeout = 600s;
+  .first_byte_timeout = 600s;
+  .between_bytes_timeout = 600s;
+  .max_connections = 128;
+}
+ 
+acl purge {
+    "localhost";
+    "127.0.0.1";
+}
+ 
+# vcl_recv 表示 Varnish 收到客户端请求的时候
+sub vcl_recv {
+  # 当 HTTP 方法是 Purge 时，检查来源 IP，如果 IP 有效，则进行 Purge 操作
+  if (req.method == "PURGE") {
+    if (!client.ip ~ purge) {
+      return(synth(405, "This IP is not allowed to send PURGE requests."));
+    }
+    return (purge);
+  }
+ 
+  # 不缓存有密码控制的内容和 Post 请求
+  if (req.http.Authorization || req.method == "POST") {
+    return (pass);
+  }
+ 
+  # 不缓存管理员页面和预览页面
+  if (req.url ~ "wp-(login|admin)" || req.url ~ "preview=true") {
+    return (pass);
+  }
+ 
+  # 不缓存已登录用户的内容
+  if (req.http.Cookie ~ "wordpress_logged_in_") {
+    return (pass);
+  }
+ 
+  # 清除 cookie，因为 WordPress 会根据用户 cookie 在评论框中直接输出昵称
+  unset req.http.cookie;
+ 
+  # 进行 hash 操作，见下面的定义
+  return (hash);
+}
+ 
+sub vcl_pipe {
+        return (pipe);
+}
+ 
+sub vcl_pass {
+        return (fetch);
+}
+ 
+# 定义用于缓存的键
+sub vcl_hash {
+  # 这里使用 URL 做为键，如果是多域名站点，则需要使用 req.http.host + req.url
+  hash_data(req.url);
+  return (lookup);
+}
+ 
+# 处理后端服务器的响应
+sub vcl_backend_response {
+  # 删掉一些没有用的项
+  unset beresp.http.X-Powered-By;
+  unset beresp.http.x-mod-pagespeed;
+ 
+  # 对于图片之类的静态内容，删掉 cookie 并且设置浏览器缓存时间为一个月
+  if (bereq.url ~ "\.(css|js|png|gif|jp(e?)g|swf|ico|txt|eot|svg|woff)") {
+    unset beresp.http.cookie;
+    set beresp.http.cache-control = "public, max-age=2700000";
+  }
+ 
+  # 不缓存管理员页面和预览页面
+  if (bereq.url ~ "wp-(login|admin)" || bereq.url ~ "preview=true") {
+    set beresp.uncacheable = true;
+    set beresp.ttl = 30s;
+    return (deliver);
+  }
+ 
+  # 这一段很重要，在用户提交评论的同时，立即清空该页面的缓存，这样用户可以加载到最新的页面
+  if (bereq.url == "/wp-comments-post.php") {
+    ban("req.url == " + regsub(beresp.http.Location, "^http(s)?://bb\.mf8\.biz(/.*/)$
+  }
+  
+  # 不缓存 Post 请求和有密码的内容
+  if ( bereq.method == "POST" || bereq.http.Authorization ) {
+    set beresp.uncacheable = true;
+    set beresp.ttl = 120s;
+    return (deliver);
+  }
+ 
+  # 只缓存正常的响应和 404
+  if ( beresp.status != 200 && beresp.status != 404 ) {
+    set beresp.uncacheable = true;
+    set beresp.ttl = 120s;
+    return (deliver);
+  }
+ 
+  unset beresp.http.set-cookie;
+ 
+  # 默认缓存时间是 24 小时
+  set beresp.ttl = 24h;
+  set beresp.grace = 30s;
+  return (deliver);
+}
+ 
+sub vcl_deliver {
+  return (deliver);
+}
+sub vcl_init {
+        return (ok);
+}
+sub vcl_fini {
+        return (ok);
+}
+```
 
 # varnish工具介绍
 
