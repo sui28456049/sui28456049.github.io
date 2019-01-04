@@ -135,6 +135,14 @@ sub vcl_init {
 }
 
 sub vcl_recv {
+    #url重写，告诉后端服务器真实的请求者，安全避免重复添加，还可定义在记录日志中
+    if (req.restarts == 0) {
+        if (req.http.X-Fowarded-For) {
+            set req.http.X-Forwarded-For = req.http.X-Forwarded-For + "," + client.ip;
+        } else {
+            set req.http.X-Forwarded-For = client.ip;
+        }
+    }         
     # 指定varnish接受到的请求，如果缓存没有命中，直接全部发往后端的static主机组
     set req.backend_hint = static.backend();
 
@@ -324,7 +332,7 @@ sub vcl_backend_response {
   if (bereq.url == "/wp-comments-post.php") {
     ban("req.url == " + regsub(beresp.http.Location, "^http(s)?://bb\.mf8\.biz(/.*/)$
   }
-  
+
   # 不缓存 Post 请求和有密码的内容
   if ( bereq.method == "POST" || bereq.http.Authorization ) {
     set beresp.uncacheable = true;
