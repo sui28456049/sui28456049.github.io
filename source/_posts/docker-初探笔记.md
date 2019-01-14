@@ -322,6 +322,207 @@ curl -i localhost:8888
 
 备注: Dockerfile创建镜像,不推荐build
 
+# Docker Compose(/19/1/14 add)
+
+使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。
+
+Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。
+
+Compose 中有两个重要的概念：
+
+服务 (service)：一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。
+
+项目 (project)：由一组关联的应用容器组成的一个完整业务单元，在 docker-compose.yml 文件中定义。
+
+`yaml语法配置项为2个空格`
+
+## 跑起来再说
+
+### web 应用
+
+app.py
+
+```python
+from flask import Flask
+from redis import Redis
+
+app = Flask(__name__)
+redis = Redis(host='redis', port=6379)
+
+@app.route('/')
+def hello():
+    count = redis.incr('hits')
+    return 'Hello World! 该页面已被访问 {} 次。\n'.format(count)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
+```
+
+### Dockerfile
+
+```sh
+FROM python:3.6-alpine
+ADD . /code
+WORKDIR /code
+RUN pip install redis flask
+CMD ["python", "app.py"]
+```
+
+### docker-compose.yml
+
+```sh
+version: '3'
+services:
+
+  web:
+    build: .
+    ports:
+     - "5000:5000"
+
+  redis:
+    image: "redis:alpine"
+```
+
+## Compose 命令说明
+
+常用选项:
+
+docker-compose down    此命令将会停止 up 命令所启动的容器，并移除网络
+
+docker-compose up      启动
+
+docker-compose build    构建（重新构建）项目中的服务容器。
+
+docker-compose exec  nginx   进入指定的容器。
+
+docker-compose ps   列出容器
+
+docker-compose restart
+
+docker-compose rm 
+
+选项：
+
+  -d 后台运行容器。
+
+  --name NAME 为容器指定一个名字。
+
+  --entrypoint CMD 覆盖默认的容器启动指令。
+
+  -e KEY=VAL 设置环境变量值，可多次使用选项来设置多个环境变量。
+
+  -u, --user="" 指定运行容器的用户名或者 uid。
+
+  --no-deps 不自动启动关联的服务容器。
+
+  --rm 运行命令后自动删除容器，d 模式下将忽略。
+
+  -p, --publish=[] 映射容器端口到本地主机。
+
+  --service-ports 配置服务端口并映射到本地主机。
+
+  -T 不分配伪 tty，意味着依赖 tty 的指令将无法运行。
+
+更多参考: https://yeasy.gitbooks.io/docker_practice/compose/commands.html#stop
+
+## Compose 模板文件常用配置(.yaml)
+
+1. `build`  指定 Dockerfile 所在文件夹的路径（可以是绝对路径，或者相对 docker-compose.yml 文件的路径）。 Compose 将会利用它自动构建这个镜像，然后使用这个镜像。 
+
+2. `container_name` 指定容器名称。默认将会使用 项目名称_服务名称_序号 这样的格式。
+container_name: sui-web
+
+3. `depends_on`  解决容器的依赖、启动先后的问题。
+
+4. `environment`  设置环境变量。
+
+5. `expose`  暴露端口，但不映射到宿主机，只被连接的服务访问。
+
+6. `extra_hosts 类似 Docker 中的 --add-host 参数，指定额外的 host 名称映射信息。`
+
+```sh
+extra_hosts:
+ - "googledns:8.8.8.8"
+ - "dockerhub:52.1.157.61"
+```
+
+会在启动后的服务容器中 /etc/hosts 文件中添加如下两条条目。
+
+```
+8.8.8.8 googledns
+52.1.157.61 dockerhub
+```
+7. `image`   指定为镜像名称或镜像 ID
+
+8. `logging`  日志
+
+9. `network_mode` 设置网络模式
+
+```sh
+network_mode: "bridge"
+network_mode: "host"
+network_mode: "none"
+network_mode: "service:[service name]"
+network_mode: "container:[container name/id]"
+```
+10. `ports`   暴露端口信息。使用宿主端口：容器端口 (HOST:CONTAINER) 格式，或者仅仅指定容器的端口（宿主将会随机选择端口）都可以。
+
+11. `volumes`  数据卷所挂载路径设置。可以设置宿主机路径 （HOST:CONTAINER） 或加上访问模式 （HOST:CONTAINER:ro）。
+
+
+## 实例
+
+### python (Django/PostgreSQL应用)
 
 
 
+### php(运行wordpress)
+
+新建一个名为 wordpress 的文件夹，然后进入这个文件夹。
+```sh
+version: "3"
+services:
+
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     ports:
+       - "4399:3306"
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     container_name: sui-web
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "3000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+
+   adminer:
+     image: adminer
+     restart: always
+     ports:
+       - "8080:8080"
+
+   # 定义phpmyadmin ,80 端口冲突
+   # phpmyadmin:
+   #   image: phpmyadmin/phpmyadmin
+   #   restart: always
+   #   ports:
+   #     - "8888:80"
+volumes:
+  db_data:
+```
+
+运行 docker-compose up -d Compose 就会拉取镜像再创建我们所需要的镜像，然后启动 wordpress 和数据库容器。 接着浏览器访问 127.0.0.1:8080 端口就能看到 WordPress 安装界面了。
