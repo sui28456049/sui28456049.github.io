@@ -526,3 +526,10 @@ volumes:
 ```
 
 运行 docker-compose up -d Compose 就会拉取镜像再创建我们所需要的镜像，然后启动 wordpress 和数据库容器。 接着浏览器访问 127.0.0.1:8080 端口就能看到 WordPress 安装界面了。
+
+
+# 其他工具
+
+在线生成php docker 工具 https://phpdocker.io/generator
+
+不错的的东西: https://laradock.io/documentation/
