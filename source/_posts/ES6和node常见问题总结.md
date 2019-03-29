@@ -71,3 +71,30 @@ location / {
 1 hash 模式下，仅 hash 符号之前的内容会被包含在请求中，如 http://www.abc.com，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 404 错误。
 2 history 模式下，前端的 URL 必须和实际向后端发起请求的 URL 一致，如 http://www.abc.com/book/id。如果后端缺少对 /book/id 的路由处理，将返回 404 错误。Vue-Router 官网里如此描述：“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。”
 3 结合自身例子，对于一般的 Vue + Vue-Router + Webpack + XXX 形式的 Web 开发场景，用 history 模式即可，只需在后端（Apache 或 Nginx）进行简单的路由配置，同时搭配前端路由的 404 页面支持。
+
+# 快速建立Vue项目(老爱忘...)
+
+首先安装vue-cli
+
+```
+npm install -g vue-cli
+```
+
+安装成功后可以输入vue查看相关命令的使用，输入`vue list`可以查看vue可以用的模板
+
+```
+  Available official templates:
+
+  ★  browserify - A full-featured Browserify + vueify setup with hot-reload, linting & unit testing.
+  ★  browserify-simple - A simple Browserify + vueify setup for quick prototyping.
+  ★  pwa - PWA template for vue-cli based on the webpack template
+  ★  simple - The simplest possible Vue setup in a single HTML file
+  ★  webpack - A full-featured Webpack + vue-loader setup with hot reload, linting, testing & css extraction.
+  ★  webpack-simple - A simple Webpack + vue-loader setup for quick prototyping.
+```
+
+一般都用`webpack模板`
+
+```
+vue init webpack projectName
+```
