@@ -277,3 +277,254 @@ Promise
 用Promise.all来执行，all接收一个数组参数，里面的值最终都算返回Promise对象。这样，三个异步操作的并行执行的，等到它们都执行完后才会进到then里面。
 
 那么，三个异步操作返回的数据哪里去了呢？都在then里面呢，all会把所有异步操作的结果放进一个数组中传给then，就是上面的results。
+
+# 箭头函数
+
+```js
+// 箭头函数
+let fun = (name) => {
+    // 函数体
+    return `Hello ${name} !`;
+};
+
+// 等同于
+let fun = function (name) {
+    // 函数体
+    return `Hello ${name} !`;
+};
+```
+
+箭头函数省去了function关键字，采用箭头=>来定义函数。函数的参数放在=>前面的括号中，函数体跟在=>后的花括号中。
+
+关于箭头函数的参数：
+① 如果箭头函数没有参数，直接写一个空括号即可。
+② 如果箭头函数的参数只有一个，也可以省去包裹参数的括号。
+③ 如果箭头函数有多个参数，将参数依次用逗号(,)分隔，包裹在括号中即可。
+
+```js
+// 没有参数
+let fun1 = () => {
+    console.log(111);
+};
+
+// 只有一个参数，可以省去参数括号
+let fun2 = name => {
+    console.log(`Hello ${name} !`)
+};
+
+// 有多个参数
+let fun3 = (val1, val2, val3) => {
+    return [val1, val2, val3];
+};
+```
+
+## 箭头函数里面的函数体
+
+① 如果箭头函数的函数体只有一句代码，就是简单返回某个变量或者返回一个简单的JS表达式，可以省去函数体的大括号{ }。
+
+```js
+let f = val => val;
+// 等同于
+let f = function (val) { return val };
+
+let sum = (num1, num2) => num1 + num2;
+// 等同于
+let sum = function(num1, num2) {
+  return num1 + num2;
+};
+```
+
+② 如果箭头函数的函数体只有一句代码，就是返回一个对象，可以像下面这样写
+
+```js
+// 用小括号包裹要返回的对象，不报错
+let getTempItem = id => ({ id: id, name: "Temp" });
+
+// 但绝不能这样写，会报错。
+// 因为对象的大括号会被解释为函数体的大括号
+let getTempItem = id => { id: id, name: "Temp" };
+```
+
+③ 如果箭头函数的函数体只有一条语句并且不需要返回值（最常见是调用一个函数），可以给这条语句前面加一个void关键字
+
+```js
+let fn = () => void doesNotReturn();
+```
+
+## 常见用法
+
+1. 简化函数
+
+```js
+// 例子一
+// 正常函数写法
+[1,2,3].map(function (x) {
+  return x * x;
+});
+
+// 箭头函数写法
+[1,2,3].map(x => x * x);
+
+// 例子二
+// 正常函数写法
+var result = [2, 5, 1, 4, 3].sort(function (a, b) {
+  return a - b;
+});
+
+// 箭头函数写法
+var result = [2, 5, 1, 4, 3].sort((a, b) => a - b);
+```
+
+## 与普通函数区别
+
+箭头函数不会创建自己的this（重要！！深入理解！！）
+
+`箭头函数不会创建自己的this，所以它没有自己的this，它只会从自己的作用域链的上一层继承this。`
+
+箭头函数没有自己的this，它会捕获自己在定义时（注意，是定义时，不是调用时）所处的外层执行环境的this，并继承这个this值。
+所以，箭头函数中this的指向在它被定义的时候就已经确定了，之后永远不会改变。
+
+```js
+var id = 'Global';
+
+function fun1() {
+    // setTimeout中使用普通函数
+    setTimeout(function(){
+        console.log(this.id);
+    }, 2000);
+}
+
+function fun2() {
+    // setTimeout中使用箭头函数
+    setTimeout(() => {
+        console.log(this.id);
+    }, 2000)
+}
+
+fun1.call({id: 'Obj'});     // 'Global'
+
+fun2.call({id: 'Obj'});     // 'Obj'
+```
+
+上面这个例子，函数fun1中的setTimeout中使用普通函数，2秒后函数执行时，这时函数其实是在全局作用域执行的，所以this指向Window对象，this.id就指向全局变量id，所以输出'Global'。
+但是函数fun2中的setTimeout中使用的是箭头函数，这个箭头函数的this在定义时就确定了，它继承了它外层fun2的执行环境中的this，而fun2调用时this被call方法改变到了对象{id: 'Obj'}中，所以输出'Obj'。
+
+
+eg2:
+
+```js
+var id = 'GLOBAL';
+var obj = {
+  id: 'OBJ',
+  a: function(){
+    console.log(this.id);
+  },
+  b: () => {
+      console.log(this.id);
+  }
+};
+
+obj.a();    // 'OBJ'
+obj.b();    // 'GLOBAL'
+```
+
+上面这个例子，对象obj的方法a使用普通函数定义的，普通函数作为对象的方法调用时，this指向它所属的对象。所以，this.id就是obj.id，所以输出'OBJ'。
+但是方法b是使用箭头函数定义的，箭头函数中的this实际是继承的它定义时所处的全局执行环境中的this，所以指向Window对象，所以输出'GLOBAL'。（这里要注意，定义对象的大括号{}是无法形成一个单独的执行环境的，它依旧是处于全局执行环境中！！）
+
+箭头函数继承而来的this指向永远不变（重要！！深入理解！！）
+
+上面的例子，就完全可以说明箭头函数继承而来的this指向永远不变。对象obj的方法b是使用箭头函数定义的，这个函数中的this就永远指向它定义时所处的全局执行环境中的this，
+即便这个函数是作为对象obj的方法调用，this依旧指向Window对象。
+
+# ES7(async、await)异步特性
+
+## 什么是async、await？
+
+有一种特殊的语法可以更舒适地与promise协同工作，它叫做async/await
+
+async顾名思义是“异步”的意思，async用于声明一个函数是异步的。而await从字面意思上是“等待”的意思，就是用于等待异步完成。并且await只能在async函数中使用
+
+通常async、await都是跟随Promise一起使用的。为什么这么说呢？因为async返回的都是一个Promise对象同时async适用于任何类型的函数上。这样await得到的就是一个Promise对象(如果不是Promise对象的话那async返回的是什么 就是什么)；
+
+await得到Promise对象之后就等待Promise接下来的resolve或者reject。
+
+## Async functions
+
+async关键字,它被放置在一个函数前面
+
+```js
+async function f() {
+    return 1
+}
+```
+
+函数前面的async一词意味着一个简单的事情：这个函数总是返回一个promise.
+如果代码中有return <非promise>语句，JavaScript会自动把返回的这个value值包装成promise的resolved值。
+
+```
+async function f() {
+    return 1
+}
+f().then(alert) // 1
+```
+上面的代码返回resolved值为1的promise
+
+所以，async确保了函数返回一个promise，即使其中包含非promise。
+还有另一个关键词await，只能在async函数里使用
+
+## Await关键字
+
+```js
+// 只能在async函数内部使用
+let value = await promise
+```
+关键词await可以让JavaScript进行等待，直到一个promise执行并返回它的结果，JavaScript才会继续往下执行。
+
+
+以下是一个promise在1s之后resolve的例子：
+
+```js
+async function f() {
+    let promise = new Promise((resolve, reject) => {
+        setTimeout(() => resolve('done!'), 3000)
+    })
+    let result = await promise // 直到promise返回一个resolve值（*）阻塞态
+    console.log(result) // 'done!' 
+}
+f()
+```
+
+await字面上使得JavaScript等待，直到promise处理完成，
+
+## 注意
+
+await不能工作在顶级作用域
+那些刚开始使用await的人们老是忘记这一点，那就是我们不能将await放在代码的顶层，那样是行不通的
+
+```
+async function showAvatar() {
+    // read our JSON
+    let response = await fetch('/article/promise-chaining/user.json')
+    let user = await response.json()
+    
+    // read github user
+    let githubResponse = await fetch(`https://api.github.com/users/${user.name}`)
+    let githubUser = await githubResponse.json()
+    
+    // 展示头像
+    let img = document.createElement('img')
+    img.src = githubUser.avatar_url
+    img.className = 'promise-avatar-example'
+    documenmt.body.append(img)
+    
+    // 等待3s
+    await new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000)
+    })
+    
+    img.remove()
+    
+    return githubUser
+}
+showAvatar()
+```
