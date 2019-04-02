@@ -98,3 +98,182 @@ npm install -g vue-cli
 ```
 vue init webpack projectName
 ```
+
+# ES6 Promise用法
+
+Promise是一个构造函数，自己身上有all、reject、resolve这几个方法，原型上有then、catch等同样方法。
+
+```js
+var p = new Promise(function(resolve, reject){
+    //做一些异步操作
+    setTimeout(function(){
+        console.log('执行完成');
+        resolve('随便什么数据');
+    }, 2000);
+});
+```
+
+Promise的构造函数接收一个参数，是函数，并且传入两个参数：resolve，reject，分别表示异步操作执行成功后的回调函数和异步操作执行失败后的回调函数。
+
+其实这里用“成功”和“失败”来描述并不准确，按照标准来讲，resolve是将Promise的状态置为fullfiled，reject是将Promise的状态置为rejected。
+
+只是new了一个对象，并没有调用它，我们传进去的函数就已经执行了,这是需要注意的一个细节。所以我们用Promise的时候一般是包在一个函数中，在需要的时候去运行这个函数
+
+```js
+function runAsync(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            console.log('执行完成');
+            resolve('随便什么数据');
+        }, 2000);
+    });
+    return p;            
+}
+runAsync()
+```
+
+上述做了什么???
+
+return出Promise对象，也就是说，执行这个函数我们得到了一个Promise对象,Promise对象上有then、catch方法
+
+```
+runAsync().then(function(data){
+    console.log(data);
+    //后面可以用传过来的数据做些其他操作
+    //......
+});
+```
+
+在异步操作执行完后，用链式调用的方式执行回调函数,类似与php $this->db链式操作.
+
+## 链式操作的用法
+
+```js
+runAsync1()
+.then(function(data){
+    console.log(data);
+    return runAsync2();
+})
+.then(function(data){
+    console.log(data);
+    return runAsync3();
+})
+.then(function(data){
+    console.log(data);
+});
+
+
+
+function runAsync1(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            console.log('异步任务1执行完成');
+            resolve('随便什么数据1');
+        }, 1000);
+    });
+    return p;            
+}
+function runAsync2(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            console.log('异步任务2执行完成');
+            resolve('随便什么数据2');
+        }, 2000);
+    });
+    return p;            
+}
+function runAsync3(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            console.log('异步任务3执行完成');
+            resolve('随便什么数据3');
+        }, 2000);
+    });
+    return p;            
+}
+```
+
+在then方法中，你也可以直接return数据而不是Promise对象，在后面的then中就可以接收到数据了，比如我们把上面的代码修改成这样：
+
+```js
+runAsync1()
+.then(function(data){
+    console.log(data);
+    return runAsync2();
+})
+.then(function(data){
+    console.log(data);
+    return '直接返回数据';  //这里直接返回数据
+})
+.then(function(data){
+    console.log(data);
+});
+```
+
+## reject用法
+失败的回调函数,reject的作用就是把Promise的状态置为rejected，这样我们在then中就能捕捉到，然后执行“失败”情况的回调。
+
+```js
+function getNumber(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            var num = Math.ceil(Math.random()*10); //生成1-10的随机数
+            if(num<=5){
+                resolve(num);
+            }
+            else{
+                reject('数字太大了');
+            }
+        }, 2000);
+    });
+    return p;            
+}
+
+getNumber()
+.then(
+    function(data){
+        console.log('resolved');
+        console.log(data);
+    }, 
+    function(reason, data){
+        console.log('rejected');
+        console.log(reason);
+    }
+);
+```
+
+## catch用法
+
+不会报错,捕捉异常
+
+```js
+getNumber()
+.then(function(data){
+    console.log('resolved');
+    console.log(data);
+})
+.catch(function(reason){
+    console.log('rejected');
+    console.log(reason);
+});
+```
+
+## all的用法
+
+Promise的all方法提供了`并行执行异步`操作的能力
+
+```
+Promise
+.all([runAsync1(), runAsync2(), runAsync3()])
+.then(function(results){
+    console.log(results);
+});
+```
+用Promise.all来执行，all接收一个数组参数，里面的值最终都算返回Promise对象。这样，三个异步操作的并行执行的，等到它们都执行完后才会进到then里面。
+
+那么，三个异步操作返回的数据哪里去了呢？都在then里面呢，all会把所有异步操作的结果放进一个数组中传给then，就是上面的results。
