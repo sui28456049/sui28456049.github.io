@@ -68,3 +68,42 @@ https://www.cnblogs.com/dreamflower/p/5371246.html
 3、background-clip将背景裁剪为文字,屏幕就变成这样子了。
 
 4、animation设置动画，我们这里通过背景色position的变化来达成这个效果，所以要先将background-size放大，这样子background-position才有变化的空间。
+
+# flex:1 什么意思
+
+flex属性是 flex盒模型的子元素属性
+
+flex 属性用于设置或检索弹性盒模型对象的`子元素`如何`分配空间`。
+
+flex 属性是 flex-grow、flex-shrink 和 flex-basis 属性的简写属性。
+
+
+默认值：	0 1 auto
+
+
+让所有弹性盒模型对象的子元素都有相同的长度，忽略它们内部的内容：
+
+```
+#main
+{
+	width:220px;
+	height:300px;
+	border:1px solid black;
+	display:flex;
+}
+
+#main div
+{
+	flex:1;
+}
+
+
+<div id="main">
+  <div style="background-color:coral;">红色</div>
+  <div style="background-color:lightblue;">蓝色</div>  
+  <div style="background-color:lightgreen;">带有更多内容的绿色 div</div>
+</div>
+```
+
+flex:1 子元素项目一样大.如果有一个子元素设置flex:1.5,这个元素相对于其他元素1.5倍大.
+
