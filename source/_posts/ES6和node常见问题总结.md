@@ -532,7 +532,12 @@ showAvatar()
 # 覆盖组件样式方法
 
 1.使用>>> 
+```
 >>> .uni-navbar__content{background: linear-gradient(top, #E1B2FE,#E2B1FD);box-shadow: none;} 
 
+```
 2. 使用/deep/
+
+```
 /deep/ .uni-navbar__content{background: linear-gradient(top, #E1B2FE,#E2B1FD);box-shadow: none;} 
+```
