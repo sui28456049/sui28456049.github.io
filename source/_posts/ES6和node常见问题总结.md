@@ -7,6 +7,104 @@ category: 前端
 
 本人前端JS遇见知识点总结，遇见啥用到啥学啥，所以比较琐碎。
 
+# es6常见基本语法
+## 用let、const代替var
+
+函数内 var 声明的变量是局部的.外部是全局变量.
+const声明只读常量，定义的变量不可以修改，而且必须初始化。和let一样只在块级作用域有效而且不能重复声明。
+
+var定义的变量可以修改，如果不初始化会输出undefined，不会报错。
+var不能跨函数作用域访问，可以跨块级作用域访问
+
+let是块级作用域，函数内部使用let定义后，对函数外部无影响。
+let 不像var 那样会发生“变量提升”现象，因此，变量需要先声明然后再使用，否则报错；
+let不能重复声明，也不能在函数内部重新声明参数。
+
+## 对象解构赋值
+
+```js
+//...引入person对象 person={name:'小明',sex:'男','age':17,'':'',...................}
+let {name,sex} = person
+name // 小明
+sex // 男
+```
+解构Math对象
+
+```js
+let {sin,cos,log} = Math
+console.log(sin(3.14/2),cos,log)
+```
+##  模块化开发之import和export命令
+
+ 为什么需要模块开发:
+ 避免引入无用的 js 函数,变量,这也是 js 可以做大型工程的基础.
+
+### export 命令
+
+模块可以通过export前缀关键词声明导出对象，导出对象可以是多个。这些导出对象用名称进行区分，称之为命名式导出。
+
+第一种(推荐):
+```js
+let json = {'name': 'sui'}
+let str = '字符串'
+function add (x, y) {
+  return x * y
+}
+export {json, str, add}
+```
+
+
+第二种:
+```js
+export const json = {'name': 'sui'}
+export const str = '字符串'
+export function add (x, y) {
+  return x * y
+ }
+```
+
+第三种:
+
+ 你可以用as关键字重命名想要输出的变量，函数或者类名，当你这么做的时候，注意要用as重命名的值去接收
+ 
+```js
+export {json as newJson, str as newStr,  sui as sui1}
+```
+
+### import 命令
+ `使用export命令定义了模块的对外接口以后，其他 JS 文件就可以通过import命令加载这个模块`
+ 
+我们可以通过下面的方式，引入刚才模块中的一些函数和变量
+
+```js
+import {json, str, sui, add} from './export.js'
+console.log(json)
+add(1+5)
+```
+### export defaul命令
+ 有时需要知道加载的变量名或函数名，为了给用户提供方便，让他们不用阅读文档就能加载模块，可以用export default命令，为模块指定默认输出。
+
+```js
+export default function (...msg) {
+  msg.forEach((item) => {
+    console.log(item)
+  })
+}
+
+//等同于:
+function hello (...msg) {
+  msg.forEach((item) => {
+    console.log(item)
+  })
+}
+export default hello
+
+//使用
+//上面的模块输出一个函数,用于打印信息.你可以在import导入的时候为该函数指定任意名字
+import print from './export.js'
+print('hello', 'world')
+```
+
 # 如何引入文件/模块
 
 有时候需要封装一些公用的common,lib类似的公共文件,在其他地方对公共中定义的属性和方法进行引用
