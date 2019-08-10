@@ -340,7 +340,6 @@ POST  http://localhost:9200/database/article
 }
 ```
 # 关系数据库对比
-
 <table>
 <thead>
 <tr>
