@@ -1,3 +1,10 @@
+---
+title: php 测试那些事
+date: 2018-01-23 09:57:02
+tags: php
+category: php
+---
+
 # 几种软件开发模式
 ## TDD
 `测试驱动开发（Test-Driven Development）`
