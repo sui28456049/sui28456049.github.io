@@ -169,6 +169,7 @@ URL.revokeObjectURL() 静态方法用来释放一个之前通过调用 URL.creat
 ```
  canvas.toBlob(function (name, quality=0.8) {
     console.log(blobObj)
+	let url = URL.createObjectURL(blob); // 转化 dataurl 地址
 })
 ```
 
@@ -182,6 +183,32 @@ canvas.toBlob(function (blobObj) {
 })
 ```
 
+### blob dataUrl 格式 转为 base 64
+创建 img 对象 通过 canvas 操作
+
+```
+let img = new Image();
+					
+img.src = res.tempFiles[0].path;
+img.onload = function () {
+	that.test_img = that.getBase64Image(img)
+	console.log(that.getBase64Image(img))
+}
+
+getBase64Image(img) 
+{
+	var canvas = document.createElement("canvas");
+	canvas.width = img.width;
+	canvas.height = img.height;
+					
+	var ctx = canvas.getContext("2d");
+	ctx.drawImage(img, 0, 0, img.width, img.height);
+					
+	var dataURL = canvas.toDataURL("image/png");	
+	return dataURL
+		     // return dataURL.replace("data:image/png;base64,", "");
+}
+```
 # canvas图片压缩
 
 
@@ -272,7 +299,22 @@ canvas.toBlob(function (blobObj) {
 		    a.readAsDataURL(blob);
 		}
 		
-		// dataurl 
+		// dataurl blob 格式转化 base 64  
+		//  形如 blob:http://localhost:8000/6c5b1a61-8452-4a4e-9578-7f49c78c556f 转为 base 64
+		//img 对象  
+		getBase64Image(img) 
+		{
+		     var canvas = document.createElement("canvas");
+		     canvas.width = img.width;
+		     canvas.height = img.height;
+					
+		     var ctx = canvas.getContext("2d");
+		     ctx.drawImage(img, 0, 0, img.width, img.height);
+					
+		     var dataURL = canvas.toDataURL("image/png", 0.6);
+		     return dataURL
+		     // return dataURL.replace("data:image/png;base64,", "");
+		}
 </script>
 ```
 
