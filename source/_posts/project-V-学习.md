@@ -17,7 +17,7 @@ category: Linux
 
 #  快速入门
 
-*   注意 json 里面去掉注释
+*   注意 json 里面去掉注释(v2ray 其实已经支持写注释了)
 ##  服务端 
 ```json
 {
@@ -198,8 +198,154 @@ category: Linux
  }
  ```
  
- # 未完待续...用啥学啥
- 
- # 其他参考资料
+# WebSocket+TLS+Web
+TLS 的配置将写入 Nginx / Caddy / Apache 配置中，由这些软件来监听 443 端口（443 比较常用，并非 443 不可）
+然后将流量转发到 V2Ray 的 WebSocket 所监听的内网端口（本例是 10086），V2Ray 服务器端不需要配置 TLS。
+## 服务端v2ray 配置
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 10086,
+      "listen":"127.0.0.1",//只监听 127.0.0.1，避免除本机外的机器探测到开放了 10086 端口
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "b831381d-6324-4d53-ad4f-8cda48b30811",
+            "alterId": 64
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+        "path": "/ray"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+```
+## Nginx配置
+
+```bash
+server {
+    listen       443 ssl;
+    server_name  www.test.com;
+    access_log  /webSite/access_log/test.log;
+    ssl_certificate /www/server/ssl/3060613_.pem;
+    ssl_certificate_key /www/server/ssl/3060613.key;
+
+    ssl_protocols TLSv1.2 TLSv1 TLSv1.1 ;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    
+    location /ray { # 与 V2Ray 配置中的 path 保持一致
+      if ($http_upgrade != "websocket") { # WebSocket协商失败时返回404
+          return 404;
+      }
+      proxy_redirect off;
+      proxy_pass http://127.0.0.1:10086; # 假设WebSocket监听在环回地址的10000端口上
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_set_header Host $host;
+      # Show real IP in v2ray access.log
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+## Caddy 配置
+Caddy 会自动申请证书并自动更新，所以使用 Caddy 不用指定证书、密钥
+```
+domain.com
+{
+  log ./caddy.log
+  proxy /ray localhost:10086 {
+    websocket
+    header_upstream -Origin
+  }
+}
+```
+## Apache 配置
+```
+<VirtualHost *:443>
+  ServerName domain.com
+  SSLCertificateFile /etc/v2ray/v2ray.crt
+  SSLCertificateKeyFile /etc/v2ray/v2ray.key
+  
+  SSLProtocol -All +TLSv1 +TLSv1.1 +TLSv1.2
+  SSLCipherSuite HIGH:!aNULL
+  
+  <Location "/ray/">
+    ProxyPass ws://127.0.0.1:10086/ray/ upgrade=WebSocket
+    ProxyAddHeaders Off
+    ProxyPreserveHost On
+    RequestHeader append X-Forwarded-For %{REMOTE_ADDR}s
+  </Location>
+</VirtualHost>
+```
+## v2ray客户端配置
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "www.test.com",
+            "port": 443,
+            "users": [
+              {
+                "id": "b831381d-6324-4d53-ad4f-8cda48b30811",
+                "alterId": 64
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "wsSettings": {
+          "path": "/ray"
+        }
+      }
+    }
+  ]
+}
+```
+# dd
+
+# 11
+# 22
+# 33
+# 其他参考资料
 *  官方文档: https://www.v2ray.com/
 *  UUID 生成: https://www.uuidgenerator.net/
+*  白话文: https://guide.v2fly.org/
