@@ -1,8 +1,8 @@
 ---
 title: docker 初探笔记
 date: 2017-12-01 06:13:19
-tags: 云计算
-category: 云计算
+tags: docker
+category: docker
 ---
 
 
