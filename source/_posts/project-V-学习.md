@@ -348,4 +348,4 @@ domain.com
 # 其他参考资料
 *  官方文档: https://www.v2ray.com/
 *  UUID 生成: https://www.uuidgenerator.net/
-*  白话文: https://guide.v2fly.org/
+*  白话文: https://guide.v2fly.org/[](https://kht.zoosnet.net/LR/Chatpre.aspx?id=KHT56305690&lng=cn)
