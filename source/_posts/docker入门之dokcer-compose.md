@@ -157,7 +157,7 @@ django/
      'default': {
          'ENGINE': 'django.db.backends.postgresql',
          'NAME': 'postgres',
-         'USER': 'postgres',
+         'USER': 'postgre s',
          'HOST': 'db',
          'PORT': 5432,
      }
