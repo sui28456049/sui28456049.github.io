@@ -15,8 +15,8 @@ Compose 中有两个重要的概念：
 Compose 的默认管理对象是项目，通过子命令对项目中的一组容器进行便捷地生命周期管理。
 
 * 清空所有镜像和容器
-  清空全部镜像: docker image prune
-  停止所有正在运行的容器: docker stop $(docker container ls -q)
+  清空全部镜像: docker image prune /  docker rmi $(docker images -q)
+  停止并且删除所有正在运行的容器:  docker stop $(docker ps -a -q) && docker  rm $(docker ps -a -q)
   批量清理已经停止容器: docker container prune
 * 安装
 ```
