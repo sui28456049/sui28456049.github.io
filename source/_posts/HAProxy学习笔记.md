@@ -242,7 +242,26 @@ listen  proxy-mysql 0.0.0.0:3307
 
 对于MySQL的负载来说，更建议采用MySQL协议感知的程序来实现，例如mysqlrouter，proxysql，maxscale，mycat等等数据库中间件。
 
-
+#  转发 tcp(ssrr) 流量
+ 一个 vps 转发到另一个 vps 上
+ ```
+ global
+  
+ defaults
+ 	log	global
+ 	mode	tcp
+ 	option	dontlognull
+         timeout connect 5000
+         timeout client  50000
+         timeout server  50000
+  
+ frontend ss-in
+     bind *:10086
+     default_backend ss-out
+  
+ backend ss-out
+     server server1 要转发的服务器ip maxconn 20480
+ ```
 
 
 
@@ -263,7 +282,3 @@ listen  proxy-mysql 0.0.0.0:3307
 
 
 
-
-
-
-```
