@@ -342,7 +342,148 @@ domain.com
 ```
 # dd
 
-# 11
+# 反向代理
+A: 家里内网环境
+B：拥有公网IP的环境
+C: 公司网络环境
+
+
+A 会主动向 B 发起请求，建立起一个连接；
+用户在 C 上向 B 发起请求，欲访问 A 上的私有网盘；
+B 接受 C 的请求，通过 A 向 B 建立的连接转发给 A(即 B 反向连接了 A)；
+
+
+
+## A配置
+```
+{  
+  "reverse":{ 
+    // 这是 A 的反向代理设置，必须有下面的 bridges 对象
+    "bridges":[  
+      {  
+        "tag":"bridge", // 关于 A 的反向代理标签，在路由中会用到
+        "domain":"private.cloud.com" // A 和 B 反向代理通信的域名，可以自己取一个，可以不是自己购买的域名，但必须跟下面 B 中的 reverse 配置的域名一致
+      }
+    ]
+  },
+  "outbounds": [
+    {  
+      //A连接B的outbound  
+      "tag":"tunnel", // A 连接 B 的 outbound 的标签，在路由中会用到
+      "protocol":"vmess",
+      "settings":{  
+        "vnext":[  
+          {  
+            "address":"serveraddr.com", // B 地址，IP 或 实际的域名
+            "port":16823,
+            "users":[  
+              {  
+                "id":"b831381d-6324-4d53-ad4f-8cda48b30811",
+                "alterId":64
+              }
+            ]
+          }
+        ]
+      }
+    },
+    // 另一个 outbound，最终连接私有网盘    
+    {  
+      "protocol":"freedom",
+      "settings":{  
+      },
+      "tag":"out"
+    }    
+  ],
+  "routing":{   
+    "rules":[  
+      {  
+        // 配置 A 主动连接 B 的路由规则
+        "type":"field",
+        "inboundTag":[  
+          "bridge"
+        ],
+        "domain":[  
+          "full:private.cloud.com"
+        ],
+        "outboundTag":"tunnel"
+      },
+      {  
+        // 反向连接访问私有网盘的规则
+        "type":"field",
+        "inboundTag":[  
+          "bridge"
+        ],
+        "outboundTag":"out"
+      }
+    ]
+  }
+}
+```
+## B公网环境
+```
+{  
+  "reverse":{  //这是 B 的反向代理设置，必须有下面的 portals 对象
+    "portals":[  
+      {  
+        "tag":"portal",
+        "domain":"private.cloud.com"        // 必须和上面 A 设定的域名一样
+      }
+    ]
+  },
+  "inbounds": [
+    {  
+      // 接受 C 的inbound
+      "tag":"external", // 标签，路由中用到
+      "port":80,
+      // 开放 80 端口，用于接收外部的 HTTP 访问 
+      "protocol":"dokodemo-door",
+        "settings":{  
+          "address":"127.0.0.1",
+          "port":80, //假设 NAS 监听的端口为 80
+          "network":"tcp"
+        }
+    },
+    // 另一个 inbound，接受 A 主动发起的请求  
+    {  
+      "tag": "tunnel",// 标签，路由中用到
+      "port":16823,
+      "protocol":"vmess",
+      "settings":{  
+        "clients":[  
+          {  
+            "id":"b831381d-6324-4d53-ad4f-8cda48b30811",
+            "alterId":64
+          }
+        ]
+      }
+    }
+  ],
+  "routing":{  
+    "rules":[  
+      {  //路由规则，接收 C 请求后发给 A
+        "type":"field",
+        "inboundTag":[  
+          "external"
+        ],
+        "outboundTag":"portal"
+      },
+      {  //路由规则，让 B 能够识别这是 A 主动发起的反向代理连接
+        "type":"field",
+        "inboundTag":[  
+          "tunnel"
+        ],
+        "domain":[  
+          "full:private.cloud.com"
+        ],
+        "outboundTag":"portal"
+      }
+    ]
+  }
+}
+```
+## C其他环境
+C正常配置连接B服务器配置即可。此时C的ip就是内网A的ip。
+
 # 22
 # 33
 # 其他参考资料
