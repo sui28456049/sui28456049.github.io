@@ -11,17 +11,36 @@ VarnishCache是一个Web应用加速器，也是一个知名的反向代理程�
 
 工具文档: https://jefferywang.gitbooks.io/varnish_4_1_doc_zh/content/preface.html
 
+# 安装
+
+文档:  `(https://varnish-cache.org/docs/index.html)`
+
+包地址: `(https://packagecloud.io/varnishcache)`
+
+安装: 
+
+* `curl -s https://packagecloud.io/install/repositories/varnishcache/varnish63/script.rpm.sh | sudo bash`
+* `yum -y install varnish`
+* `varnishd -a :6081 -T localhost:6082 -b localhost:8080` #  默认运行在 6081 端口
+    -a 参数用来定义varnish监听的地址和http请求来源。
+	-b varnish需要知道它应该从哪里获得http server的数据来缓存下来
+	-s 缓存内存大小
+	-T <address:port> 连接指定地址和端口的管理接口。
+  
+* `systemctl reload varnish` # 重载配置
+
 # 基本操作
 
 默认配置文件: /etc/varnish/default.vcl  /etc/varnish/varnish.params
+vim /usr/lib/systemd/system/varnish.service
 
 /etc/varnish/default.vcl  ：主配置文件
 /etc/varnish/varnish.params ：服务器参数配置文件
 
 varnish 默认监听 127.0.0.1:6081,修改配置文件`/etc/varnish/varnish.params`的`VARNISH_LISTEN_PORT=80`监听端口为80
 
-重载配置文件:service varnish reload
-重启: service varnish restart
+重载配置文件:systemctl reload varnish 
+
 
 # VCL——varnish配置语言
 
@@ -56,6 +75,7 @@ beresp.http. ：由backend主机发来的http的响应报文的对象
 1：req
 req.method：请求的方法
 req.url：请求的URL
+req.http.host 请求主机头,多域名情况下需带过去
 2：bereq
 bereq.http.HEADERS：varnish的请求报文首部
 bereq.request：请求方法
@@ -75,6 +95,9 @@ obj.ttl：对象的ttl值
 server.ip：主机的IP
 server.hostname：主机名
 
+# 执行流程图
+
+![执行流程图](https://varnish-cache.org/docs/6.3/_images/cache_req_fsm.svg)
 
 # 我的配置
 
@@ -135,14 +158,21 @@ sub vcl_init {
 }
 
 sub vcl_recv {
+	# .php或者 php? 结尾的请求 不缓存
+	if(req.method == "GET" && req.url ~ "\.(php)($|\?)")
+	{
+		return (pass);
+	}
+	
     #url重写，告诉后端服务器真实的请求者，安全避免重复添加，还可定义在记录日志中
-    if (req.restarts == 0) {
         if (req.http.X-Fowarded-For) {
             set req.http.X-Forwarded-For = req.http.X-Forwarded-For + "," + client.ip;
         } else {
             set req.http.X-Forwarded-For = client.ip;
         }
-    }         
+	# 虚拟主机下指定主机头跳转固定域名  
+	# set req.http.host = "www.sui666.tk";
+
     # 指定varnish接受到的请求，如果缓存没有命中，直接全部发往后端的static主机组
     set req.backend_hint = static.backend();
 
@@ -154,7 +184,6 @@ sub vcl_recv {
 
     # 如何请求方法是pri,直接返回synth子程序
     if (req.method == "PRI") {
-        /* We do not support SPDY or HTTP/2.0 */
         return (synth(405));
     }   
 
