@@ -86,11 +86,18 @@ sudo mysql -u root
 
 # 安装php
 
+
 ```bash
 sudo apt install php7.0 php7.0-fpm php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-opcache php7.0-readline php7.0-mbstring php7.0-xml php7.0-gd php7.0-curl  php-pear php7.0-dev php7.0-pdo
 ```
-
 可以把所有`php7.0` 换成`php7.1`
+
+```bash
+sudo apt install php-pear # 安装pecl
+
+sudo apt-get install php7.3-dev  #开发工具
+pecl install swoole
+```
 
 
 查看php扩展
