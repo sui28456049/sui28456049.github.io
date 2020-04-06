@@ -1,0 +1,97 @@
+---
+title: phpstorm xdebug本地调试与远程调试
+date: 2019-04-05 16:23:14
+tags: php
+category: php
+---
+
+# 安装xdebug
+
+我用`brew install php72-xdebug`安装不上
+
+使用`pecl install xdebug`安装
+
+# 本地调试
+
+## 本地php.ini配置文件
+
+```
+[xdebug]
+#/usr/local/Cellar/php@7.2/7.2.18/pecl/20170718/xdebug.so
+zend_extension="xdebug.so"
+xdebug.remote_enable = 1
+xdebug.remote_handler = dbgp
+xdebug.remote_host = 127.0.0.1
+xdebug.remote_port = 9001
+xdebug.idekey = PHPSTORM
+```
+
+## phpstorm配置
+
+![1](/uploads/phpstorm1.png)
+![1](/uploads/phpstorm2.png)
+![1](/uploads/phpstorm3.png)
+![1](/uploads/phpstorm4.png)
+
+
+# 远程调试
+
+## 远程php.ini配置文件
+
+```
+zend_extension=xdebug.so
+xdebug.remote_enable=On
+xdebug.remote_port=11955
+xdebug.idekey=PHPSTORM
+```
+注意:需要开放防火墙的9001端口,开放此端口号、开放此端口号、开放此端口号。
+
+```
+# firewall-cmd --zone=public --add-port=11955/tcp --permanent
+# firewall-cmd --reload
+```
+
+## phpstorm配置
+
+IDE的配置与本地调试不太一样，总的来说有两种方式.
+一种是通过在IDE配置Remote Debug, 需要配置登录远端服务器；
+
+一种是通过ssh来做远程端口转发到本地来实现类似本地调试的方式。
+在这里，我选用了后一种方式来操作。
+
+## 远程端口转发
+
+```
+# HOST 为远程服务器,可以替换为你的 比如 root@1.1.1.1
+# 这样就实现了远程xdebug端口11955到本地9001的映射。
+ssh -NT -R 9909:127.0.0.1:9001 root@ip
+```
+
+## IDE配置
+
+### 本地目录与服务器目录映射
+
+![1](/uploads/phpstorm5.png)
+![1](/uploads/phpstorm6.png)
+
+http://120.27.3.185
+https://cloud.tencent.com/developer/article/1561767
+
+
+# 超时设置
+
+
+
+```
+　　1. apache module的情况下:
+
+　　　修改配置文件 httpd/conf.d/fcgid.conf
+
+　　　FcgidIOTimeout 3600
+
+　　2.nginx , php-fpm的情况下:
+
+　　　　修改配置文件 php-fpm.conf
+
+　　　　request_terminate_timeout = 3600
+```
