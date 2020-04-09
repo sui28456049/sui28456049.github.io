@@ -11,6 +11,16 @@ category: php
 
 使用`pecl install xdebug`安装
 
+
+# phpstorm配置Xdebug 步过 步入 步出意思
+
+步过，就是遇到方法，不进入，直接下一行
+
+步入，就是遇到函数会进入函数
+
+步出，就是运行到退出本函数、返回上一级的下一行
+
+
 # 本地调试
 
 ## 本地php.ini配置文件
@@ -33,6 +43,8 @@ xdebug.idekey = PHPSTORM
 ![1](/uploads/phpstorm3.png)
 ![1](/uploads/phpstorm4.png)
 
+* Start URL 可以设置为入口文件`/index.php`
+* 记得点击绿色的监听`电话筒`按钮
 
 # 远程调试
 
