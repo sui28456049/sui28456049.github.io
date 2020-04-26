@@ -47,3 +47,24 @@ ps [ef axu]
 ps -ef|grep php
 ps -axu|grep php
 ```
+# sed
+
+sed(stream editor)是一种非交互的流编辑器.默认情况下,sed不会改变原文件本身,而只是对流经sed命令的文本进行修改,并将修改后的结果打印到标准输出(也是就是屏幕)
+
+sed 处理以行为单位
+
+注意: 要想保存修改后的文件.必须使用重定向生成新文件,直接修改文件本身"-i"参数
+
+使用场景:
+
+* 常规编辑器编辑困难的文件
+* 过于庞大的文本(vim 一个几百m的文件)
+* 有规律的文本修改
+
+https://www.runoob.com/linux/linux-comm-sed.html
+
+# awk 
+
+列处理工具
+
+https://www.runoob.com/linux/linux-comm-awk.html
