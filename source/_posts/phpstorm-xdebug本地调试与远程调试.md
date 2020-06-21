@@ -48,46 +48,58 @@ xdebug.idekey = PHPSTORM
 
 # 远程调试
 
-## 远程php.ini配置文件
 
+
+
+
+# ssh远程端口转发调试(远程调试xdebug调试)
+
+## 服务器php.ini设置
 ```
 zend_extension=xdebug.so
 xdebug.remote_enable=On
 xdebug.remote_port=11955
-xdebug.idekey=PHPSTORM
+;xdebug.idekey=PHPSTORM
 ```
-注意:需要开放防火墙的9001端口,开放此端口号、开放此端口号、开放此端口号。
+如果使用宝塔,开放11955端口
 
-```
-# firewall-cmd --zone=public --add-port=11955/tcp --permanent
-# firewall-cmd --reload
-```
+## phpstorm客户端操作
+![1](/uploads/xdebug1.png)
+注意:这里要配置2个映射,不然单一入口文件找不到入口(具体参考:
+https://www.jetbrains.com/help/phpstorm/validating-the-configuration-of-the-debugging-engine.html)
+![1](/uploads/xdebug2.png)
+![1](/uploads/xdebug3.png)
+设置本地目录和服务器目录程序对应
 
-## phpstorm配置
+## ssh客户端操作
 
-IDE的配置与本地调试不太一样，总的来说有两种方式.
-一种是通过在IDE配置Remote Debug, 需要配置登录远端服务器；
-
-一种是通过ssh来做远程端口转发到本地来实现类似本地调试的方式。
-在这里，我选用了后一种方式来操作。
-
-## 远程端口转发
+1.客户端php安装xdebug
+2.确保xdebug监听端口运行(phpstorm配置的xdebug端口)
 
 ```
+lsof -i:9100
+COMMAND   PID USER   FD   TYPE            DEVICE SIZE/OFF NODE NAME
+phpstorm 1115  sui  485u  IPv4 0x272f4a4103ca923      0t0  TCP *:hp-pdl-datas
+```
+3.ssh转发
+
+```
+ssh -NT -R 11955:127.0.0.1:9100 root@119.45.5.209
+
+# ssh -NT -R 11955:127.0.0.1:9100 root@ip
 # HOST 为远程服务器,可以替换为你的 比如 root@1.1.1.1
-# 这样就实现了远程xdebug端口11955到本地9001的映射。
-ssh -NT -R 9909:127.0.0.1:9001 root@ip
+# 这样就实现了远程xdebug端口11955到本地9100的映射。
 ```
+ phpstorm监听的9100端口转发到远程服务器上的11955 实现远程调试
 
-## IDE配置
 
-### 本地目录与服务器目录映射
 
-![1](/uploads/phpstorm5.png)
-![1](/uploads/phpstorm6.png)
 
+
+```
 http://120.27.3.185
 https://cloud.tencent.com/developer/article/1561767
+```
 
 
 # 超时设置
