@@ -65,6 +65,7 @@ xdebug.remote_port=11955
 
 ## phpstorm客户端操作
 ![1](/uploads/xdebug1.png)
+![9](/uploads/xdebug_666.png)
 注意:(我不配public 目录也可以)这里要配置2个映射,不然单一入口文件找不到入口(具体参考:
 https://www.jetbrains.com/help/phpstorm/validating-the-configuration-of-the-debugging-engine.html)
 ![1](/uploads/xdebug2.png)
