@@ -85,7 +85,12 @@ phpstorm 1115  sui  485u  IPv4 0x272f4a4103ca923      0t0  TCP *:hp-pdl-datas
 3.ssh转发
 
 ```
-ssh -NT -R 11955:127.0.0.1:9100 root@119.45.5.209
+ssh -fgN -R 20000:127.0.0.1:9100 root@129.226.116.195
+
+"-g"选项，指定该选项表示允许外界主机连接本地转发端口(端口号),一般来说，使用转发端口，都建议同时使用"-g"选项，否则将只有自身能访问转发端口。
+远程端口转发一样，建议的选项是："-f"、"-N"和"-g"。
+
+# ssh -NT -R 11955:127.0.0.1:9100 root@119.45.5.209
 
 # ssh -NT -R 11955:127.0.0.1:9100 root@ip
 # HOST 为远程服务器,可以替换为你的 比如 root@1.1.1.1
@@ -111,11 +116,11 @@ https://cloud.tencent.com/developer/article/1561767
 ```
 　　1. apache module的情况下:
 
-　　　修改配置文件 httpd/conf.d/fcgid.conf
+　　　  修改配置文件 httpd/conf.d/fcgid.conf
 
-　　　FcgidIOTimeout 3600
+　　　  FcgidIOTimeout 3600
 
-　　2.nginx , php-fpm的情况下:
+　　2. nginx , php-fpm的情况下:
 
 　　　　修改配置文件 php-fpm.conf
 
