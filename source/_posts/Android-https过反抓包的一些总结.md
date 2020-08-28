@@ -2,7 +2,7 @@
 title: Android https过反抓包的一些总结
 date: 2020-08-28 17:42:03
 tags: 逆向破解
-categorys: 逆向破解
+category: 逆向破解
 ---
 ![avatar](/uploads/2020082801.png)
 
