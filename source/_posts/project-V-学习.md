@@ -512,7 +512,7 @@ C正常配置连接B服务器配置即可。此时C的ip就是内网A的ip。
             "port":16823,
             "users":[  
               {  
-                "id":"b831381d-6324-4d53-ad4f-8cda48b30811",
+                "id":"100405c9-8a69-4403-9acc-f47c10db96e9",
                 "alterId":64
               }
             ]
@@ -573,7 +573,7 @@ C正常配置连接B服务器配置即可。此时C的ip就是内网A的ip。
       "settings":{  
         "clients":[  
           {  
-            "id":"a26efdb8-ef34-4278-a4e6-2af32cc010aa",
+            "id":"dd8fcd7e-45e5-4bc5-9707-9725e856c87e",
             "alterId":64
           }
         ]
@@ -587,7 +587,7 @@ C正常配置连接B服务器配置即可。此时C的ip就是内网A的ip。
       "settings":{  
         "clients":[  
           {  
-            "id":"b831381d-6324-4d53-ad4f-8cda48b30811",
+            "id":"100405c9-8a69-4403-9acc-f47c10db96e9",
             "alterId":64
           }
         ]
