@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="黑苹果,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="最好百度 Google 搜索 自己电脑型号的借鉴博客: 黑果小兵:安装macOS Mojave:https://blog.daliansky.net/Lenovo-Xiaoxin-Air-13-macOS-Mojave-installation-tutorial.htmlclover 使用:https://blog.daliansky.net/clover-user-manual.htmlHac">
+<meta name="keywords" content="黑苹果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="黑苹果安装记录">
+<meta property="og:url" content="http://sui28456049.github.io/2019/05/07/黑苹果安装记录/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="最好百度 Google 搜索 自己电脑型号的借鉴博客: 黑果小兵:安装macOS Mojave:https://blog.daliansky.net/Lenovo-Xiaoxin-Air-13-macOS-Mojave-installation-tutorial.htmlclover 使用:https://blog.daliansky.net/clover-user-manual.htmlHac">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20200824/hack1111.jpg">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.694Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="黑苹果安装记录">
+<meta name="twitter:description" content="最好百度 Google 搜索 自己电脑型号的借鉴博客: 黑果小兵:安装macOS Mojave:https://blog.daliansky.net/Lenovo-Xiaoxin-Air-13-macOS-Mojave-installation-tutorial.htmlclover 使用:https://blog.daliansky.net/clover-user-manual.htmlHac">
+<meta name="twitter:image" content="http://sui28456049.github.io/uploads/20200824/hack1111.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/05/07/黑苹果安装记录/">
+
+
+
+
+
+  <title>黑苹果安装记录 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/05/07/黑苹果安装记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">黑苹果安装记录</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-07T14:08:03+08:00">
+                2019-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/黑苹果/" itemprop="url" rel="index">
+                    <span itemprop="name">黑苹果</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><p>最好百度 Google 搜索 自己电脑型号的<br>借鉴博客:</p>
+<p>黑果小兵:<br>安装macOS Mojave:<br><code>https://blog.daliansky.net/Lenovo-Xiaoxin-Air-13-macOS-Mojave-installation-tutorial.html</code><br>clover 使用:<br><code>https://blog.daliansky.net/clover-user-manual.html</code><br>Hackintool 内核补丁(启动系统后使用)<br><code>https://blog.daliansky.net/Intel-FB-Patcher-tutorial-and-insertion-pose.html</code><br>Clover Configurator 可视化 配置程序<br><code>https://blog.daliansky.net/Clover-Configurator-Chinese-Version.html</code></p>
+<h1 id="知己知彼"><a href="#知己知彼" class="headerlink" title="知己知彼"></a>知己知彼</h1><ul>
+<li>cpu 的架构</li>
+<li>主板的型号</li>
+<li>声卡网卡型号</li>
+</ul>
+<p>EFI文件查找</p>
+<ul>
+<li><a href="https://github.com/daliansky/Hackintosh" target="_blank" rel="noopener">https://github.com/daliansky/Hackintosh</a> （很不错）</li>
+<li><a href="https://zhih.me/hackintosh/（底噪）" target="_blank" rel="noopener">https://zhih.me/hackintosh/（底噪）</a></li>
+</ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><ol>
+<li>安装 etcher(<a href="https://www.balena.io/etcher/" target="_blank" rel="noopener">https://www.balena.io/etcher/</a>) 烧录镜像;Windows操作系统下面,以系统管理员身份打开cmd窗口,分出 EFI 区</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;diskpart</span><br><span class="line">list disk           # 磁盘列表</span><br><span class="line">select disk n       # 选择EFI分区所在的磁盘，n为磁盘号</span><br><span class="line">list partition      # 磁盘分区列表</span><br><span class="line">select partition n  # 选择EFI分区，n为EFI分区号</span><br><span class="line">set id=&quot;ebd0a0a2-b9e5-4433-87c0-68b6b72699c7&quot;        # 设置为基本数据分区</span><br><span class="line">assign letter=X     # x为EFI分区盘符</span><br><span class="line">exit                                # 退出diskpart</span><br></pre></td></tr></table></figure>
+<p>2.下载安装镜像通过 transmac 安装也可以</p>
+<p>(最好用原版镜像)</p>
+<h2 id="安装声卡"><a href="#安装声卡" class="headerlink" title="安装声卡"></a>安装声卡</h2><p>AppleALC声卡仿冒教程<br><a href="https://blog.daliansky.net/Use-AppleALC-sound-card-to-drive-the-correct-posture-of-AppleHDA.html" target="_blank" rel="noopener">https://blog.daliansky.net/Use-AppleALC-sound-card-to-drive-the-correct-posture-of-AppleHDA.html</a> </p>
+<p>AppleALC支持的Codecs列表<br><a href="https://github.com/acidanthera/AppleALC/wiki/Supported-codecs" target="_blank" rel="noopener">https://github.com/acidanthera/AppleALC/wiki/Supported-codecs</a><br><a href="https://blog.daliansky.net/AppleALC-Supported-codecs.html" target="_blank" rel="noopener">https://blog.daliansky.net/AppleALC-Supported-codecs.html</a> </p>
+<p>启动后我发现没声音,百度了通过驱动AppleALC和 Lilu 驱动,通过注入 layout-id 来驱动声卡</p>
+<p>问题: 排查了半天,clover 启动参数有 -alcoff - 禁用自身;赶紧去掉….</p>
+<p>重点: 如何找自己的  layout-id </p>
+<p> github 有个开源的项目 <code>https://github.com/acidanthera/AppleALC</code></p>
+<p> 找见自己的声卡型号 codecs 发现注入 layout-id </p>
+<p> <code>https://github.com/acidanthera/AppleALC/wiki/Supported-codecs</code></p>
+<p>  我的声卡型号是 Realtek ALC662</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Realtek	ALC662	0x100101, 0x100300, layout 5, 7, 11, 12, 13, 15, 16, 17, 18, 66	13 (10.9)</span><br></pre></td></tr></table></figure>
+<p> 我通过Clover Configurator -&gt;device-&gt;layout-id 注入全部,13,15都可以但是是重音,最后15可以驱动外放,我选择的是15,有的能驱动耳机,估计文档<code>MinKernel</code>就是 laytou-id,我猜的</p>
+<h2 id="显卡1536m-到2048m"><a href="#显卡1536m-到2048m" class="headerlink" title="显卡1536m 到2048m"></a>显卡1536m 到2048m</h2><p>下载 FB-VRAM Patcher 自动生成核显显存提升补丁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Name:	   AppleIntelFramebufferAzul</span><br><span class="line">Find:          00000060 d90a0000 d90a0000 00000000 </span><br><span class="line">replace:	   00000080 d90a0000 d90a0000 00000000</span><br><span class="line">Comment: Change VRAM 1536 -&gt; 2048 for 0x0a260006</span><br></pre></td></tr></table></figure>
+<p><img src="/uploads/20200824/hack1111.jpg" alt="avatar"></p>
+<h1 id="笔记本问题"><a href="#笔记本问题" class="headerlink" title="笔记本问题"></a>笔记本问题</h1><h2 id="mac安装无法抹掉磁盘"><a href="#mac安装无法抹掉磁盘" class="headerlink" title="mac安装无法抹掉磁盘"></a>mac安装无法抹掉磁盘</h2><p>分区工具使esp分区大于300m</p>
+<h2 id="蓝牙无法使用"><a href="#蓝牙无法使用" class="headerlink" title="蓝牙无法使用"></a>蓝牙无法使用</h2><p>免驱蓝牙，免驱蓝牙也无法使用？？?<br>禁用系统自带蓝牙，因为mac只认一个蓝牙。<br>··</p>
+<h2 id="字体发虚"><a href="#字体发虚" class="headerlink" title="字体发虚"></a>字体发虚</h2><p>hdpi问题，一件脚本开启hdpi<br>·<a href="https://github.com/xzhih/one-key-hidpi·" target="_blank" rel="noopener">https://github.com/xzhih/one-key-hidpi·</a><br>默认设置-显示设置里面只有分辨率，开启hdpi后有缩放，有较大文字，标准。</p>
+<p>免驱蓝牙，免驱蓝牙也无法使用？？?</p>
+<h1 id="设置默认启动系统"><a href="#设置默认启动系统" class="headerlink" title="设置默认启动系统"></a>设置默认启动系统</h1><p>clover configaurator工具里面:</p>
+<p>在BOOT选项的Default Boot Volume上键入引导分区的Disk’ UUID就能解决问题且模式设置为fast。</p>
+<p><a href="http://bbs.pcbeta.com/viewthread-1787729-1-1.html" target="_blank" rel="noopener">http://bbs.pcbeta.com/viewthread-1787729-1-1.html</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/黑苹果/" rel="tag"># 黑苹果</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/23/开发工具-环境部署备忘/" rel="next" title="开发工具,环境部署备忘">
+                <i class="fa fa-chevron-left"></i> 开发工具,环境部署备忘
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/08/php数组复习/" rel="prev" title="php数组复习">
+                php数组复习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#知己知彼"><span class="nav-number">1.</span> <span class="nav-text">知己知彼</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装声卡"><span class="nav-number">2.1.</span> <span class="nav-text">安装声卡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显卡1536m-到2048m"><span class="nav-number">2.2.</span> <span class="nav-text">显卡1536m 到2048m</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#笔记本问题"><span class="nav-number">3.</span> <span class="nav-text">笔记本问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mac安装无法抹掉磁盘"><span class="nav-number">3.1.</span> <span class="nav-text">mac安装无法抹掉磁盘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#蓝牙无法使用"><span class="nav-number">3.2.</span> <span class="nav-text">蓝牙无法使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字体发虚"><span class="nav-number">3.3.</span> <span class="nav-text">字体发虚</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设置默认启动系统"><span class="nav-number">4.</span> <span class="nav-text">设置默认启动系统</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

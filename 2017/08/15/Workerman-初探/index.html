@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="Workerman是一个高性能的PHP socket 服务器框架，workerman基于PHP多进程以及libevent事件轮询库，PHP开发者只要实现一两个接口，便可以开发出自己的网络应用，例如Rpc服务、聊天室服务器、手机游戏服务器等。  题外话:还有一款更加强大的,名为swoole,底层为c,上层php,性能很强大.这里先学习这个,workerman也很优秀,百万级并发,完全够用. 简单">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Workerman 初探">
+<meta property="og:url" content="http://sui28456049.github.io/2017/08/15/Workerman-初探/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="Workerman是一个高性能的PHP socket 服务器框架，workerman基于PHP多进程以及libevent事件轮询库，PHP开发者只要实现一两个接口，便可以开发出自己的网络应用，例如Rpc服务、聊天室服务器、手机游戏服务器等。  题外话:还有一款更加强大的,名为swoole,底层为c,上层php,性能很强大.这里先学习这个,workerman也很优秀,百万级并发,完全够用. 简单">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Workerman 初探">
+<meta name="twitter:description" content="Workerman是一个高性能的PHP socket 服务器框架，workerman基于PHP多进程以及libevent事件轮询库，PHP开发者只要实现一两个接口，便可以开发出自己的网络应用，例如Rpc服务、聊天室服务器、手机游戏服务器等。  题外话:还有一款更加强大的,名为swoole,底层为c,上层php,性能很强大.这里先学习这个,workerman也很优秀,百万级并发,完全够用. 简单">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2017/08/15/Workerman-初探/">
+
+
+
+
+
+  <title>Workerman 初探 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2017/08/15/Workerman-初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Workerman 初探</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-15T11:17:28+08:00">
+                2017-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><blockquote>
+<p>Workerman是一个高性能的PHP socket 服务器框架，workerman基于PHP多进程以及libevent事件轮询库，PHP开发者只要实现一两个接口，便可以开发出自己的网络应用，例如Rpc服务、聊天室服务器、手机游戏服务器等。</p>
+</blockquote>
+<p>题外话:还有一款更加强大的,名为swoole,底层为c,上层php,性能很强大.这里先学习这个,workerman也很优秀,百万级并发,完全够用.</p>
+<h2 id="简单的开发实例"><a href="#简单的开发实例" class="headerlink" title="简单的开发实例"></a>简单的开发实例</h2><h3 id="1-使用HTTP协议对外提供Web服务"><a href="#1-使用HTTP协议对外提供Web服务" class="headerlink" title="1.使用HTTP协议对外提供Web服务"></a>1.使用HTTP协议对外提供Web服务</h3><p>创建http_test.php文件（位置任意，能引用到Workerman/Autoloader.php即可，下同）<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个Worker监听2345端口，使用http协议通讯</span></span><br><span class="line">$http_worker = <span class="keyword">new</span> Worker(<span class="string">"http://0.0.0.0:2345"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动4个进程对外提供服务</span></span><br><span class="line">$http_worker-&gt;count = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收到浏览器发送的数据时回复hello world给浏览器</span></span><br><span class="line">$http_worker-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection, $data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 向浏览器发送hello world</span></span><br><span class="line">    $connection-&gt;send(<span class="string">'hello world'</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure></p>
+<h4 id="命令行运行（windows用户用-cmd命令行，下同）"><a href="#命令行运行（windows用户用-cmd命令行，下同）" class="headerlink" title="命令行运行（windows用户用 cmd命令行，下同）"></a>命令行运行（windows用户用 cmd命令行，下同）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php http_test.php start</span><br></pre></td></tr></table></figure>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>假设服务端ip为127.0.0.1</p>
+<p>在浏览器中访问url <a href="http://127.0.0.1:2345" target="_blank" rel="noopener">http://127.0.0.1:2345</a></p>
+<p>注意：如果出现无法访问的情况，请检查服务器防火墙。</p>
+<h3 id="2-使用WebSocket协议对外提供服务"><a href="#2-使用WebSocket协议对外提供服务" class="headerlink" title="2.使用WebSocket协议对外提供服务"></a>2.使用WebSocket协议对外提供服务</h3><p>创建ws_test.php文件<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个Worker监听2346端口，使用websocket协议通讯</span></span><br><span class="line">$ws_worker = <span class="keyword">new</span> Worker(<span class="string">"websocket://0.0.0.0:2346"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动4个进程对外提供服务</span></span><br><span class="line">$ws_worker-&gt;count = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当收到客户端发来的数据后返回hello $data给客户端</span></span><br><span class="line">$ws_worker-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection, $data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 向客户端发送hello $data</span></span><br><span class="line">    $connection-&gt;send(<span class="string">'hello '</span> . $data);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure></p>
+<h4 id="命令行运行"><a href="#命令行运行" class="headerlink" title="命令行运行"></a>命令行运行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php ws_test.php start</span><br></pre></td></tr></table></figure>
+<h4 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h4><p>打开chrome浏览器，按F12打开调试控制台，在Console一栏输入(或者把下面代码放入到html页面用js运行)<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设服务端ip为127.0.0.1</span></span><br><span class="line">ws = <span class="keyword">new</span> WebSocket(<span class="string">"ws://127.0.0.1:2346"</span>);</span><br><span class="line">ws.onopen = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">"连接成功"</span>);</span><br><span class="line">    ws.send(<span class="string">'sui'</span>);</span><br><span class="line">    alert(<span class="string">"给服务端发送一个字符串：sui"</span>);</span><br><span class="line">&#125;;</span><br><span class="line">ws.onmessage = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">"收到服务端的消息："</span> + e.data);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>注意：如果出现无法访问的情况，请检查服务器防火墙。</p>
+<h3 id="直接使用TCP传输数据"><a href="#直接使用TCP传输数据" class="headerlink" title="直接使用TCP传输数据"></a>直接使用TCP传输数据</h3><p>创建tcp_test.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个Worker监听2347端口，不使用任何应用层协议</span></span><br><span class="line">$tcp_worker = <span class="keyword">new</span> Worker(<span class="string">"tcp://0.0.0.0:2347"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动4个进程对外提供服务</span></span><br><span class="line">$tcp_worker-&gt;count = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当客户端发来数据时</span></span><br><span class="line">$tcp_worker-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection, $data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 向客户端发送hello $data</span></span><br><span class="line">    $connection-&gt;send(<span class="string">'hello '</span> . $data);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<h4 id="命令行运行-1"><a href="#命令行运行-1" class="headerlink" title="命令行运行"></a>命令行运行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php tcp_test.php start</span><br></pre></td></tr></table></figure>
+<h4 id="测试：命令行运行"><a href="#测试：命令行运行" class="headerlink" title="测试：命令行运行"></a>测试：命令行运行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">telnet 127.0.0.1 2347</span><br><span class="line">Trying 127.0.0.1...</span><br><span class="line">Connected to 127.0.0.1.</span><br><span class="line">Escape character is &apos;^]&apos;.</span><br><span class="line">sui</span><br><span class="line">hello sui</span><br></pre></td></tr></table></figure>
+<p>注意：如果出现无法访问的情况，请检查服务器防火墙。</p>
+<h2 id="Worker类-主容器"><a href="#Worker类-主容器" class="headerlink" title="Worker类(主容器)"></a>Worker类(主容器)</h2><p><b><br>WorkerMan中有两个重要的类Worker与Connection。</b></p>
+<p>Worker类用于实现端口的监听，并可以设置客户端连接事件、连接上消息事件、连接断开事件的回调函数，从而实现业务处理。</p>
+<p>可以设置Worker实例的进程数（count属性），Worker主进程会fork出count个子进程同时监听相同的端口，并行的接收客户端连接，处理连接上的事件。<br></p>
+<h3 id="worker例子"><a href="#worker例子" class="headerlink" title="worker例子"></a>worker例子</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line">$worker = <span class="keyword">new</span> Worker(<span class="string">'http://0.0.0.0:8484'</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$worker-&gt;onWorkerStart = <span class="function"><span class="keyword">function</span><span class="params">($worker)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"Worker starting...\n"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">$worker-&gt;onWorkerStop = <span class="function"><span class="keyword">function</span><span class="params">($worker)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"Worker stopping...\n"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">$worker-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"new connection from ip "</span> . $connection-&gt;getRemoteIp() . <span class="string">"\n"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">$worker-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"connection closed\n"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<h3 id="小测试"><a href="#小测试" class="headerlink" title="小测试"></a>小测试</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line">$worker = <span class="keyword">new</span> Worker(<span class="string">'http://0.0.0.0:8484'</span>);</span><br><span class="line">$worker-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"new connection from ip "</span> . $connection-&gt;getRemoteIp() . <span class="string">"\n"</span>;</span><br><span class="line">    print_r($connection);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<p>运行 curl <a href="http://0.0.0.0:8484" target="_blank" rel="noopener">http://0.0.0.0:8484</a></p>
+<p>返回的数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">Workerman\Connection\TcpConnection Object</span><br><span class="line">(</span><br><span class="line">    [onMessage] =&gt; Closure Object</span><br><span class="line">        (</span><br><span class="line">            [this] =&gt; Workerman\Worker Object</span><br><span class="line">                (</span><br><span class="line">                    [id] =&gt; 0</span><br><span class="line">                    [name] =&gt; none</span><br><span class="line">                    [count] =&gt; 1</span><br><span class="line">                    [user] =&gt; parallels</span><br><span class="line">                    [group] =&gt; </span><br><span class="line">                    [reloadable] =&gt; 1</span><br><span class="line">                    [reusePort] =&gt; </span><br><span class="line">                    [onWorkerStart] =&gt; </span><br><span class="line">                    [onConnect] =&gt; Closure Object</span><br><span class="line">                        (</span><br><span class="line">                            [parameter] =&gt; Array</span><br><span class="line">                                (</span><br><span class="line">                                    [$connection] =&gt; &lt;required&gt;</span><br><span class="line">                                )</span><br><span class="line"></span><br><span class="line">                        )</span><br><span class="line"></span><br><span class="line">                    [onMessage] =&gt; Closure Object</span><br><span class="line"> *RECURSION*</span><br><span class="line">                    [onClose] =&gt; </span><br><span class="line">                    [onError] =&gt; </span><br><span class="line">                    [onBufferFull] =&gt; </span><br><span class="line">                    [onBufferDrain] =&gt; </span><br><span class="line">                    [onWorkerStop] =&gt; </span><br><span class="line">                    [onWorkerReload] =&gt; </span><br><span class="line">                    [transport] =&gt; tcp</span><br><span class="line">                    [connections] =&gt; Array</span><br><span class="line">                        (</span><br><span class="line">                            [1] =&gt; Workerman\Connection\TcpConnection Object</span><br><span class="line"> *RECURSION*</span><br><span class="line">                        )</span><br><span class="line"></span><br><span class="line">                    [protocol] =&gt; \Workerman\Protocols\Http</span><br><span class="line">                    [_autoloadRootPath:protected] =&gt; /home/sui</span><br><span class="line">                    [_mainSocket:protected] =&gt; Resource id #12</span><br><span class="line">                    [_socketName:protected] =&gt; http://0.0.0.0:8484</span><br><span class="line">                    [_context:protected] =&gt; Resource id #7</span><br><span class="line">                    [workerId] =&gt; 000000006b500573000000001a96f053</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    [onClose] =&gt; </span><br><span class="line">    [onError] =&gt; </span><br><span class="line">    [onBufferFull] =&gt; </span><br><span class="line">    [onBufferDrain] =&gt; </span><br><span class="line">    [protocol] =&gt; \Workerman\Protocols\Http</span><br><span class="line">    [transport] =&gt; tcp</span><br><span class="line">    [worker] =&gt; Workerman\Worker Object</span><br><span class="line">        (</span><br><span class="line">            [id] =&gt; 0</span><br><span class="line">            [name] =&gt; none</span><br><span class="line">            [count] =&gt; 1</span><br><span class="line">            [user] =&gt; parallels</span><br><span class="line">            [group] =&gt; </span><br><span class="line">            [reloadable] =&gt; 1</span><br><span class="line">            [reusePort] =&gt; </span><br><span class="line">            [onWorkerStart] =&gt; </span><br><span class="line">            [onConnect] =&gt; Closure Object</span><br><span class="line">                (</span><br><span class="line">                    [parameter] =&gt; Array</span><br><span class="line">                        (</span><br><span class="line">                            [$connection] =&gt; &lt;required&gt;</span><br><span class="line">                        )</span><br><span class="line"></span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            [onMessage] =&gt; Closure Object</span><br><span class="line">                (</span><br><span class="line">                    [this] =&gt; Workerman\Worker Object</span><br><span class="line"> *RECURSION*</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            [onClose] =&gt; </span><br><span class="line">            [onError] =&gt; </span><br><span class="line">            [onBufferFull] =&gt; </span><br><span class="line">            [onBufferDrain] =&gt; </span><br><span class="line">            [onWorkerStop] =&gt; </span><br><span class="line">            [onWorkerReload] =&gt; </span><br><span class="line">            [transport] =&gt; tcp</span><br><span class="line">            [connections] =&gt; Array</span><br><span class="line">                (</span><br><span class="line">                    [1] =&gt; Workerman\Connection\TcpConnection Object</span><br><span class="line"> *RECURSION*</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            [protocol] =&gt; \Workerman\Protocols\Http</span><br><span class="line">            [_autoloadRootPath:protected] =&gt; /home/sui</span><br><span class="line">            [_mainSocket:protected] =&gt; Resource id #12</span><br><span class="line">            [_socketName:protected] =&gt; http://0.0.0.0:8484</span><br><span class="line">            [_context:protected] =&gt; Resource id #7</span><br><span class="line">            [workerId] =&gt; 000000006b500573000000001a96f053</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    [bytesRead] =&gt; 0</span><br><span class="line">    [bytesWritten] =&gt; 0</span><br><span class="line">    [id] =&gt; 1</span><br><span class="line">    [_id:protected] =&gt; 1</span><br><span class="line">    [maxSendBufferSize] =&gt; 1048576</span><br><span class="line">    [_socket:protected] =&gt; Resource id #19</span><br><span class="line">    [_sendBuffer:protected] =&gt; </span><br><span class="line">    [_recvBuffer:protected] =&gt; </span><br><span class="line">    [_currentPackageLength:protected] =&gt; 0</span><br><span class="line">    [_status:protected] =&gt; 2</span><br><span class="line">    [_remoteAddress:protected] =&gt; 127.0.0.1:47950</span><br><span class="line">    [_isPaused:protected] =&gt; </span><br><span class="line">    [_sslHandshakeCompleted:protected] =&gt; </span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>返回的结果是一个TcpConnection Object对象,里面有许多连接的信息.</p>
+<h2 id="TcpConnection类-连接对象"><a href="#TcpConnection类-连接对象" class="headerlink" title="TcpConnection类(连接对象)"></a>TcpConnection类(连接对象)</h2><blockquote>
+<p>WorkerMan中有两个重要的类Worker与Connection。<br>每个客户端连接对应一个Connection对象，可以设置对象的onMessage、onClose等回调，同时提供了向客户端发送数据send接口与关闭连接close接口，以及其它一些必要的接口。<br>可以说Worker是一个监听容器，负责接受客户端连接，并把连接包装成connection对象式提供给开发者操作。</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line">$worker = <span class="keyword">new</span> Worker(<span class="string">'websocket://0.0.0.0:8484'</span>);</span><br><span class="line"><span class="comment">// 当有客户端连接事件时</span></span><br><span class="line">$worker-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置连接的onMessage回调</span></span><br><span class="line">    $connection-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection, $data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        var_dump($data);</span><br><span class="line">        $connection-&gt;send(<span class="string">'receive success\n'</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">     <span class="comment">// 设置连接的onClose回调</span></span><br><span class="line">    $connection-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"connection closed\n"</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<h2 id="AsyncTcpConnection-TcpConnection的子类"><a href="#AsyncTcpConnection-TcpConnection的子类" class="headerlink" title="AsyncTcpConnection(TcpConnection的子类)"></a>AsyncTcpConnection(TcpConnection的子类)</h2><blockquote>
+<p>AsyncTcpConnection是TcpConnection的子类，拥有与TcpConnection一样的属性与接口。AsyncTcpConnection用于异步创建一个TcpConnection连接。</p>
+<h3 id="异步访问外部http服务"><a href="#异步访问外部http服务" class="headerlink" title="异步访问外部http服务"></a>异步访问外部http服务</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Connection</span>\<span class="title">AsyncTcpConnection</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line">$task = <span class="keyword">new</span> Worker();</span><br><span class="line"><span class="comment">// 进程启动时异步建立一个到www.baidu.com连接对象，并发送数据获取数据</span></span><br><span class="line">$task-&gt;onWorkerStart = <span class="function"><span class="keyword">function</span><span class="params">($task)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $connection_to_baidu = <span class="keyword">new</span> AsyncTcpConnection(<span class="string">'tcp://www.baidu.com:80'</span>);</span><br><span class="line">    <span class="comment">// 当连接建立成功时，发送http请求数据</span></span><br><span class="line">    $connection_to_baidu-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_baidu)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"connect success\n"</span>;</span><br><span class="line">        $connection_to_baidu-&gt;send(<span class="string">"GET / HTTP/1.1\r\nHost: www.baidu.com\r\nConnection: keep-alive\r\n\r\n"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    $connection_to_baidu-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_baidu, $http_buffer)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> $http_buffer;</span><br><span class="line">    &#125;;</span><br><span class="line">    $connection_to_baidu-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_baidu)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"connection closed\n"</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    $connection_to_baidu-&gt;onError = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_baidu, $code, $msg)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Error code:$code msg:$msg\n"</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    $connection_to_baidu-&gt;connect();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="Mysql代理"><a href="#Mysql代理" class="headerlink" title="Mysql代理"></a>Mysql代理</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Connection</span>\<span class="title">AsyncTcpConnection</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 真实的mysql地址，假设这里是本机3306端口</span></span><br><span class="line">$REAL_MYSQL_ADDRESS = <span class="string">'tcp://127.0.0.1:3306'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 代理监听本地4406端口</span></span><br><span class="line">$proxy = <span class="keyword">new</span> Worker(<span class="string">'tcp://0.0.0.0:4406'</span>);</span><br><span class="line"></span><br><span class="line">$proxy-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $REAL_MYSQL_ADDRESS;</span><br><span class="line">    <span class="comment">// 异步建立一个到实际mysql服务器的连接</span></span><br><span class="line">    $connection_to_mysql = <span class="keyword">new</span> AsyncTcpConnection($REAL_MYSQL_ADDRESS);</span><br><span class="line">    <span class="comment">// mysql连接发来数据时，转发给对应客户端的连接</span></span><br><span class="line">    $connection_to_mysql-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_mysql, $buffer)</span><span class="title">use</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection-&gt;send($buffer);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// mysql连接关闭时，关闭对应的代理到客户端的连接</span></span><br><span class="line">    $connection_to_mysql-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_mysql)</span><span class="title">use</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection-&gt;close();</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// mysql连接上发生错误时，关闭对应的代理到客户端的连接</span></span><br><span class="line">    $connection_to_mysql-&gt;onError = <span class="function"><span class="keyword">function</span><span class="params">($connection_to_mysql)</span><span class="title">use</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection-&gt;close();</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 执行异步连接</span></span><br><span class="line">    $connection_to_mysql-&gt;connect();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 客户端发来数据时，转发给对应的mysql连接</span></span><br><span class="line">    $connection-&gt;onMessage = <span class="function"><span class="keyword">function</span><span class="params">($connection, $buffer)</span><span class="title">use</span><span class="params">($connection_to_mysql)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection_to_mysql-&gt;send($buffer);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 客户端连接断开时，断开对应的mysql连接</span></span><br><span class="line">    $connection-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span><span class="title">use</span><span class="params">($connection_to_mysql)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection_to_mysql-&gt;close();</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 客户端连接发生错误时，断开对应的mysql连接</span></span><br><span class="line">    $connection-&gt;onError = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span><span class="title">use</span><span class="params">($connection_to_mysql)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $connection_to_mysql-&gt;close();</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<h3 id="测试-2"><a href="#测试-2" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -P4406 -h127.0.0.1 -p</span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 25004</span><br><span class="line">Server version: 5.5.31-1~dotdeb.0 (Debian)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="定时器Timer类"><a href="#定时器Timer类" class="headerlink" title="定时器Timer类"></a>定时器Timer类</h2><h3 id="定时函数为匿名函数，利用闭包传递参数"><a href="#定时函数为匿名函数，利用闭包传递参数" class="headerlink" title="定时函数为匿名函数，利用闭包传递参数"></a>定时函数为匿名函数，利用闭包传递参数</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Worker</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Workerman</span>\<span class="title">Lib</span>\<span class="title">Timer</span>;</span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/Workerman/Autoloader.php'</span>;</span><br><span class="line"></span><br><span class="line">$ws_worker = <span class="keyword">new</span> Worker(<span class="string">'websocket://0.0.0.0:8080'</span>);</span><br><span class="line">$ws_worker-&gt;count = <span class="number">8</span>;</span><br><span class="line"><span class="comment">// 连接建立时给对应连接设置定时器</span></span><br><span class="line">$ws_worker-&gt;onConnect = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 每10秒执行一次</span></span><br><span class="line">    $time_interval = <span class="number">10</span>;</span><br><span class="line">    $connect_time = time();</span><br><span class="line">    <span class="comment">// 给connection对象临时添加一个timer_id属性保存定时器id</span></span><br><span class="line">    $connection-&gt;timer_id = Timer::add($time_interval, <span class="function"><span class="keyword">function</span><span class="params">()</span><span class="title">use</span><span class="params">($connection, $connect_time)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">         $connection-&gt;send($connect_time);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 连接关闭时，删除对应连接的定时器</span></span><br><span class="line">$ws_worker-&gt;onClose = <span class="function"><span class="keyword">function</span><span class="params">($connection)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 删除定时器</span></span><br><span class="line">    Timer::del($connection-&gt;timer_id);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行worker</span></span><br><span class="line">Worker::runAll();</span><br></pre></td></tr></table></figure>
+<p>测试<br>打开chrome浏览器，按F12打开调试控制台，在Console一栏输入(或者把下面代码放入到html页面用js运行)<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设服务端ip为127.0.0.1</span></span><br><span class="line">ws = <span class="keyword">new</span> WebSocket(<span class="string">"ws://127.0.0.1:8080"</span>);</span><br><span class="line">ws.onopen = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    alert(<span class="string">"连接成功"</span>);</span><br><span class="line">    ws.send(<span class="string">'我要当前时间'</span>);</span><br><span class="line">    <span class="comment">//alert("给服务端发送一个字符串：sui");</span></span><br><span class="line">&#125;;</span><br><span class="line">ws.onmessage = <span class="function"><span class="keyword">function</span><span class="params">(e)</span> </span>&#123;</span><br><span class="line">    alert(<span class="string">"收到服务端的消息："</span> + e.data);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/13/TCP-IP协议族学习/" rel="next" title="TCP/IP协议族学习">
+                <i class="fa fa-chevron-left"></i> TCP/IP协议族学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/25/对于Php堆栈的理解/" rel="prev" title="对于Php堆栈的理解">
+                对于Php堆栈的理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单的开发实例"><span class="nav-number">1.</span> <span class="nav-text">简单的开发实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用HTTP协议对外提供Web服务"><span class="nav-number">1.1.</span> <span class="nav-text">1.使用HTTP协议对外提供Web服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令行运行（windows用户用-cmd命令行，下同）"><span class="nav-number">1.1.1.</span> <span class="nav-text">命令行运行（windows用户用 cmd命令行，下同）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">1.1.2.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用WebSocket协议对外提供服务"><span class="nav-number">1.2.</span> <span class="nav-text">2.使用WebSocket协议对外提供服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令行运行"><span class="nav-number">1.2.1.</span> <span class="nav-text">命令行运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接使用TCP传输数据"><span class="nav-number">1.3.</span> <span class="nav-text">直接使用TCP传输数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#命令行运行-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">命令行运行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试：命令行运行"><span class="nav-number">1.3.2.</span> <span class="nav-text">测试：命令行运行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Worker类-主容器"><span class="nav-number">2.</span> <span class="nav-text">Worker类(主容器)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#worker例子"><span class="nav-number">2.1.</span> <span class="nav-text">worker例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小测试"><span class="nav-number">2.2.</span> <span class="nav-text">小测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TcpConnection类-连接对象"><span class="nav-number">3.</span> <span class="nav-text">TcpConnection类(连接对象)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AsyncTcpConnection-TcpConnection的子类"><span class="nav-number">4.</span> <span class="nav-text">AsyncTcpConnection(TcpConnection的子类)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异步访问外部http服务"><span class="nav-number">4.1.</span> <span class="nav-text">异步访问外部http服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql代理"><span class="nav-number">4.2.</span> <span class="nav-text">Mysql代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-2"><span class="nav-number">4.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定时器Timer类"><span class="nav-number">5.</span> <span class="nav-text">定时器Timer类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定时函数为匿名函数，利用闭包传递参数"><span class="nav-number">5.1.</span> <span class="nav-text">定时函数为匿名函数，利用闭包传递参数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

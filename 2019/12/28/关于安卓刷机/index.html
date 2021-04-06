@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="娱乐,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="ADBADB的全称为Android Debug Bridge，就是起到调试桥的作用Android设备(如手机)连接PC时所需要的驱动程序，一般Android设备连接WinXP是无需安装驱动的。 通过adb我们可以通过DDMS来调试Android程序，说白了就是debug工具。 ADB是android sdk里的一个工具, 用这个工具可以直接操作管理android模拟器或者真实的andriod设备">
+<meta name="keywords" content="娱乐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓刷机">
+<meta property="og:url" content="http://sui28456049.github.io/2019/12/28/关于安卓刷机/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="ADBADB的全称为Android Debug Bridge，就是起到调试桥的作用Android设备(如手机)连接PC时所需要的驱动程序，一般Android设备连接WinXP是无需安装驱动的。 通过adb我们可以通过DDMS来调试Android程序，说白了就是debug工具。 ADB是android sdk里的一个工具, 用这个工具可以直接操作管理android模拟器或者真实的andriod设备">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.691Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安卓刷机">
+<meta name="twitter:description" content="ADBADB的全称为Android Debug Bridge，就是起到调试桥的作用Android设备(如手机)连接PC时所需要的驱动程序，一般Android设备连接WinXP是无需安装驱动的。 通过adb我们可以通过DDMS来调试Android程序，说白了就是debug工具。 ADB是android sdk里的一个工具, 用这个工具可以直接操作管理android模拟器或者真实的andriod设备">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/12/28/关于安卓刷机/">
+
+
+
+
+
+  <title>安卓刷机 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/12/28/关于安卓刷机/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">安卓刷机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-28T13:58:24+08:00">
+                2019-12-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/娱乐/" itemprop="url" rel="index">
+                    <span itemprop="name">娱乐</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h2 id="ADB"><a href="#ADB" class="headerlink" title="ADB"></a>ADB</h2><p>ADB的全称为Android Debug Bridge，就是起到调试桥的作用<br>Android设备(如手机)连接PC时所需要的驱动程序，一般Android设备连接WinXP是无需安装驱动的。</p>
+<p>通过adb我们可以通过DDMS来调试Android程序，说白了就是debug工具。</p>
+<p>ADB是android sdk里的一个工具, 用这个工具可以直接操作管理android模拟器或者真实的andriod设备. 它的主要功能有:</p>
+<ul>
+<li>运行设备的shell(命令行)</li>
+<li>管理模拟器或设备的端口映射</li>
+<li>计算机和设备之间上传/下载文件</li>
+<li>将本地apk软件安装至模拟器或android设备</li>
+<li>ADB是一个 客户端-服务器端 程序</li>
+</ul>
+<p>客户端是你的电脑，用来操作手机</p>
+<ul>
+<li>服务器端是android设备。</li>
+<li><p>ADB驱动就是电脑与android 设备的通信的客户端驱动程序。</p>
+</li>
+<li><p>常用命令</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">adb devices # 查看连接设备</span><br><span class="line">adb shell # 进入通 Linux 终端</span><br><span class="line">adb push open_gapps-arm-9.0-aroma-20200115.zip  /sdcard #  复制文件到 /sdcard 目录</span><br><span class="line"></span><br><span class="line">adb reboot recovery #  重启到recovery</span><br><span class="line">adb reboot fastboot #  重启到fastboot</span><br></pre></td></tr></table></figure>
+<h2 id="Fastboot"><a href="#Fastboot" class="headerlink" title="Fastboot"></a>Fastboot</h2><p>Fastboot类似于电脑的BIOS系统</p>
+<p>Fastboot启动，更像是一种电脑上的U盘启动，类似于电脑上可以在U盘上选择不同的PE系统（非电脑上）。</p>
+<p>对于手机而言fastboot可以将电脑上的recovery镜像（非手机上），加载到手机。</p>
+<p>fastboot方法更灵活，功能也更强大，fastboot方法不需要依赖于recovery，甚至linux底层刷坏了recovery模式都进不了的情况下也可以通过fastboot方工刷回来。fastboot模式其实是调用spl进行刷机的，所以如果刷spl坏了，fastboot模式应该也进不了，也就是砖了。</p>
+<p>fastboot方法需要电脑上有fastboot程序，同时手机要进入fastboot模式才可以操作</p>
+<h2 id="Recovery"><a href="#Recovery" class="headerlink" title="Recovery"></a>Recovery</h2><p>Recovery模式指的是一种可以对安卓机内部的数据或系统进行修改的模式（类似于windows PE或DOS）。</p>
+<p>在这个模式下我们可以刷入新的安卓系统，或者对已有的系统进行备份或升级，也可以在此恢复出厂设置。</p>
+<ul>
+<li>手机厂商为了限制手机被刷成其他 rom，或者说为了手机的安全，在手机的 Recovery 上会限制非官方包的 rom 刷入</li>
+<li><p>第三方有名Recovery  <code>TWRP</code></p>
+</li>
+<li><p>地址<code>https://twrp.me/Devices/</code></p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fastboot flash recovery recovery.img</span><br><span class="line">fastboot boot recovery.img</span><br></pre></td></tr></table></figure>
+<h2 id="Bootloader-俗称解锁"><a href="#Bootloader-俗称解锁" class="headerlink" title="Bootloader(俗称解锁)"></a>Bootloader(俗称解锁)</h2><p>解锁指的是接bootloader锁，有的厂商锁住了bootloader，就刷不了其他第三方ROM，需要解开，具体方法去各厂商官方论坛查找。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">锁定/解锁bootloader命令</span><br><span class="line">1.进入fastboot模式</span><br><span class="line"># adb reboot bootloader</span><br><span class="line"> </span><br><span class="line">2.解锁bootbloader</span><br><span class="line"># fastboot flashing unlock</span><br><span class="line"> </span><br><span class="line">3.加锁bootloader</span><br><span class="line"># fastboot flashing lock</span><br></pre></td></tr></table></figure>
+<h2 id="什么是底包，固件"><a href="#什么是底包，固件" class="headerlink" title="什么是底包，固件"></a>什么是底包，固件</h2><p>我认为现在的固件、底包就是一个概念，这是刷机的基础包，相当于一个纯净版或者内核版的系统包，控制了很底层的东西.<br>所以为什么会有刷第三方ROM的时候会提到对应的底包，因为有些要底层的支持，如果底包不对就刷不成功，或者刷成功后使用有问题。</p>
+<h2 id="什么是基带"><a href="#什么是基带" class="headerlink" title="什么是基带"></a>什么是基带</h2><p>基带(Baseband)是手机中的一块电路，负责完成移动网络中无线信号的解调、解扰、解扩和解码工作，并将最终解码完成的数字信号传递给上层处理系统 进行处理。在我们的手机中通常由两大部分电路组成，一部分是高层处理部分，相当于我们使用的电脑;另一部分就是基带，这部分相当于我们使用的Modem， 手机支持什么样的网络制式(GSM、CDMA、WCDMA、TD-SCDMA等)都是由它来决定的。</p>
+<p>基带其实就是手机里面一块负责各种手机信号处理的电路，用手机打电话、上网、发短信等等，都是通过上层处理系统下发指令(通常是标准AT指令)给基带部分，并由基带部分处理执行，基带部分完成处理后就会在手机和无线网络间建立起一条逻辑通道，我们的话音、短信或上网数据包都是通过这个逻辑通道传送出去的。</p>
+<p>作为手机中的一块专门代码，基带专门负责通讯的BIOS，负责完成移动网络中无线信号的解调、解扰、解扩和解码工作，所以基带的不同会造成信号效果的不同。而因为各地、各网络实际情况不同，有时就需要大家自己选择适合自己的基带，我们平时说的刷基带其实就是通过软性的改变参数以微调这个电路的代码。</p>
+<p>个别手机在更新大版本或者本身为非国行版本的手机，可能会出现接打电话、收发信息、彩信以及上网受阻，信号不佳等问题，遇到这种情况，可以通过刷入第三方基带来改善机子运行效率或者通话质量，一般来说，国行手机大多不会出现这样的问题，而且目前基带芯片的方案也大多比较统一，除非是一些运营商软锁的定制机，一般的裸机大多都可以忽略刷基带这一环节。</p>
+<h2 id="刷open-gapps"><a href="#刷open-gapps" class="headerlink" title="刷open gapps"></a>刷open gapps</h2><p>有的手机安装google服务包app也不能使用google服务，这时需要刷入gapps，这是一套包含google服务和google app的包.<br>刷这个放在你已经刷完第三方ROM后，方式和刷ROM类似，具体请自行搜索。gapps也有很多个版本，包含google的app数量不同。<br><a href="http://opengapps.org/" target="_blank" rel="noopener">http://opengapps.org/</a></p>
+<ul>
+<li>下载 app  安装</li>
+<li>下载相应服务包，放置到手机内置存储或外置SD卡.进入第三方 Recovery 模式，选择服务包，刷入，无需双清或三清，重启。</li>
+</ul>
+<p>Open Gapps<br>OpenGApps有几个不同的版本，super、stock、full、mini、micro、nano、pico，很多人不知道差别是什么，这里说明一下</p>
+<p>super<br>包含了所有 GApps ，像韩语日语中文拼音中文注音输入法等。（请注意：如果你是用的是基于原生的 ROM ，本版本会替换相机，通讯录等等所有有关应用）。体积1G左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>stock<br>类似于 Google Pixel 出厂内置的 GApps ，相比 super 版少了其他语种的输入法以及 Google 地球等。（请注意：如果你是用的是基于原生的 ROM ，本版本会替换相机，通讯录等等所有有关应用）。体积820M~840M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>full<br>与 stock 版所包含的内容相同，但此版本不会替换手机原本的应用。体积670~690M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>mini<br>包含基础的 Google 服务框架，以及一些影响力较大的 GApps ，相比 full 版去掉了 Docs 等应用。体积370M~390M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>micro<br>包含基础的 Google 服务框架和 Gmail 等常见 GApps。体积190~210M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>nano<br>包含基础的 Google 服务框架，但不会有其他 不必要的 GApps。体积160M~180M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<p>pico<br>包含最迷你的 Google 服务框架，但由于框架并非完整，部分 GApps 可能无法运行。体积110~120M左右，如果System分区剩余空间不够，就会刷入失败。</p>
+<h2 id="下载系统安卓英文简称"><a href="#下载系统安卓英文简称" class="headerlink" title="下载系统安卓英文简称"></a>下载系统安卓英文简称</h2><p>Android 发布每个版本的时候都给它起了一个代号：都是以各种食物命名，这已经是Android的传统了，今天就总结一下这些代号吧</p>
+<p><a href="https://img-blog.csdnimg.cn/20191017153044541.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqejY5Ng==,size_16,color_FFFFFF,t_70" target="_blank" rel="noopener">Android版本简称</a></p>
+<p>比如小米四简称<code>cancro</code>,巨蟹座意思;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https://get.resurrectionremix.com/?dir=oreo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">比如小米四简称`cancro`,巨蟹座意思;</span><br><span class="line"></span><br><span class="line">https://twrp.me/Devices/Xiaomi/ #  手机型号简称</span><br></pre></td></tr></table></figure>
+<h1 id="magisk-amp-amp-xposed"><a href="#magisk-amp-amp-xposed" class="headerlink" title="magisk &amp;&amp; xposed"></a>magisk &amp;&amp; xposed</h1><p> 先理解为Root 工具,其实就是钩子;</p>
+<p> 下载地址: <code>https://magiskmanager.com</code>, 从 <code>recovery</code> 下安装</p>
+<p> xposed: <a href="https://xposed.appkg.com/tag/magisk%E6%A1%86%E6%9E%B6" target="_blank" rel="noopener">https://xposed.appkg.com/tag/magisk%E6%A1%86%E6%9E%B6</a></p>
+<p> 使用模块<code>(https://sspai.com/post/54008)</code></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/娱乐/" rel="tag"># 娱乐</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/23/英语学习/" rel="next" title="英语学习-词类">
+                <i class="fa fa-chevron-left"></i> 英语学习-词类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/11/初探-express/" rel="prev" title="初探 express">
+                初探 express <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ADB"><span class="nav-number">1.</span> <span class="nav-text">ADB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fastboot"><span class="nav-number">2.</span> <span class="nav-text">Fastboot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recovery"><span class="nav-number">3.</span> <span class="nav-text">Recovery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bootloader-俗称解锁"><span class="nav-number">4.</span> <span class="nav-text">Bootloader(俗称解锁)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是底包，固件"><span class="nav-number">5.</span> <span class="nav-text">什么是底包，固件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是基带"><span class="nav-number">6.</span> <span class="nav-text">什么是基带</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#刷open-gapps"><span class="nav-number">7.</span> <span class="nav-text">刷open gapps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载系统安卓英文简称"><span class="nav-number">8.</span> <span class="nav-text">下载系统安卓英文简称</span></a></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#magisk-amp-amp-xposed"><span class="nav-number"></span> <span class="nav-text">magisk &amp;&amp; xposed</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

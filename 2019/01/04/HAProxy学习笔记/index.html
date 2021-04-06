@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="引言HAproxy可以代理四层七层应用,而varnish web cache 作用于七层 许多东西不比重复写: http://www.cnblogs.com/f-ck-need-u/p/7576137.html#haproxy proxy配置部分是haproxy最重要的配置部分，包含下面四种配置段： defaults []:设置frontend/backend/listen配置段的默认值。fro">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HAProxy学习笔记">
+<meta property="og:url" content="http://sui28456049.github.io/2019/01/04/HAProxy学习笔记/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="引言HAproxy可以代理四层七层应用,而varnish web cache 作用于七层 许多东西不比重复写: http://www.cnblogs.com/f-ck-need-u/p/7576137.html#haproxy proxy配置部分是haproxy最重要的配置部分，包含下面四种配置段： defaults []:设置frontend/backend/listen配置段的默认值。fro">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HAProxy学习笔记">
+<meta name="twitter:description" content="引言HAproxy可以代理四层七层应用,而varnish web cache 作用于七层 许多东西不比重复写: http://www.cnblogs.com/f-ck-need-u/p/7576137.html#haproxy proxy配置部分是haproxy最重要的配置部分，包含下面四种配置段： defaults []:设置frontend/backend/listen配置段的默认值。fro">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/01/04/HAProxy学习笔记/">
+
+
+
+
+
+  <title>HAProxy学习笔记 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/01/04/HAProxy学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HAProxy学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-04T10:35:00+08:00">
+                2019-01-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>HAproxy可以代理四层七层应用,而varnish web cache 作用于七层</p>
+<p>许多东西不比重复写: <a href="http://www.cnblogs.com/f-ck-need-u/p/7576137.html#haproxy" target="_blank" rel="noopener">http://www.cnblogs.com/f-ck-need-u/p/7576137.html#haproxy</a></p>
+<p>proxy配置部分是haproxy最重要的配置部分，包含下面四种配置段：</p>
+<p>defaults []:设置frontend/backend/listen配置段的默认值。<br>frontend :配置监听客户端连接的套接字。<br>backend :配置haproxy所代理的后端服务器组。<br>listen:定义一个完整的前端和后端代理，但后端可以不定义。所以有时候等价于frontend+backend。它常用于绑定前后端1对1的情况。<br>所有代理的名称只能使用大写字母、小写字母、数字、-(中线)、_(下划线)、.(点号)和:(冒号)。此外，ACL名称会区分字母大小写。</p>
+<p>目前，有两种主流的代理模式：tcp代理(即所谓的4层代理)和http代理(即所谓的7层代理)。在4层代理模式下，haproxy简单的在两端进行双向转发。在7层代理模式下，haproxy会对协议进行分析，可以根据协议来允许、阻塞、切换、增加、修改和移除request或response中的属性内容。</p>
+<h1 id="默认配置"><a href="#默认配置" class="headerlink" title="默认配置"></a>默认配置</h1><p>haproxy命令行检查配置文件语法是否正确:<code>haproxy -f /etc/haproxy/phaproxy.cfg -c</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># Example configuration for a possible web application.  See the</span><br><span class="line"># full configuration options online.</span><br><span class="line">#</span><br><span class="line">#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt</span><br><span class="line">#</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># Global settings</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line">global</span><br><span class="line">    # to have these messages end up in /var/log/haproxy.log you will</span><br><span class="line">    # need to:</span><br><span class="line">    #</span><br><span class="line">    # 1) configure syslog to accept network log events.  This is done</span><br><span class="line">    #    by adding the &apos;-r&apos; option to the SYSLOGD_OPTIONS in</span><br><span class="line">    #    /etc/sysconfig/syslog</span><br><span class="line">    #</span><br><span class="line">    # 2) configure local2 events to go to the /var/log/haproxy.log</span><br><span class="line">    #   file. A line like the following can be added to</span><br><span class="line">    #   /etc/sysconfig/syslog</span><br><span class="line">    #</span><br><span class="line">    #    local2.*                       /var/log/haproxy.log</span><br><span class="line">    #</span><br><span class="line">    log         127.0.0.1 local2</span><br><span class="line"></span><br><span class="line">    chroot      /var/lib/haproxy</span><br><span class="line">    pidfile     /var/run/haproxy.pid</span><br><span class="line">    maxconn     4000</span><br><span class="line">    user        haproxy</span><br><span class="line">    group       haproxy</span><br><span class="line">    daemon</span><br><span class="line"></span><br><span class="line">    # turn on stats unix socket</span><br><span class="line">    stats socket /var/lib/haproxy/stats</span><br><span class="line"></span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># common defaults that all the &apos;listen&apos; and &apos;backend&apos; sections will</span><br><span class="line"># use if not designated in their block</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line">defaults</span><br><span class="line">    mode                    http</span><br><span class="line">    log                     global</span><br><span class="line">    option                  httplog</span><br><span class="line">    option                  dontlognull</span><br><span class="line">    option http-server-close</span><br><span class="line">    option forwardfor       except 127.0.0.0/8</span><br><span class="line">    option                  redispatch</span><br><span class="line">    retries                 3</span><br><span class="line">    timeout http-request    10s</span><br><span class="line">    timeout queue           1m</span><br><span class="line">    timeout connect         10s</span><br><span class="line">    timeout client          1m</span><br><span class="line">    timeout server          1m</span><br><span class="line">    timeout http-keep-alive 10s</span><br><span class="line">    timeout check           10s</span><br><span class="line">    maxconn                 3000</span><br><span class="line"></span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># main frontend which proxys to the backends</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line">frontend  main *:5000</span><br><span class="line">    acl url_static       path_beg       -i /static /images /javascript /stylesheets</span><br><span class="line">    acl url_static       path_end       -i .jpg .gif .png .css .js</span><br><span class="line"></span><br><span class="line">    use_backend static          if url_static</span><br><span class="line">    default_backend             app</span><br><span class="line"></span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># static backend for serving up images, stylesheets and such</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line">backend static</span><br><span class="line">    balance     roundrobin</span><br><span class="line">    server      static 127.0.0.1:4331 check</span><br><span class="line"></span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line"># round robin balancing between the various backends</span><br><span class="line">#---------------------------------------------------------------------</span><br><span class="line">backend app</span><br><span class="line">    balance     roundrobin</span><br><span class="line">    server  app1 127.0.0.1:5001 check</span><br><span class="line">    server  app2 127.0.0.1:5002 check</span><br><span class="line">    server  app3 127.0.0.1:5003 check</span><br><span class="line">    server  app4 127.0.0.1:5004 check</span><br></pre></td></tr></table></figure></p>
+<h1 id="小试牛刀"><a href="#小试牛刀" class="headerlink" title="小试牛刀"></a>小试牛刀</h1><h2 id="监听所有的80端口"><a href="#监听所有的80端口" class="headerlink" title="监听所有的80端口"></a>监听所有的80端口</h2><p>配置文件代理模式为http，frontend定义的是监听在前端所有网卡的80端口上，此文件中只定义了一个后端服务器组backend，该backend只包含一台监听在127.0.0.1:8000的服务器。在haproxy的术语中，frontend表示的是监听套接字，用于等待客户端的连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        daemon</span><br><span class="line">        maxconn 256</span><br><span class="line"></span><br><span class="line">defaults</span><br><span class="line">        mode http</span><br><span class="line">        timeout connect 5000ms</span><br><span class="line">        timeout client 50000ms</span><br><span class="line">        timeout server 50000ms</span><br><span class="line"></span><br><span class="line">frontend http-in</span><br><span class="line">        bind *:80</span><br><span class="line">        default_backend web_servers</span><br><span class="line"></span><br><span class="line">backend web_servers</span><br><span class="line">        server server1 127.0.0.1:8000 maxconn 32</span><br></pre></td></tr></table></figure>
+<p>如果使用listen配置方式替换backend和frontend，则更简单，以下是等价配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        daemon</span><br><span class="line">        maxconn 256</span><br><span class="line"></span><br><span class="line"> defaults</span><br><span class="line">        mode http</span><br><span class="line">        timeout connect 5000ms</span><br><span class="line">        timeout client 50000ms</span><br><span class="line">        timeout server 50000ms</span><br><span class="line"></span><br><span class="line"> listen http-in</span><br><span class="line">        bind *:80</span><br><span class="line">        server server1 127.0.0.1:8000 maxconn 32</span><br></pre></td></tr></table></figure>
+<h2 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        daemon</span><br><span class="line">        maxconn 256</span><br><span class="line"></span><br><span class="line">defaults</span><br><span class="line">        mode http</span><br><span class="line">        timeout connect 5000ms</span><br><span class="line">        timeout client 50000ms</span><br><span class="line">        timeout server 50000ms</span><br><span class="line"></span><br><span class="line">frontend http-in</span><br><span class="line">        <span class="built_in">bind</span> *:80</span><br><span class="line">        acl url_static path_beg /static /images /img /css /viedo /download  </span><br><span class="line">        acl url_static path_end .gif .png .jpg .css .js .bmp                </span><br><span class="line">        acl host_www   path /index.html                                     </span><br><span class="line">        acl url_dynamic path_end .php .php5                                 </span><br><span class="line">        acl host_www    hdr_beg(Host) -i m.zxmrtop.com                </span><br><span class="line">        use_backend static  <span class="keyword">if</span> url_static</span><br><span class="line">        use_backend dynamic <span class="keyword">if</span> url_dynamic</span><br><span class="line">        use_backend www <span class="keyword">if</span> host_www</span><br><span class="line"></span><br><span class="line">backend static</span><br><span class="line">        server server1 121.65.111.138:8888 maxconn 32</span><br><span class="line">backend dynamic</span><br><span class="line">        server server1 47.52.222.88:8888 maxconn 32</span><br><span class="line">backend www</span><br><span class="line">        server server1 47.52.222.88:8080 maxconn 32</span><br></pre></td></tr></table></figure>
+<h2 id="反向代理mysql"><a href="#反向代理mysql" class="headerlink" title="反向代理mysql"></a>反向代理mysql</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        maxconn 4096</span><br><span class="line">        daemon</span><br><span class="line">        chroot      /var/lib/haproxy</span><br><span class="line">        pidfile     /var/run/haproxy.pid</span><br><span class="line">        <span class="comment">#debug</span></span><br><span class="line">        <span class="comment">#quiet</span></span><br><span class="line">        user haproxy</span><br><span class="line">        group haproxy</span><br><span class="line"> </span><br><span class="line">defaults</span><br><span class="line">        <span class="built_in">log</span>     global</span><br><span class="line">        mode    http</span><br><span class="line">        option  httplog</span><br><span class="line">        option  dontlognull</span><br><span class="line">        <span class="built_in">log</span> 127.0.0.1 local0</span><br><span class="line">        retries 3</span><br><span class="line">        option redispatch</span><br><span class="line">        maxconn 2000</span><br><span class="line">        <span class="comment">#contimeout      5000</span></span><br><span class="line">        <span class="comment">#clitimeout      50000</span></span><br><span class="line">        <span class="comment">#srvtimeout      50000</span></span><br><span class="line">        timeout http-request    10s</span><br><span class="line">        timeout queue           1m</span><br><span class="line">        timeout connect         10s</span><br><span class="line">        timeout client          1m</span><br><span class="line">        timeout server          1m</span><br><span class="line">        timeout http-keep-alive 10s</span><br><span class="line">        timeout check           10s</span><br><span class="line"> </span><br><span class="line">listen  admin_stats 0.0.0.0:8888</span><br><span class="line">        mode        http</span><br><span class="line">        stats uri   /dbs</span><br><span class="line">        stats realm     Global\ statistics</span><br><span class="line">        stats auth  admin:admin</span><br><span class="line"> </span><br><span class="line">listen  proxy-mysql 0.0.0.0:3307</span><br><span class="line">        mode tcp</span><br><span class="line">        balance leastconn <span class="comment"># 新的连接请求被派发至具有最少连接数目的后端服务器；此算法是动态的，可以在运行时调整其权重</span></span><br><span class="line">       <span class="comment"># balance roundrobin</span></span><br><span class="line">        option tcplog</span><br><span class="line">        <span class="comment"># option mysql-check user haproxy #在mysql中创建无任何权限用户haproxy，且无密码</span></span><br><span class="line">        server MySQL1 47.52.222.25:3306 check weight 1 maxconn 2000</span><br><span class="line">        server MySQL2 47.52.222.26:3306 check weight 1 maxconn 2000</span><br><span class="line">        option tcpka</span><br></pre></td></tr></table></figure>
+<p>对于MySQL的负载来说，更建议采用MySQL协议感知的程序来实现，例如mysqlrouter，proxysql，maxscale，mycat等等数据库中间件。</p>
+<h1 id="转发-tcp-ssrr-流量"><a href="#转发-tcp-ssrr-流量" class="headerlink" title="转发 tcp(ssrr) 流量"></a>转发 tcp(ssrr) 流量</h1><p> 一个 vps 转发到另一个 vps 上<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line"> </span><br><span class="line">defaults</span><br><span class="line">	log	global</span><br><span class="line">	mode	tcp</span><br><span class="line">	option	dontlognull</span><br><span class="line">        timeout connect 5000</span><br><span class="line">        timeout client  50000</span><br><span class="line">        timeout server  50000</span><br><span class="line"> </span><br><span class="line">frontend ss-in</span><br><span class="line">    bind *:10086</span><br><span class="line">    default_backend ss-out</span><br><span class="line"> </span><br><span class="line">backend ss-out</span><br><span class="line">    server server1 要转发的服务器ip maxconn 20480</span><br></pre></td></tr></table></figure></p>
+<p>手册查询: <a href="https://www.cnblogs.com/f-ck-need-u/p/8502593.html#1-1-" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/8502593.html#1-1-</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/03/varnish-Web加速器/" rel="next" title="varnish Web加速器">
+                <i class="fa fa-chevron-left"></i> varnish Web加速器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/17/ES6和node常见问题总结/" rel="prev" title="ES6和Node常见问题总结">
+                ES6和Node常见问题总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#默认配置"><span class="nav-number">2.</span> <span class="nav-text">默认配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小试牛刀"><span class="nav-number">3.</span> <span class="nav-text">小试牛刀</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#监听所有的80端口"><span class="nav-number">3.1.</span> <span class="nav-text">监听所有的80端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动静分离"><span class="nav-number">3.2.</span> <span class="nav-text">动静分离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向代理mysql"><span class="nav-number">3.3.</span> <span class="nav-text">反向代理mysql</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#转发-tcp-ssrr-流量"><span class="nav-number">4.</span> <span class="nav-text">转发 tcp(ssrr) 流量</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

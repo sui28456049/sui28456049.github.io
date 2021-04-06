@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="简单签名前台生成一个签名，当需要访问接口的时候，把时间戳，随机数，签名通过URL传递到后台。后台拿到时间戳，随机数后，通过一样的算法规则计算出签名，然后和传递过来的签名进行对比，一样的话，返回数据。 模拟前台生成接口签名链接thinkphp5 模拟 12345678910111213141516171819202122232425262728293031323334353637383940414">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口安全加密的几种方式">
+<meta property="og:url" content="http://sui28456049.github.io/2019/05/18/接口安全加密的几种方式/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="简单签名前台生成一个签名，当需要访问接口的时候，把时间戳，随机数，签名通过URL传递到后台。后台拿到时间戳，随机数后，通过一样的算法规则计算出签名，然后和传递过来的签名进行对比，一样的话，返回数据。 模拟前台生成接口签名链接thinkphp5 模拟 12345678910111213141516171819202122232425262728293031323334353637383940414">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.692Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="接口安全加密的几种方式">
+<meta name="twitter:description" content="简单签名前台生成一个签名，当需要访问接口的时候，把时间戳，随机数，签名通过URL传递到后台。后台拿到时间戳，随机数后，通过一样的算法规则计算出签名，然后和传递过来的签名进行对比，一样的话，返回数据。 模拟前台生成接口签名链接thinkphp5 模拟 12345678910111213141516171819202122232425262728293031323334353637383940414">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/05/18/接口安全加密的几种方式/">
+
+
+
+
+
+  <title>接口安全加密的几种方式 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/05/18/接口安全加密的几种方式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">接口安全加密的几种方式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-18T09:49:02+08:00">
+                2019-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="简单签名"><a href="#简单签名" class="headerlink" title="简单签名"></a>简单签名</h1><p>前台生成一个签名，当需要访问接口的时候，把时间戳，随机数，签名通过URL传递到后台。后台拿到时间戳，随机数后，通过一样的算法规则计算出签名，然后和传递过来的签名进行对比，一样的话，返回数据。</p>
+<h2 id="模拟前台生成接口签名链接"><a href="#模拟前台生成接口签名链接" class="headerlink" title="模拟前台生成接口签名链接"></a>模拟前台生成接口签名链接</h2><p>thinkphp5 模拟</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">api</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Client</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> TOKEN=<span class="string">'sui-token'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//模拟前台请求服务器api接口</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getData</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//时间戳</span></span><br><span class="line">        $timeStamp = time();</span><br><span class="line">        <span class="comment">//随机数</span></span><br><span class="line">        $randomStr = <span class="keyword">$this</span>-&gt;nonce_str();</span><br><span class="line">        <span class="comment">//生成签名</span></span><br><span class="line">        $signature = <span class="keyword">$this</span>-&gt;sign($timeStamp,$randomStr);</span><br><span class="line">        <span class="comment">//url地址</span></span><br><span class="line">        $url = <span class="string">"http://weixin.sadprincess.com/api/server/givedata?timeStamp=&#123;$timeStamp&#125;&amp;randomStr=&#123;$randomStr&#125;&amp;signature=&#123;$signature&#125;"</span>;</span><br><span class="line">        <span class="comment">// http://weixin.sadprincess.com/api/server/givedata?timeStamp=1558143935&amp;randomStr=z4isxIQaj&amp;signature=9384E621B20D227290EFB355871BAD29</span></span><br><span class="line">        $result = <span class="keyword">$this</span>-&gt;http_get($url);</span><br><span class="line">        dump($result);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//随机生成字符串</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">nonce_str</span><span class="params">($length = <span class="number">8</span>)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $chars = <span class="string">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"</span>;</span><br><span class="line">        $str = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $length; $i++) &#123;</span><br><span class="line">            $str .= substr($chars, mt_rand(<span class="number">0</span>, strlen($chars) - <span class="number">1</span>), <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"z"</span>.$str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">sign</span><span class="params">($timeStamp,$randomStr)</span></span></span><br><span class="line"><span class="function">      </span>&#123;</span><br><span class="line">        <span class="comment">// 时间戳，随机数，口令按照首字母大小写顺序排序</span></span><br><span class="line">        <span class="comment">// 然后拼接成字符串</span></span><br><span class="line">        <span class="comment">// 进行sha1加密</span></span><br><span class="line">        <span class="comment">// 再进行MD5加密</span></span><br><span class="line">        <span class="comment">// 转换成大写。</span></span><br><span class="line">        $arr[<span class="string">'timeStamp'</span>] = $timeStamp;</span><br><span class="line">        $arr[<span class="string">'randomStr'</span>] = $randomStr;</span><br><span class="line">        $arr[<span class="string">'token'</span>] = <span class="keyword">self</span>::TOKEN;</span><br><span class="line">        <span class="comment">//按照首字母大小写顺序排序</span></span><br><span class="line">        sort($arr,SORT_STRING);</span><br><span class="line">        <span class="comment">//拼接成字符串</span></span><br><span class="line">        $str = implode($arr);</span><br><span class="line">        <span class="comment">//进行加密</span></span><br><span class="line">        $signature = md5(sha1($str));</span><br><span class="line">        <span class="comment">//转换成大写</span></span><br><span class="line">        $signature = strtoupper($signature);</span><br><span class="line">        <span class="keyword">return</span> $signature;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">http_get</span><span class="params">($url)</span></span></span><br><span class="line"><span class="function">     </span>&#123;</span><br><span class="line">        $curl = curl_init();</span><br><span class="line">        curl_setopt($curl,CURLOPT_URL,$url);</span><br><span class="line">        curl_setopt($curl,CURLOPT_RETURNTRANSFER,<span class="number">1</span>);</span><br><span class="line">        $result = curl_exec($curl);</span><br><span class="line">        curl_close($curl);</span><br><span class="line">        <span class="keyword">return</span> $result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体需要前台按照统一算法约定生成 sign</p>
+<h2 id="后台处理"><a href="#后台处理" class="headerlink" title="后台处理"></a>后台处理</h2><p>后台得到参数加密生成 sign 比对</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">api</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Server</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> TOKEN=<span class="string">'sui-token'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//模拟前台请求服务器api接口</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">giveData</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $timeStamp = $_GET[<span class="string">'timeStamp'</span>];</span><br><span class="line">        $randomStr = $_GET[<span class="string">'randomStr'</span>];</span><br><span class="line">        $signature = $_GET[<span class="string">'signature'</span>];</span><br><span class="line">        $str = <span class="keyword">$this</span>-&gt;sign($timeStamp,$randomStr);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>($str != $signature)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"签名错误"</span>;</span><br><span class="line">            <span class="keyword">exit</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//模拟数据</span></span><br><span class="line">        $arr[<span class="string">'uid'</span>] = <span class="string">'1'</span>;</span><br><span class="line">        $arr[<span class="string">'name'</span>] = <span class="string">'sui'</span>;</span><br><span class="line">        <span class="keyword">echo</span> json_encode($arr);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//随机生成字符串</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">nonce_str</span><span class="params">($length = <span class="number">8</span>)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $chars = <span class="string">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"</span>;</span><br><span class="line">        $str = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $length; $i++) &#123;</span><br><span class="line">            $str .= substr($chars, mt_rand(<span class="number">0</span>, strlen($chars) - <span class="number">1</span>), <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"z"</span>.$str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">sign</span><span class="params">($timeStamp,$randomStr)</span></span></span><br><span class="line"><span class="function">      </span>&#123;</span><br><span class="line">        <span class="comment">// 时间戳，随机数，口令按照首字母大小写顺序排序</span></span><br><span class="line">        <span class="comment">// 然后拼接成字符串</span></span><br><span class="line">        <span class="comment">// 进行sha1加密</span></span><br><span class="line">        <span class="comment">// 再进行MD5加密</span></span><br><span class="line">        <span class="comment">// 转换成大写。</span></span><br><span class="line">        $arr[<span class="string">'timeStamp'</span>] = $timeStamp;</span><br><span class="line">        $arr[<span class="string">'randomStr'</span>] = $randomStr;</span><br><span class="line">        $arr[<span class="string">'token'</span>] = <span class="keyword">self</span>::TOKEN;</span><br><span class="line">        <span class="comment">//按照首字母大小写顺序排序</span></span><br><span class="line">        sort($arr,SORT_STRING);</span><br><span class="line">        <span class="comment">//拼接成字符串</span></span><br><span class="line">        $str = implode($arr);</span><br><span class="line">        <span class="comment">//进行加密</span></span><br><span class="line">        $signature = md5(sha1($str));</span><br><span class="line">        <span class="comment">//转换成大写</span></span><br><span class="line">        $signature = strtoupper($signature);</span><br><span class="line">        <span class="keyword">return</span> $signature;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="使用-openssl-对称加密算法加密接口"><a href="#使用-openssl-对称加密算法加密接口" class="headerlink" title="使用 openssl 对称加密算法加密接口"></a>使用 openssl 对称加密算法加密接口</h1><p>可用的对称加密算法(des/aes/3des): 使用命令行 openssl –help</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看对称加密算法类型</span></span><br><span class="line">openssl enc --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line">-aes-128-cbc               -aes-128-cbc-hmac-sha1     -aes-128-cfb             </span><br><span class="line">-aes-128-cfb1              -aes-128-cfb8              -aes-128-ctr             </span><br><span class="line">-aes-128-ecb               -aes-128-gcm               -aes-128-ofb             </span><br><span class="line">-aes-128-xts               -aes-192-cbc               -aes-192-cfb             </span><br><span class="line">-aes-192-cfb1              -aes-192-cfb8              -aes-192-ctr             </span><br><span class="line">-aes-192-ecb               -aes-192-gcm               -aes-192-ofb             </span><br><span class="line">-aes-256-cbc               -aes-256-cbc-hmac-sha1     -aes-256-cfb             </span><br><span class="line">-aes-256-cfb1              -aes-256-cfb8              -aes-256-ctr             </span><br><span class="line">-aes-256-ecb               -aes-256-gcm               -aes-256-ofb             </span><br><span class="line">-aes-256-xts               -aes128                    -aes192                  </span><br><span class="line">-aes256                    -bf                        -bf-cbc                  </span><br><span class="line">-bf-cfb                    -bf-ecb                    -bf-ofb                  </span><br><span class="line">-blowfish                  -camellia-128-cbc          -camellia-128-cfb        </span><br><span class="line">-camellia-128-cfb1         -camellia-128-cfb8         -camellia-128-ecb        </span><br><span class="line">-camellia-128-ofb          -camellia-192-cbc          -camellia-192-cfb        </span><br><span class="line">-camellia-192-cfb1         -camellia-192-cfb8         -camellia-192-ecb        </span><br><span class="line">-camellia-192-ofb          -camellia-256-cbc          -camellia-256-cfb        </span><br><span class="line">-camellia-256-cfb1         -camellia-256-cfb8         -camellia-256-ecb        </span><br><span class="line">-camellia-256-ofb          -camellia128               -camellia192             </span><br><span class="line">-camellia256               -cast                      -cast-cbc                </span><br><span class="line">-cast5-cbc                 -cast5-cfb                 -cast5-ecb               </span><br><span class="line">-cast5-ofb                 -des                       -des-cbc                 </span><br><span class="line">-des-cfb                   -des-cfb1                  -des-cfb8                </span><br><span class="line">-des-ecb                   -des-ede                   -des-ede-cbc             </span><br><span class="line">-des-ede-cfb               -des-ede-ofb               -des-ede3                </span><br><span class="line">-des-ede3-cbc              -des-ede3-cfb              -des-ede3-cfb1           </span><br><span class="line">-des-ede3-cfb8             -des-ede3-ofb              -des-ofb                </span><br><span class="line">-des3                      -desx                      -desx-cbc                </span><br><span class="line">-id-aes128-GCM             -id-aes128-wrap            -id-aes128-wrap-pad      </span><br><span class="line">-id-aes192-GCM             -id-aes192-wrap            -id-aes192-wrap-pad      </span><br><span class="line">-id-aes256-GCM             -id-aes256-wrap            -id-aes256-wrap-pad      </span><br><span class="line">-id-smime-alg-CMS3DESwrap  -idea                      -idea-cbc                 </span><br><span class="line">-idea-cfb                  -idea-ecb                  -idea-ofb                </span><br><span class="line">-rc2                       -rc2-40-cbc                -rc2-64-cbc              </span><br><span class="line">-rc2-cbc                   -rc2-cfb                   -rc2-ecb                 </span><br><span class="line">-rc2-ofb                   -rc4                       -rc4-40                  </span><br><span class="line">-rc4-hmac-md5              -seed                      -seed-cbc                </span><br><span class="line">-seed-cfb                  -seed-ecb                  -seed-ofb</span><br></pre></td></tr></table></figure>
+<p>以DES对称加密 des-cbc/pksc5填充为例结果base64编码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CryptDes</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $key;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($key)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;key = $key;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * des加密</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@desc</span> des加密CBC模式,PKCS5Padding填充</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $str</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">encrypt</span><span class="params">($str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $str = <span class="keyword">$this</span>-&gt;pkcs5Pad($str, <span class="number">8</span>);</span><br><span class="line">        <span class="keyword">if</span> (strlen($str) % <span class="number">8</span>) &#123;</span><br><span class="line">            $str = str_pad($str,</span><br><span class="line">                strlen($str) + <span class="number">8</span> - strlen($str) % <span class="number">8</span>, <span class="string">"\0"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> base64_encode(openssl_encrypt($str, <span class="string">'DES-ECB'</span>, substr(<span class="keyword">$this</span>-&gt;key, <span class="number">0</span>, <span class="number">8</span>), OPENSSL_RAW_DATA | OPENSSL_NO_PADDING));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * des解密</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $str</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">decrypt</span><span class="params">($str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $decode_str = openssl_decrypt(base64_decode($str), <span class="string">'DES-ECB'</span>, substr(<span class="keyword">$this</span>-&gt;key, <span class="number">0</span>, <span class="number">8</span>), OPENSSL_RAW_DATA | OPENSSL_NO_PADDING);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;pkcs5Unpad($decode_str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * PKCS5Padding填充</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $text</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $blocksize</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">pkcs5Pad</span><span class="params">($text, $blocksize)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $pad = $blocksize - (strlen($text) % $blocksize);</span><br><span class="line">        <span class="keyword">return</span> $text . str_repeat(chr($pad), $pad);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * PKCS5Padding填充逆向</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $text</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool|string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">pkcs5Unpad</span><span class="params">($text)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $pad = ord($text&#123;strlen($text) - <span class="number">1</span>&#125;);</span><br><span class="line">        <span class="keyword">if</span> ($pad &gt; strlen($text))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (strspn($text, chr($pad), strlen($text) - $pad) != $pad)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">return</span> substr($text, <span class="number">0</span>, <span class="number">-1</span> * $pad);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$des = <span class="keyword">new</span> CryptDes(<span class="string">'sui-token-key'</span>);</span><br><span class="line">$data = json_encode([</span><br><span class="line">    <span class="string">'uid'</span> =&gt;<span class="number">1</span>,</span><br><span class="line">    <span class="string">'content'</span> =&gt; <span class="string">'sui content'</span></span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line">$encode = $des-&gt;encrypt($data);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> json_encode([<span class="string">'code'</span>=&gt; <span class="number">1</span>,<span class="string">'msg'</span>=&gt;<span class="string">'success'</span>,<span class="string">'data'</span>=&gt;$encode]).PHP_EOL;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'解码后规则:'</span>.$des-&gt;decrypt($encode);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果</span></span><br><span class="line">&#123;<span class="string">"code"</span>:<span class="number">1</span>,<span class="string">"msg"</span>:<span class="string">"success"</span>,<span class="string">"data"</span>:<span class="string">"EZQ13GuP1wmxTLft6D2XzTkLojZxsvKlbNkoWkdX5WBOpFJL5iQSkA=="</span>&#125;</span><br><span class="line">解码后规则:&#123;<span class="string">"uid"</span>:<span class="number">1</span>,<span class="string">"content"</span>:<span class="string">"sui content"</span>&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="RSA非对称加密"><a href="#RSA非对称加密" class="headerlink" title="RSA非对称加密"></a>RSA非对称加密</h1><p>我一般服务器留私钥,给别人公钥,看个人吧,都可以.</p>
+<p>命令行生成一对秘钥;php openssl_pkey_new() 也能生成一个新的私钥和公钥对</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成私钥 // 默认长度 2048</span></span><br><span class="line">openssl genrsa -out private_key</span><br><span class="line"><span class="comment"># 通过提取私钥生成公钥 </span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> private_key -pubout -out public_key</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RSA</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $encrypt_len;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $public_key;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $private_key;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($encrypt_len, $public_key, $private_key)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;encrypt_len = $encrypt_len;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;public_key = $public_key;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;private_key = $private_key;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私钥加密</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $data_content</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">encryptedByPrivateKey</span><span class="params">($data_content)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $data_content = base64_encode($data_content);</span><br><span class="line">        $encrypted = <span class="string">""</span>;</span><br><span class="line">        $totalLen = strlen($data_content);</span><br><span class="line">        $encrypt_pos = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> ($encrypt_pos &lt; $totalLen) &#123;</span><br><span class="line">            openssl_private_encrypt(substr($data_content, $encrypt_pos, <span class="keyword">$this</span>-&gt;encrypt_len), $encrypt_data, <span class="keyword">$this</span>-&gt;private_key);</span><br><span class="line">            $encrypted .= bin2hex($encrypt_data);</span><br><span class="line">            $encrypt_pos += <span class="keyword">$this</span>-&gt;encrypt_len;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $encrypted;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 公钥解密</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> $encrypted</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool|string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">decryptByPublicKey</span><span class="params">($encrypted)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $decrypt = <span class="string">""</span>;</span><br><span class="line">        $totalLen = strlen($encrypted);</span><br><span class="line">        $decryptPos = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> ($decryptPos &lt; $totalLen) &#123;</span><br><span class="line">            openssl_public_decrypt(hex2bin(substr($encrypted, $decryptPos, <span class="keyword">$this</span>-&gt;encrypt_len * <span class="number">8</span>)), $decryptData, <span class="keyword">$this</span>-&gt;public_key);</span><br><span class="line">            $decrypt .= $decryptData;</span><br><span class="line">            $decryptPos += <span class="keyword">$this</span>-&gt;encrypt_len * <span class="number">8</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//openssl_public_decrypt($encrypted, $decryptData, $this-&gt;public_key);</span></span><br><span class="line">        $decrypt = base64_decode($decrypt);</span><br><span class="line">        <span class="keyword">return</span> $decrypt;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">$public_key = <span class="string">&lt;&lt;&lt;EOF</span></span><br><span class="line"><span class="string">-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx6frXec7GEuypYmx3F/O</span></span><br><span class="line"><span class="string">t2DQ8Uu3z9HdHF9/EqfRcrYq2vLVFnKNad9W1U9+1N1EcQlt7LdzWLWLklZQGLp9</span></span><br><span class="line"><span class="string">76Tgn+vXROP0qpqt1U8aoe5MOd8FBboslVn2QoRaCQs08MXTJJ/X8OS+Y9nyXgpM</span></span><br><span class="line"><span class="string">HOBIBV6X5GU3lZK4h2d2IxRzRKFZPDWB/ie17xXiHma5I6BBaVjUhgNyM3o7C+dx</span></span><br><span class="line"><span class="string">geP856lc/qyBdJXAmrnJM34BhL7O2xyFDKKO4ur73sN6dGVZnXTfpWUW2iFPqfhf</span></span><br><span class="line"><span class="string">t2abxvV68vVkaCI8r9NJn5LQFM5jVA0tSAKAIcTodz8OamZlA0L3y2ildH39Po+5</span></span><br><span class="line"><span class="string">WQIDAQAB</span></span><br><span class="line">-----END <span class="keyword">PUBLIC</span> KEY-----</span><br><span class="line">EOF;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$private_key = <span class="string">&lt;&lt;&lt;EOF</span></span><br><span class="line"><span class="string">-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">MIIEpAIBAAKCAQEAx6frXec7GEuypYmx3F/Ot2DQ8Uu3z9HdHF9/EqfRcrYq2vLV</span></span><br><span class="line"><span class="string">FnKNad9W1U9+1N1EcQlt7LdzWLWLklZQGLp976Tgn+vXROP0qpqt1U8aoe5MOd8F</span></span><br><span class="line"><span class="string">BboslVn2QoRaCQs08MXTJJ/X8OS+Y9nyXgpMHOBIBV6X5GU3lZK4h2d2IxRzRKFZ</span></span><br><span class="line"><span class="string">PDWB/ie17xXiHma5I6BBaVjUhgNyM3o7C+dxgeP856lc/qyBdJXAmrnJM34BhL7O</span></span><br><span class="line"><span class="string">2xyFDKKO4ur73sN6dGVZnXTfpWUW2iFPqfhft2abxvV68vVkaCI8r9NJn5LQFM5j</span></span><br><span class="line">VA0tSAKAIcTodz8OamZlA0L3y2ildH39Po+<span class="number">5</span>WQIDAQABAoIBAFx1AYTpyK72lxMb</span><br><span class="line">kbb40xSOjBPBuaxOhjNWcdUky9RwUaY038LWZ3BI0cBUYOqYUNJ7yGDfj1XcNHce</span><br><span class="line"><span class="number">61</span>aYPiuU0cSdBYJMggfjO27VhALLBJekFIJTdcPv9h9VhRA9FVYOdjm2n9xZQWWi</span><br><span class="line">Dx/HavnQTunVpUdKLBRi7nsdyVJym1q7PilBwecLanGqyPtZEQZqAxPYrgXnSybC</span><br><span class="line">e90V1jIbVXkwEVgi6rTcJnGa6bArgOyRnB8ENTVm3W2eYLDC4HnMmGzDphHhqL/H</span><br><span class="line">y+tz9rCs63KkMvajU4L56xuvNDXIH5lILCXe0xDI1qI3FPhUF/dTGBvqWFEj1ncT</span><br><span class="line"><span class="number">5</span>ImjkgECgYEA7EIvulkHJBXVLbqadiiNGO8QUq4dBIqrLtQNeB1iwZwfIUrq4I3i</span><br><span class="line">Wqd2nzWY6m2W7IV9z/GcKdx5i/uzqoK43zXcyKlXsrSmwO0cMBKJBQWz/tti7P+w</span><br><span class="line"><span class="number">9</span>VPFp2RIXPGACcBsXxycwGTP0wzScCeH0L/dIGK3jHm1BWUct77zt8ECgYEA2FbD</span><br><span class="line">+XXeuGTDpwbLjPmAjAHkQ3j+eQS0hueQTVk+N4+<span class="number">3</span>jPdq/<span class="number">5</span>bjpwslmQIfFFgmjl7h</span><br><span class="line">GTmD1GFHHA2J8ksqjpX0j2x71BAILje3sv6fsfnqLtyCm1rs0xoEnsNCyZ1tiMhv</span><br><span class="line">tAOn2oXsGoldIa2qot5Cp0Be+wi4DpqotmQIp5kCgYBBX1cBgxzcuUXRb27J/xJ7</span><br><span class="line">sbqchhz1YsFXJcnMUKVA2Ugr2CUBmYDmgKvsBdKYG1bFf3J+lWYWlzDysOTX62/o</span><br><span class="line">I2lCBMmFY0M44uMH0jkjsJ5LiLzowx9d4p4wYSk8vn4lNJ9H+gzNl5eB2GxqKCYG</span><br><span class="line">dvBiw63yKsMSCRZXKXkagQKBgQCS44a40JFivfgiZni6xYXEilxEe9i8rrcsifnu</span><br><span class="line">qtOVwh0st6mM1RTJjMYAd/JGS/wR2tYX3HdoMoynvYGWY/cHTUX6Q/xn5mLHjslJ</span><br><span class="line"><span class="number">3</span>ZzsqPWaz9pWRYxbYWUVrxqf7iY7I2zE216S/y9qbS4w+cvMPgEfspNK+<span class="number">4</span>aNU/GN</span><br><span class="line">taoysQKBgQC12HZu8NP53PN5pSoEPPFjErhIHB7CuCL7hpphxQjb0j++qlcYK1bO</span><br><span class="line">tYe26eu6Wq38TO/hvJorCBbhJwHgSZY9cb/Htw+h1xbIrOhSX16OmowlKxd4xgbM</span><br><span class="line">q/Zzxw1t8uqc9wHbJcjmbylgCV9vPtBIMcoeKJSpf3rhGYXt6GKaWA==</span><br><span class="line">-----END RSA <span class="keyword">PRIVATE</span> KEY-----</span><br><span class="line">EOF;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 默认长度 2048</span></span><br><span class="line">$encrypt_len = <span class="number">2048</span>;</span><br><span class="line"></span><br><span class="line">$rsa = <span class="keyword">new</span> RSA($encrypt_len, $public_key, $private_key);</span><br><span class="line">$data = json_encode([</span><br><span class="line">    <span class="string">'uid'</span> =&gt;<span class="number">1</span>,</span><br><span class="line">    <span class="string">'content'</span> =&gt; <span class="string">'sui content'</span></span><br><span class="line">]);</span><br><span class="line">$encode_content = $rsa-&gt;encryptedByPrivateKey($data);</span><br><span class="line">$decode_content = $rsa-&gt;decryptByPublicKey($encode_content);</span><br><span class="line"><span class="keyword">echo</span> json_encode([<span class="string">'code'</span>=&gt; <span class="number">1</span>,<span class="string">'msg'</span>=&gt;<span class="string">'success'</span>,<span class="string">'data'</span>=&gt;$decode_content]).PHP_EOL;</span><br><span class="line"></span><br><span class="line">结果:</span><br><span class="line">&#123;<span class="string">"code"</span>:<span class="number">1</span>,<span class="string">"msg"</span>:<span class="string">"success"</span>,<span class="string">"data"</span>:<span class="string">"&#123;\"uid\":1,\"content\":\"sui content\"&#125;"</span>&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="JWT-用户认证"><a href="#JWT-用户认证" class="headerlink" title="JWT 用户认证"></a>JWT 用户认证</h1><p>介绍: <a href="http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html</a></p>
+<p>实现多点登录认证</p>
+<h2 id="安装扩展包"><a href="#安装扩展包" class="headerlink" title="安装扩展包"></a>安装扩展包</h2><p>composer require firebase/php-jwt</p>
+<h2 id="基础示例"><a href="#基础示例" class="headerlink" title="基础示例"></a>基础示例</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Firebase</span>\<span class="title">JWT</span>\<span class="title">JWT</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $key = <span class="string">'sui-key'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line"></span><br><span class="line">        $phone = $_GET[<span class="string">'phone'</span>];</span><br><span class="line">        $passwd = $_GET[<span class="string">'passwd'</span>];</span><br><span class="line">        <span class="keyword">if</span>($phone == <span class="string">'666'</span> &amp;&amp; $passwd == <span class="string">'123456'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 签发 token</span></span><br><span class="line">            $access_token =  <span class="keyword">$this</span>-&gt;issue();</span><br><span class="line">            <span class="keyword">return</span> json([<span class="string">'code'</span>=&gt;<span class="number">1</span>,<span class="string">'msg'</span>=&gt;<span class="string">'success'</span>,<span class="string">'data'</span>=&gt;[<span class="string">'access_token'</span>=&gt;$access_token]]);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">'登录失败'</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//签发token</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">issue</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $key = <span class="keyword">$this</span>-&gt;key;</span><br><span class="line">        <span class="comment">// 省略数据库查询操作........</span></span><br><span class="line">        $userinfo = [</span><br><span class="line">            <span class="string">'uid'</span> =&gt; <span class="number">1</span>,</span><br><span class="line">            <span class="string">'username'</span>=&gt;<span class="string">'随某人'</span></span><br><span class="line">        ];</span><br><span class="line">        $token = <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">"iss"</span> =&gt; <span class="string">"http://sui.com"</span>,  <span class="comment">//签发者</span></span><br><span class="line">            <span class="string">"aud"</span> =&gt; <span class="string">"http://sui.com"</span>, <span class="comment">//jwt所面向的用户</span></span><br><span class="line">            <span class="string">"iat"</span> =&gt; time(), <span class="comment">//jwt的签发时间</span></span><br><span class="line">            <span class="string">"nbf"</span> =&gt; time(), <span class="comment">//定义在什么时间之前，某个时间点后才能访问</span></span><br><span class="line">            <span class="string">"exp"</span> =&gt; time() + <span class="number">3600</span>, <span class="comment">// 1小时后过期</span></span><br><span class="line">            <span class="string">"data"</span> =&gt; $userinfo</span><br><span class="line">        );</span><br><span class="line">        $access_toekn =  JWT::encode($token, $key);</span><br><span class="line">        <span class="keyword">return</span> $access_toekn;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 验证 token</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $access_token = <span class="string">'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9zdWkuY29tIiwiYXVkIjoiaHR0cDpcL1wvc3VpLmNvbSIsImlhdCI6MTU1ODE2Mjc4MiwibmJmIjoxNTU4MTYyNzgyLCJleHAiOjE1NTgxNjYzODIsImRhdGEiOnsidWlkIjoxLCJ1c2VybmFtZSI6Ilx1OTY4Zlx1NjdkMFx1NGViYSJ9fQ.0cOoQGX286IgDa5KF3cDm6RJgsBUbHHi0txQiPoSk6g'</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            JWT::$leeway = <span class="number">60</span>;<span class="comment">//当前时间减去60，把时间留点余地</span></span><br><span class="line">            $decoded = JWT::decode($access_token, <span class="keyword">$this</span>-&gt;key, [<span class="string">'HS256'</span>]); <span class="comment">//HS256方式，这里要和签发的时候对应</span></span><br><span class="line">            $arr = (<span class="keyword">array</span>)$decoded;</span><br><span class="line">            print_r($arr);</span><br><span class="line">        &#125; <span class="keyword">catch</span>(\Firebase\JWT\SignatureInvalidException $e) &#123;  <span class="comment">//签名不正确</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;<span class="keyword">catch</span>(\Firebase\JWT\BeforeValidException $e) &#123;  <span class="comment">// 签名在某个时间点之后才能用</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;<span class="keyword">catch</span>(\Firebase\JWT\ExpiredException $e) &#123;  <span class="comment">// token过期</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">            <span class="comment">// 重新请求 token;</span></span><br><span class="line">        &#125;<span class="keyword">catch</span>(<span class="keyword">Exception</span> $e) &#123;  <span class="comment">//其他错误</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="刷新"><a href="#刷新" class="headerlink" title="刷新"></a>刷新</h2><p>客户端通过用户名密码登录以后，服务端返回给客户端两个token：access_token和refresh_token</p>
+<p>举个例子：比如access_token设置2个小时过期，refresh_token设置7天过期，2小时候后，access_token过期，但是refresh_token还在7天以内，那么客户端通过refresh_token来服务端刷新，服务端重新生成一个access_token；如果refresh_token也超过了7天，那么客户端需要重新登录获取access_token和refresh_token。</p>
+<p>为了区分两个token，我们在载荷（payload)加一个字段 scopes ：作用域。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span>  <span class="title">think</span>\<span class="title">Request</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Firebase</span>\<span class="title">JWT</span>\<span class="title">JWT</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $key = <span class="string">'sui-key'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line"></span><br><span class="line">        $phone = $_GET[<span class="string">'phone'</span>];</span><br><span class="line">        $passwd = $_GET[<span class="string">'passwd'</span>];</span><br><span class="line">        <span class="keyword">if</span>($phone == <span class="string">'666'</span> &amp;&amp; $passwd == <span class="string">'123456'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 签发 token</span></span><br><span class="line">            $token_arr =  <span class="keyword">$this</span>-&gt;issue();</span><br><span class="line">            <span class="keyword">return</span> json([<span class="string">'code'</span>=&gt;<span class="number">1</span>,<span class="string">'msg'</span>=&gt;<span class="string">'success'</span>,<span class="string">'data'</span>=&gt;$token_arr]);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">'登录失败'</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//签发token</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">issue</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $key = <span class="keyword">$this</span>-&gt;key;</span><br><span class="line">        <span class="comment">// 省略数据库查询操作........</span></span><br><span class="line">        $userinfo = [</span><br><span class="line">            <span class="string">'uid'</span> =&gt; <span class="number">1</span>,</span><br><span class="line">            <span class="string">'username'</span>=&gt;<span class="string">'随某人'</span></span><br><span class="line">        ];</span><br><span class="line">        $token = <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">"iss"</span> =&gt; <span class="string">"http://sui.com"</span>,  <span class="comment">//签发者</span></span><br><span class="line">            <span class="string">"aud"</span> =&gt; <span class="string">"http://sui.com"</span>, <span class="comment">//jwt所面向的用户</span></span><br><span class="line">            <span class="string">"iat"</span> =&gt; time(), <span class="comment">//jwt的签发时间</span></span><br><span class="line">            <span class="string">"nbf"</span> =&gt; time(), <span class="comment">//定义在什么时间之前，某个时间点后才能访问</span></span><br><span class="line">            <span class="string">"exp"</span> =&gt; time() + <span class="number">3600</span>, <span class="comment">// 1小时后过期</span></span><br><span class="line">            <span class="string">"data"</span> =&gt; $userinfo</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        $access_token = $token;</span><br><span class="line">        $access_token[<span class="string">'scopes'</span>] = <span class="string">'role_access'</span>; <span class="comment">//token标识，请求接口的token</span></span><br><span class="line">        $access_token[<span class="string">'exp'</span>] = time() + <span class="number">7200</span>; <span class="comment">//access_token过期时间,这里设置2个小时</span></span><br><span class="line"></span><br><span class="line">        $refresh_token = $token;</span><br><span class="line">        $refresh_token[<span class="string">'scopes'</span>] = <span class="string">'role_refresh'</span>; <span class="comment">//token标识，刷新access_token</span></span><br><span class="line">        $refresh_token[<span class="string">'exp'</span>] = time() + (<span class="number">86400</span> * <span class="number">30</span>); <span class="comment">//access_token过期时间,这里设置30天</span></span><br><span class="line"></span><br><span class="line">        $token_arr = [</span><br><span class="line">            <span class="string">'access_token'</span>=&gt;JWT::encode($access_token,$key),</span><br><span class="line">            <span class="string">'refresh_token'</span>=&gt;JWT::encode($refresh_token,$key),</span><br><span class="line">            <span class="string">'token_type'</span>=&gt;<span class="string">'bearer'</span> <span class="comment">//token_type：表示令牌类型，该值大小写不敏感，这里用bearer</span></span><br><span class="line">        ];</span><br><span class="line">        <span class="keyword">return</span> $token_arr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 验证 token</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line"><span class="comment">//        halt($_SERVER);</span></span><br><span class="line">        <span class="comment">// header 头获取或者 post 接过来</span></span><br><span class="line">        $access_token = <span class="string">'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9zdWkuY29tIiwiYXVkIjoiaHR0cDpcL1wvc3VpLmNvbSIsImlhdCI6MTU1ODE2ODg3NiwibmJmIjoxNTU4MTY4ODc2LCJleHAiOjE1NTgxNzYwNzYsImRhdGEiOnsidWlkIjoxLCJ1c2VybmFtZSI6Ilx1OTY4Zlx1NjdkMFx1NGViYSJ9LCJzY29wZXMiOiJyb2xlX2FjY2VzcyJ9.5aUVKj0ruXLqsUUAaDYkZIovr8ndzXu1hkMBhGXE78k'</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            JWT::$leeway = <span class="number">60</span>;<span class="comment">//当前时间减去60，把时间留点余地</span></span><br><span class="line">            $decoded = JWT::decode($access_token, <span class="keyword">$this</span>-&gt;key, [<span class="string">'HS256'</span>]); <span class="comment">//HS256方式，这里要和签发的时候对应</span></span><br><span class="line">            $arr = (<span class="keyword">array</span>)$decoded;</span><br><span class="line">            print_r($arr);</span><br><span class="line">        &#125; <span class="keyword">catch</span>(\Firebase\JWT\SignatureInvalidException $e) &#123;  <span class="comment">//签名不正确</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;<span class="keyword">catch</span>(\Firebase\JWT\BeforeValidException $e) &#123;  <span class="comment">// 签名在某个时间点之后才能用</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;<span class="keyword">catch</span>(\Firebase\JWT\ExpiredException $e) &#123;  <span class="comment">// token过期</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">            <span class="comment">// 重新请求 token;</span></span><br><span class="line">        &#125;<span class="keyword">catch</span>(<span class="keyword">Exception</span> $e) &#123;  <span class="comment">//其他错误</span></span><br><span class="line">            <span class="keyword">echo</span> $e-&gt;getMessage();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ps:token 可以添加到 header头,也可以 post body 体里面</p>
+<h1 id="OAUTH2-授权"><a href="#OAUTH2-授权" class="headerlink" title="OAUTH2 授权"></a>OAUTH2 授权</h1>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/08/php数组复习/" rel="next" title="php数组复习">
+                <i class="fa fa-chevron-left"></i> php数组复习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/10/nginx-第三方扩展模块/" rel="prev" title="nginx 第三方扩展模块">
+                nginx 第三方扩展模块 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简单签名"><span class="nav-number">1.</span> <span class="nav-text">简单签名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟前台生成接口签名链接"><span class="nav-number">1.1.</span> <span class="nav-text">模拟前台生成接口签名链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后台处理"><span class="nav-number">1.2.</span> <span class="nav-text">后台处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用-openssl-对称加密算法加密接口"><span class="nav-number">2.</span> <span class="nav-text">使用 openssl 对称加密算法加密接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RSA非对称加密"><span class="nav-number">3.</span> <span class="nav-text">RSA非对称加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JWT-用户认证"><span class="nav-number">4.</span> <span class="nav-text">JWT 用户认证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装扩展包"><span class="nav-number">4.1.</span> <span class="nav-text">安装扩展包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础示例"><span class="nav-number">4.2.</span> <span class="nav-text">基础示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#刷新"><span class="nav-number">4.3.</span> <span class="nav-text">刷新</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OAUTH2-授权"><span class="nav-number">5.</span> <span class="nav-text">OAUTH2 授权</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

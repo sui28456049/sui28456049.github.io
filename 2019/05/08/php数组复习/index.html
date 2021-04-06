@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="php 依赖于强大的数组,封装好的,不需要自己写(自己写的性能不好,并且有时还不好写),有必要复习一下.好记性不如烂笔头,自己亲自敲一下.只写实例,参数看官网. https://www.php.net/manual/zh/ref.array.php array_change_key_case 将数组中的所有键名修改为全大写或小写  12$input_arr = [&apos;Fist&apos; =&amp;gt;1, &apos;">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php数组复习">
+<meta property="og:url" content="http://sui28456049.github.io/2019/05/08/php数组复习/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="php 依赖于强大的数组,封装好的,不需要自己写(自己写的性能不好,并且有时还不好写),有必要复习一下.好记性不如烂笔头,自己亲自敲一下.只写实例,参数看官网. https://www.php.net/manual/zh/ref.array.php array_change_key_case 将数组中的所有键名修改为全大写或小写  12$input_arr = [&apos;Fist&apos; =&amp;gt;1, &apos;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.690Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php数组复习">
+<meta name="twitter:description" content="php 依赖于强大的数组,封装好的,不需要自己写(自己写的性能不好,并且有时还不好写),有必要复习一下.好记性不如烂笔头,自己亲自敲一下.只写实例,参数看官网. https://www.php.net/manual/zh/ref.array.php array_change_key_case 将数组中的所有键名修改为全大写或小写  12$input_arr = [&apos;Fist&apos; =&amp;gt;1, &apos;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/05/08/php数组复习/">
+
+
+
+
+
+  <title>php数组复习 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/05/08/php数组复习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">php数组复习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-08T15:27:20+08:00">
+                2019-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><p>php 依赖于强大的数组,封装好的,不需要自己写(自己写的性能不好,并且有时还不好写),有必要复习一下.好记性不如烂笔头,自己亲自敲一下.只写实例,参数看官网.</p>
+<p><a href="https://www.php.net/manual/zh/ref.array.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/ref.array.php</a></p>
+<h1 id="array-change-key-case"><a href="#array-change-key-case" class="headerlink" title="array_change_key_case"></a>array_change_key_case</h1><p> 将数组中的所有键名修改为全大写或小写</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$input_arr = [<span class="string">'Fist'</span> =&gt;<span class="number">1</span>, <span class="string">'Two'</span> =&gt; <span class="number">2</span>];</span><br><span class="line">print_r(array_change_key_case($input_arr, <span class="string">'CASE_UPPER'</span>))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>多维数据递归键名大小写</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">function array_change_key_case_recursive($arr)</span><br><span class="line">&#123;</span><br><span class="line">    return array_map(function($item) &#123;</span><br><span class="line">        if(is_array($item))</span><br><span class="line">            $item = array_change_key_case_recursive($item);</span><br><span class="line">        return $item;</span><br><span class="line">    &#125;, array_change_key_case($arr));</span><br><span class="line">&#125;</span><br><span class="line">print_r(array_change_key_case_recursive([&apos;FIRST&apos;=&gt;[&quot;TWO&quot;=&gt;[&quot;Three&quot;=&gt;&apos;FOUR&apos;]]]));</span><br><span class="line"></span><br><span class="line">结果:</span><br><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [first] =&gt; Array</span><br><span class="line">        (</span><br><span class="line">            [two] =&gt; Array</span><br><span class="line">                (</span><br><span class="line">                    [three] =&gt; FOUR</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-chunk"><a href="#array-chunk" class="headerlink" title="array_chunk"></a>array_chunk</h1><p>将一个数组分割成多个数组，其中每个数组的单元数目由 size 决定。最后一个数组的单元数目可能会少于 size 个。</p>
+<p>分成多少列数组示例</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$arr= [<span class="string">'dog'</span>,<span class="string">'pig'</span>,<span class="string">'cat'</span>,<span class="string">'orange'</span>,<span class="string">'apple'</span>,<span class="string">'banana'</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">array_chunk_columns</span><span class="params">($input, $num, $preserve_keys = FALSE)</span> </span>&#123;</span><br><span class="line">    $count = count($input) ;</span><br><span class="line">    <span class="keyword">if</span>($count)</span><br><span class="line">        $input = array_chunk($input, ceil($count/$num), $preserve_keys) ;</span><br><span class="line">    $input = array_pad($input, $num, <span class="keyword">array</span>());</span><br><span class="line">    <span class="keyword">return</span> $input ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print_r(array_chunk($arr,<span class="number">2</span>));</span><br><span class="line">print_r(str_repeat(<span class="string">'***'</span>,<span class="number">10</span>));</span><br><span class="line">print_r(array_chunk_columns($arr,<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+<h1 id="array-column"><a href="#array-column" class="headerlink" title="array_column"></a>array_column</h1><p>array_column — 返回数组中指定的一列</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$records = <span class="keyword">array</span>(</span><br><span class="line">    <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'id'</span> =&gt; <span class="number">2135</span>,</span><br><span class="line">        <span class="string">'first_name'</span> =&gt; <span class="string">'John'</span>,</span><br><span class="line">        <span class="string">'last_name'</span> =&gt; <span class="string">'Doe'</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'id'</span> =&gt; <span class="number">3245</span>,</span><br><span class="line">        <span class="string">'first_name'</span> =&gt; <span class="string">'Sally'</span>,</span><br><span class="line">        <span class="string">'last_name'</span> =&gt; <span class="string">'Smith'</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'id'</span> =&gt; <span class="number">5342</span>,</span><br><span class="line">        <span class="string">'first_name'</span> =&gt; <span class="string">'Jane'</span>,</span><br><span class="line">        <span class="string">'last_name'</span> =&gt; <span class="string">'Jones'</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'id'</span> =&gt; <span class="number">5623</span>,</span><br><span class="line">        <span class="string">'first_name'</span> =&gt; <span class="string">'Peter'</span>,</span><br><span class="line">        <span class="string">'last_name'</span> =&gt; <span class="string">'Doe'</span>,</span><br><span class="line">    )</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">$last_names = array_column($records, <span class="string">'last_name'</span>, <span class="string">'id'</span>);</span><br><span class="line">print_r($last_names);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">2135</span>] =&gt; Doe</span><br><span class="line">    [<span class="number">3245</span>] =&gt; Smith</span><br><span class="line">    [<span class="number">5342</span>] =&gt; Jones</span><br><span class="line">    [<span class="number">5623</span>] =&gt; Doe</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-combine"><a href="#array-combine" class="headerlink" title="array_combine"></a>array_combine</h1><p> 创建一个数组，用一个数组的值作为其键名，另一个数组的值作为其值</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$a = <span class="keyword">array</span>(<span class="string">'green'</span>, <span class="string">'red'</span>, <span class="string">'yellow'</span>);</span><br><span class="line">$b = <span class="keyword">array</span>(<span class="string">'avocado'</span>, <span class="string">'apple'</span>, <span class="string">'banana'</span>);</span><br><span class="line">$c = array_combine($a, $b);</span><br><span class="line"></span><br><span class="line">print_r($c);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [green]  =&gt; avocado</span><br><span class="line">    [red]    =&gt; apple</span><br><span class="line">    [yellow] =&gt; banana</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>以数组的 value 值 分组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">$info = [</span><br><span class="line">    <span class="string">'李世民'</span> =&gt; <span class="string">'唐代'</span>,</span><br><span class="line">    <span class="string">'秦琼'</span>  =&gt; <span class="string">'唐代'</span>,</span><br><span class="line">    <span class="string">'朱元璋'</span> =&gt; <span class="string">'明朝'</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以 value 值 分组</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flipAndGroup</span><span class="params">($input)</span> :<span class="title">array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $outArr = [];</span><br><span class="line">    array_walk($input, <span class="function"><span class="keyword">function</span><span class="params">($value, $key)</span><span class="title">use</span><span class="params">(&amp;$outArr)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">isset</span>($outArr[$value]) || !is_array($outArr[$value]))</span><br><span class="line">        &#123;</span><br><span class="line">            $outArr[$value] = [];</span><br><span class="line">        &#125;</span><br><span class="line">        $outArr[$value][] = $key;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> $outArr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print_r(flipAndGroup($info));</span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [唐代] =&gt; <span class="keyword">Array</span></span><br><span class="line">        (</span><br><span class="line">            [<span class="number">0</span>] =&gt; 李世民</span><br><span class="line">            [<span class="number">1</span>] =&gt; 秦琼</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    [明朝] =&gt; <span class="keyword">Array</span></span><br><span class="line">        (</span><br><span class="line">            [<span class="number">0</span>] =&gt; 朱元璋</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="array-count-values"><a href="#array-count-values" class="headerlink" title="array_count_values"></a>array_count_values</h1><p>统计数组中所有的值</p>
+<p>array_count_values() 返回一个数组： 数组的键是 array 里单元的值； 数组的值是 array 单元的值出现的次数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$list = [</span><br><span class="line">  [<span class="string">'id'</span> =&gt; <span class="number">1</span>, <span class="string">'userId'</span> =&gt; <span class="number">5</span>],</span><br><span class="line">  [<span class="string">'id'</span> =&gt; <span class="number">2</span>, <span class="string">'userId'</span> =&gt; <span class="number">5</span>],</span><br><span class="line">  [<span class="string">'id'</span> =&gt; <span class="number">3</span>, <span class="string">'userId'</span> =&gt; <span class="number">6</span>],</span><br><span class="line">];</span><br><span class="line">$userId = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> array_count_values(array_column($list, <span class="string">'userId'</span>))[$userId]; <span class="comment">// outputs: 2</span></span><br></pre></td></tr></table></figure>
+<h1 id="array-diff-assoc"><a href="#array-diff-assoc" class="headerlink" title="array_diff_assoc"></a>array_diff_assoc</h1><p>带索引检查计算数组的差集<br>array_diff_assoc() 返回一个数组，该数组包括了所有在 array1 中但是不在任何其它参数数组中的值。注意和 array_diff() 不同的是键名也用于比较。</p>
+<h1 id="array-fill-keys"><a href="#array-fill-keys" class="headerlink" title="array_fill_keys"></a>array_fill_keys</h1><p>使用指定的键和值填充数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$keys = <span class="keyword">array</span>(<span class="string">'foo'</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="string">'bar'</span>);</span><br><span class="line">$a = array_fill_keys($keys, <span class="string">'banana'</span>);</span><br><span class="line">print_r($a);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [foo] =&gt; banana</span><br><span class="line">    [<span class="number">5</span>] =&gt; banana</span><br><span class="line">    [<span class="number">10</span>] =&gt; banana</span><br><span class="line">    [bar] =&gt; banana</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-fill"><a href="#array-fill" class="headerlink" title="array_fill"></a>array_fill</h1><p>用给定的值填充数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$a = array_fill(<span class="number">5</span>, <span class="number">6</span>, <span class="string">'banana'</span>);</span><br><span class="line">$b = array_fill(<span class="number">-2</span>, <span class="number">4</span>, <span class="string">'pear'</span>);</span><br><span class="line">print_r($a);</span><br><span class="line">print_r($b);</span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">5</span>]  =&gt; banana</span><br><span class="line">    [<span class="number">6</span>]  =&gt; banana</span><br><span class="line">    [<span class="number">7</span>]  =&gt; banana</span><br><span class="line">    [<span class="number">8</span>]  =&gt; banana</span><br><span class="line">    [<span class="number">9</span>]  =&gt; banana</span><br><span class="line">    [<span class="number">10</span>] =&gt; banana</span><br><span class="line">)</span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">-2</span>] =&gt; pear</span><br><span class="line">    [<span class="number">0</span>] =&gt; pear</span><br><span class="line">    [<span class="number">1</span>] =&gt; pear</span><br><span class="line">    [<span class="number">2</span>] =&gt; pear</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-filter"><a href="#array-filter" class="headerlink" title="array_filter"></a>array_filter</h1><p>用回调函数过滤数组中的单元</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$arr = [<span class="string">'a'</span> =&gt; <span class="number">1</span>, <span class="string">'b'</span> =&gt; <span class="number">2</span>, <span class="string">'c'</span> =&gt; <span class="number">3</span>, <span class="string">'d'</span> =&gt; <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line">var_dump(array_filter($arr, <span class="function"><span class="keyword">function</span><span class="params">($k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $k == <span class="string">'b'</span>;</span><br><span class="line">&#125;, ARRAY_FILTER_USE_KEY));</span><br><span class="line"></span><br><span class="line">var_dump(array_filter($arr, <span class="function"><span class="keyword">function</span><span class="params">($v, $k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $k == <span class="string">'b'</span> || $v == <span class="number">4</span>;</span><br><span class="line">&#125;, ARRAY_FILTER_USE_BOTH));</span><br><span class="line"></span><br><span class="line"><span class="keyword">array</span>(<span class="number">1</span>) &#123;</span><br><span class="line">  [<span class="string">"b"</span>]=&gt;</span><br><span class="line">  int(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">array</span>(<span class="number">2</span>) &#123;</span><br><span class="line">  [<span class="string">"b"</span>]=&gt;</span><br><span class="line">  int(<span class="number">2</span>)</span><br><span class="line">  [<span class="string">"d"</span>]=&gt;</span><br><span class="line">  int(<span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="array-flip"><a href="#array-flip" class="headerlink" title="array_flip"></a>array_flip</h1><p>交换数组中的键和值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$input = [<span class="string">"随"</span>=&gt;<span class="string">"某人"</span>,<span class="string">'李'</span>=&gt;<span class="string">"寻欢"</span>,<span class="string">'陈'</span>=&gt;<span class="string">'独秀'</span>]</span><br><span class="line">print_r(array_flip($input));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [某人] =&gt; 随</span><br><span class="line">    [寻欢] =&gt; 李</span><br><span class="line">    [独秀] =&gt; 陈</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-key-exists"><a href="#array-key-exists" class="headerlink" title="array_key_exists"></a>array_key_exists</h1><p>检查数组里是否有指定的键名或索引</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$search_array = <span class="keyword">array</span>(<span class="string">'first'</span> =&gt; <span class="number">1</span>, <span class="string">'second'</span> =&gt; <span class="number">4</span>);</span><br><span class="line"><span class="keyword">if</span> (array_key_exists(<span class="string">'first'</span>, $search_array)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"The 'first' element is in the array"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="array-key-first"><a href="#array-key-first" class="headerlink" title="array_key_first"></a>array_key_first</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$array = [<span class="string">'a'</span> =&gt; <span class="number">1</span>, <span class="string">'b'</span> =&gt; <span class="number">2</span>, <span class="string">'c'</span> =&gt; <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">$firstKey = array_key_first($array);</span><br><span class="line"></span><br><span class="line">var_dump($firstKey);</span><br></pre></td></tr></table></figure>
+<h1 id="array-key-last"><a href="#array-key-last" class="headerlink" title="array_key_last"></a>array_key_last</h1><h1 id="array-keys"><a href="#array-keys" class="headerlink" title="array_keys"></a>array_keys</h1><p>返回数组中部分的或所有的键名</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$array = <span class="keyword">array</span>(<span class="number">0</span> =&gt; <span class="number">100</span>, <span class="string">"color"</span> =&gt; <span class="string">"red"</span>);</span><br><span class="line">print_r(array_keys($array));</span><br><span class="line"></span><br><span class="line">$array = <span class="keyword">array</span>(<span class="string">"blue"</span>, <span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"blue"</span>);</span><br><span class="line">print_r(array_keys($array, <span class="string">"blue"</span>));</span><br><span class="line"></span><br><span class="line">$array = <span class="keyword">array</span>(<span class="string">"color"</span> =&gt; <span class="keyword">array</span>(<span class="string">"blue"</span>, <span class="string">"red"</span>, <span class="string">"green"</span>),</span><br><span class="line">               <span class="string">"size"</span>  =&gt; <span class="keyword">array</span>(<span class="string">"small"</span>, <span class="string">"medium"</span>, <span class="string">"large"</span>));</span><br><span class="line">print_r(array_keys($array));</span><br></pre></td></tr></table></figure>
+<h1 id="array-map"><a href="#array-map" class="headerlink" title="array_map"></a>array_map</h1><p>为数组的每个元素应用回调函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$func = <span class="function"><span class="keyword">function</span><span class="params">($value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $value * <span class="number">2</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">print_r(array_map($func, range(<span class="number">1</span>, <span class="number">5</span>)))</span><br></pre></td></tr></table></figure>
+<h1 id="array-merge"><a href="#array-merge" class="headerlink" title="array_merge"></a>array_merge</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$array1 = <span class="keyword">array</span>(<span class="string">"color"</span> =&gt; <span class="string">"red"</span>, <span class="number">2</span>, <span class="number">4</span>);</span><br><span class="line">$array2 = <span class="keyword">array</span>(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"color"</span> =&gt; <span class="string">"green"</span>, <span class="string">"shape"</span> =&gt; <span class="string">"trapezoid"</span>, <span class="number">4</span>);</span><br><span class="line">$result = array_merge($array1, $array2);</span><br><span class="line">print_r($result);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [color] =&gt; green</span><br><span class="line">    [<span class="number">0</span>] =&gt; <span class="number">2</span></span><br><span class="line">    [<span class="number">1</span>] =&gt; <span class="number">4</span></span><br><span class="line">    [<span class="number">2</span>] =&gt; a</span><br><span class="line">    [<span class="number">3</span>] =&gt; b</span><br><span class="line">    [shape] =&gt; trapezoid</span><br><span class="line">    [<span class="number">4</span>] =&gt; <span class="number">4</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-merge-recursive"><a href="#array-merge-recursive" class="headerlink" title="array_merge_recursive"></a>array_merge_recursive</h1><p>递归地合并一个或多个数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ar1 = <span class="keyword">array</span>(<span class="string">"color"</span> =&gt; <span class="keyword">array</span>(<span class="string">"favorite"</span> =&gt; <span class="string">"red"</span>), <span class="number">5</span>);</span><br><span class="line">$ar2 = <span class="keyword">array</span>(<span class="number">10</span>, <span class="string">"color"</span> =&gt; <span class="keyword">array</span>(<span class="string">"favorite"</span> =&gt; <span class="string">"green"</span>, <span class="string">"blue"</span>));</span><br><span class="line">$result = array_merge_recursive($ar1, $ar2);</span><br><span class="line">print_r($result);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [color] =&gt; <span class="keyword">Array</span></span><br><span class="line">        (</span><br><span class="line">            [favorite] =&gt; <span class="keyword">Array</span></span><br><span class="line">                (</span><br><span class="line">                    [<span class="number">0</span>] =&gt; red</span><br><span class="line">                    [<span class="number">1</span>] =&gt; green</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">            [<span class="number">0</span>] =&gt; blue</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    [<span class="number">0</span>] =&gt; <span class="number">5</span></span><br><span class="line">    [<span class="number">1</span>] =&gt; <span class="number">10</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-pad"><a href="#array-pad" class="headerlink" title="array_pad"></a>array_pad</h1><p>以指定长度将一个值填充进数组</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$arr = [<span class="string">'11111'</span>,<span class="string">'22222'</span>,<span class="string">'33333'</span>];</span><br><span class="line"></span><br><span class="line">print_r(array_pad($arr,<span class="number">6</span>,<span class="string">'数组填充为 6 个值是这个字段'</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt; <span class="number">11111</span></span><br><span class="line">    [<span class="number">1</span>] =&gt; <span class="number">22222</span></span><br><span class="line">    [<span class="number">2</span>] =&gt; <span class="number">33333</span></span><br><span class="line">    [<span class="number">3</span>] =&gt; 数组填充为 <span class="number">6</span> 个值是这个字段</span><br><span class="line">    [<span class="number">4</span>] =&gt; 数组填充为 <span class="number">6</span> 个值是这个字段</span><br><span class="line">    [<span class="number">5</span>] =&gt; 数组填充为 <span class="number">6</span> 个值是这个字段</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-rand"><a href="#array-rand" class="headerlink" title="array_rand"></a>array_rand</h1><p>从数组中随机取出一个或多个单元,注意,这个返回的 数组的键</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$input = <span class="keyword">array</span>(<span class="string">"one"</span>, <span class="string">"two"</span>, <span class="string">"three"</span>, <span class="string">"four"</span>, <span class="string">"five"</span>);</span><br><span class="line">$rand_keys = array_rand($input, <span class="number">2</span>);</span><br><span class="line"><span class="keyword">echo</span> $input[$rand_keys[<span class="number">0</span>]] . <span class="string">"\n"</span>;</span><br><span class="line"><span class="keyword">echo</span> $input[$rand_keys[<span class="number">1</span>]] . <span class="string">"\n"</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="array-reduce"><a href="#array-reduce" class="headerlink" title="array_reduce"></a>array_reduce</h1><p>用回调函数迭代地将数组简化为单一的值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span><span class="params">($carry, $item)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $carry += $item;</span><br><span class="line">    <span class="keyword">return</span> $carry;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">product</span><span class="params">($carry, $item)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $carry *= $item;</span><br><span class="line">    <span class="keyword">return</span> $carry;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>);</span><br><span class="line">$x = <span class="keyword">array</span>();</span><br><span class="line"></span><br><span class="line">var_dump(array_reduce($a, <span class="string">"sum"</span>)); <span class="comment">// int(15)</span></span><br><span class="line">var_dump(array_reduce($a, <span class="string">"product"</span>, <span class="number">10</span>)); <span class="comment">// int(1200), because: 10*1*2*3*4*5</span></span><br><span class="line">var_dump(array_reduce($x, <span class="string">"sum"</span>, <span class="string">"No data to reduce"</span>)); <span class="comment">// string(17) "No data to reduce"</span></span><br></pre></td></tr></table></figure>
+<h1 id="array-replace"><a href="#array-replace" class="headerlink" title="array_replace"></a>array_replace</h1><p>使用传递的数组替换第一个数组的元素</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$arr = [<span class="string">'111'</span>,<span class="string">'222'</span>,<span class="string">'333'</span>];</span><br><span class="line">$replace = [<span class="string">'哈哈'</span>,<span class="string">'哈哈1'</span>,<span class="string">'哈哈 2'</span>,<span class="string">'哈哈 3'</span>];</span><br><span class="line"></span><br><span class="line">print_r(array_replace($arr,$replace));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt; 哈哈</span><br><span class="line">    [<span class="number">1</span>] =&gt; 哈哈<span class="number">1</span></span><br><span class="line">    [<span class="number">2</span>] =&gt; 哈哈 <span class="number">2</span></span><br><span class="line">    [<span class="number">3</span>] =&gt; 哈哈 <span class="number">3</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-search"><a href="#array-search" class="headerlink" title="array_search"></a>array_search</h1><p>在数组中搜索给定的值，如果成功则返回首个相应的键名</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$array = <span class="keyword">array</span>(<span class="number">0</span> =&gt; <span class="string">'blue'</span>, <span class="number">1</span> =&gt; <span class="string">'red'</span>, <span class="number">2</span> =&gt; <span class="string">'green'</span>, <span class="number">3</span> =&gt; <span class="string">'red'</span>);</span><br><span class="line"></span><br><span class="line">$key = array_search(<span class="string">'green'</span>, $array); <span class="comment">// $key = 2;</span></span><br><span class="line">$key = array_search(<span class="string">'red'</span>, $array);   <span class="comment">// $key = 1;</span></span><br></pre></td></tr></table></figure>
+<h1 id="array-slice"><a href="#array-slice" class="headerlink" title="array_slice"></a>array_slice</h1><p>从数组中取出一段</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$input = <span class="keyword">array</span>(<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>, <span class="string">"e"</span>);</span><br><span class="line"></span><br><span class="line">$output = array_slice($input, <span class="number">2</span>);      <span class="comment">// returns "c", "d", and "e"</span></span><br><span class="line">$output = array_slice($input, <span class="number">-2</span>, <span class="number">1</span>);  <span class="comment">// returns "d"</span></span><br><span class="line">$output = array_slice($input, <span class="number">0</span>, <span class="number">3</span>);   <span class="comment">// returns "a", "b", and "c"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// note the differences in the array keys</span></span><br><span class="line">print_r(array_slice($input, <span class="number">2</span>, <span class="number">-1</span>));</span><br><span class="line">print_r(array_slice($input, <span class="number">2</span>, <span class="number">-1</span>, <span class="keyword">true</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt; c</span><br><span class="line">    [<span class="number">1</span>] =&gt; d</span><br><span class="line">)</span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">2</span>] =&gt; c</span><br><span class="line">    [<span class="number">3</span>] =&gt; d</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="array-splice"><a href="#array-splice" class="headerlink" title="array_splice"></a>array_splice</h1><p>去掉数组中的某一部分并用其它值取代</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$input = <span class="keyword">array</span>(<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>);</span><br><span class="line">array_splice($input, <span class="number">2</span>);</span><br><span class="line"><span class="comment">// $input is now array("red", "green")</span></span><br><span class="line"></span><br><span class="line">$input = <span class="keyword">array</span>(<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>);</span><br><span class="line">array_splice($input, <span class="number">1</span>, <span class="number">-1</span>);</span><br><span class="line"><span class="comment">// $input is now array("red", "yellow")</span></span><br><span class="line"></span><br><span class="line">$input = <span class="keyword">array</span>(<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>);</span><br><span class="line">array_splice($input, <span class="number">1</span>, count($input), <span class="string">"orange"</span>);</span><br><span class="line"><span class="comment">// $input is now array("red", "orange")</span></span><br><span class="line"></span><br><span class="line">$input = <span class="keyword">array</span>(<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>);</span><br><span class="line">array_splice($input, <span class="number">-1</span>, <span class="number">1</span>, <span class="keyword">array</span>(<span class="string">"black"</span>, <span class="string">"maroon"</span>));</span><br><span class="line"><span class="comment">// $input is now array("red", "green",</span></span><br><span class="line"><span class="comment">//          "blue", "black", "maroon")</span></span><br><span class="line"></span><br><span class="line">$input = <span class="keyword">array</span>(<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>);</span><br><span class="line">array_splice($input, <span class="number">3</span>, <span class="number">0</span>, <span class="string">"purple"</span>);</span><br><span class="line"><span class="comment">// $input is now array("red", "green",</span></span><br><span class="line"><span class="comment">//          "blue", "purple", "yellow");</span></span><br></pre></td></tr></table></figure>
+<h1 id="array-unique"><a href="#array-unique" class="headerlink" title="array_unique"></a>array_unique</h1><p>移除数组中重复的值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$input = <span class="keyword">array</span>(<span class="string">"a"</span> =&gt; <span class="string">"green"</span>, <span class="string">"red"</span>, <span class="string">"b"</span> =&gt; <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"red"</span>);</span><br><span class="line">$result = array_unique($input);</span><br><span class="line">print_r($result);</span><br></pre></td></tr></table></figure>
+<h1 id="array-values"><a href="#array-values" class="headerlink" title="array_values"></a>array_values</h1><p>返回数组中所有的值</p>
+<h1 id="array-walk"><a href="#array-walk" class="headerlink" title="array_walk"></a>array_walk</h1><p> 使用用户自定义函数对数组中的每个元素做回调处理</p>
+<h1 id="array-walk-recursive"><a href="#array-walk-recursive" class="headerlink" title="array_walk_recursive"></a>array_walk_recursive</h1><p> 对数组中的每个成员递归地应用用户函数</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$sweet = <span class="keyword">array</span>(<span class="string">'a'</span> =&gt; <span class="string">'apple'</span>, <span class="string">'b'</span> =&gt; <span class="string">'banana'</span>);</span><br><span class="line">$fruits = <span class="keyword">array</span>(<span class="string">'sweet'</span> =&gt; $sweet, <span class="string">'sour'</span> =&gt; <span class="string">'lemon'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test_print</span><span class="params">($item, $key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"$key holds $item\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">array_walk_recursive($fruits, <span class="string">'test_print'</span>);</span><br><span class="line"></span><br><span class="line">a holds apple</span><br><span class="line">b holds banana</span><br><span class="line">sour holds lemon</span><br></pre></td></tr></table></figure>
+<p> 注意上例中的键 ‘sweet’ 并没有显示出来。任何其值为 array 的键都不会被传递到回调函数中去。</p>
+<h1 id="arsort"><a href="#arsort" class="headerlink" title="arsort"></a>arsort</h1><p> 对数组进行逆向排序并保持索引关系</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$fruits = <span class="keyword">array</span>(<span class="string">"d"</span> =&gt; <span class="string">"lemon"</span>, <span class="string">"a"</span> =&gt; <span class="string">"orange"</span>, <span class="string">"b"</span> =&gt; <span class="string">"banana"</span>, <span class="string">"c"</span> =&gt; <span class="string">"apple"</span>);</span><br><span class="line">arsort($fruits);</span><br><span class="line"><span class="keyword">foreach</span> ($fruits <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"$key = $val\n"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="asort"><a href="#asort" class="headerlink" title="asort"></a>asort</h1><p> 对数组进行排序并保持索引关系</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> $fruits = <span class="keyword">array</span>(<span class="string">"d"</span> =&gt; <span class="string">"lemon"</span>, <span class="string">"a"</span> =&gt; <span class="string">"orange"</span>, <span class="string">"b"</span> =&gt; <span class="string">"banana"</span>, <span class="string">"c"</span> =&gt; <span class="string">"apple"</span>);</span><br><span class="line">asort($fruits);</span><br><span class="line"><span class="keyword">foreach</span> ($fruits <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"$key = $val\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = apple</span><br><span class="line">b = banana</span><br><span class="line">d = lemon</span><br><span class="line">a = orange</span><br></pre></td></tr></table></figure>
+<h1 id="compact"><a href="#compact" class="headerlink" title="compact"></a>compact</h1><p>  建立一个数组，包括变量名和它们的值</p>
+  <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$city  = <span class="string">"San Francisco"</span>;</span><br><span class="line">$state = <span class="string">"CA"</span>;</span><br><span class="line">$event = <span class="string">"SIGGRAPH"</span>;</span><br><span class="line"></span><br><span class="line">$location_vars = <span class="keyword">array</span>(<span class="string">"city"</span>, <span class="string">"state"</span>);</span><br><span class="line"></span><br><span class="line">$result = compact(<span class="string">"event"</span>, <span class="string">"nothing_here"</span>, $location_vars);</span><br><span class="line">print_r($result);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/07/黑苹果安装记录/" rel="next" title="黑苹果安装记录">
+                <i class="fa fa-chevron-left"></i> 黑苹果安装记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/18/接口安全加密的几种方式/" rel="prev" title="接口安全加密的几种方式">
+                接口安全加密的几种方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#array-change-key-case"><span class="nav-number">1.</span> <span class="nav-text">array_change_key_case</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-chunk"><span class="nav-number">2.</span> <span class="nav-text">array_chunk</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-column"><span class="nav-number">3.</span> <span class="nav-text">array_column</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-combine"><span class="nav-number">4.</span> <span class="nav-text">array_combine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-count-values"><span class="nav-number">5.</span> <span class="nav-text">array_count_values</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-diff-assoc"><span class="nav-number">6.</span> <span class="nav-text">array_diff_assoc</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-fill-keys"><span class="nav-number">7.</span> <span class="nav-text">array_fill_keys</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-fill"><span class="nav-number">8.</span> <span class="nav-text">array_fill</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-filter"><span class="nav-number">9.</span> <span class="nav-text">array_filter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-flip"><span class="nav-number">10.</span> <span class="nav-text">array_flip</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-key-exists"><span class="nav-number">11.</span> <span class="nav-text">array_key_exists</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-key-first"><span class="nav-number">12.</span> <span class="nav-text">array_key_first</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-key-last"><span class="nav-number">13.</span> <span class="nav-text">array_key_last</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-keys"><span class="nav-number">14.</span> <span class="nav-text">array_keys</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-map"><span class="nav-number">15.</span> <span class="nav-text">array_map</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-merge"><span class="nav-number">16.</span> <span class="nav-text">array_merge</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-merge-recursive"><span class="nav-number">17.</span> <span class="nav-text">array_merge_recursive</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-pad"><span class="nav-number">18.</span> <span class="nav-text">array_pad</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-rand"><span class="nav-number">19.</span> <span class="nav-text">array_rand</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-reduce"><span class="nav-number">20.</span> <span class="nav-text">array_reduce</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-replace"><span class="nav-number">21.</span> <span class="nav-text">array_replace</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-search"><span class="nav-number">22.</span> <span class="nav-text">array_search</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-slice"><span class="nav-number">23.</span> <span class="nav-text">array_slice</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-splice"><span class="nav-number">24.</span> <span class="nav-text">array_splice</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-unique"><span class="nav-number">25.</span> <span class="nav-text">array_unique</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-values"><span class="nav-number">26.</span> <span class="nav-text">array_values</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-walk"><span class="nav-number">27.</span> <span class="nav-text">array_walk</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-walk-recursive"><span class="nav-number">28.</span> <span class="nav-text">array_walk_recursive</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#arsort"><span class="nav-number">29.</span> <span class="nav-text">arsort</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#asort"><span class="nav-number">30.</span> <span class="nav-text">asort</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#compact"><span class="nav-number">31.</span> <span class="nav-text">compact</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

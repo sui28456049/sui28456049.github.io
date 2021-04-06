@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="进程创建过程创建是通过fork()系统调用实现的。 新创建的进程称为子进程，启动该进程的进程(或执行开始时的进程)称为父进程。 fork()系统调用返回三个值之一 -  表示错误的负值，即创建子进程失败。 子进程则返回一个零。 父进程则返回正值。 该值是新创建的子进程的进程ID。  123456789101112131415161718192021222324252627282930#inclu">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程间的相互通信">
+<meta property="og:url" content="http://sui28456049.github.io/2018/04/04/进程间的相互通信/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="进程创建过程创建是通过fork()系统调用实现的。 新创建的进程称为子进程，启动该进程的进程(或执行开始时的进程)称为父进程。 fork()系统调用返回三个值之一 -  表示错误的负值，即创建子进程失败。 子进程则返回一个零。 父进程则返回正值。 该值是新创建的子进程的进程ID。  123456789101112131415161718192021222324252627282930#inclu">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.693Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程间的相互通信">
+<meta name="twitter:description" content="进程创建过程创建是通过fork()系统调用实现的。 新创建的进程称为子进程，启动该进程的进程(或执行开始时的进程)称为父进程。 fork()系统调用返回三个值之一 -  表示错误的负值，即创建子进程失败。 子进程则返回一个零。 父进程则返回正值。 该值是新创建的子进程的进程ID。  123456789101112131415161718192021222324252627282930#inclu">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2018/04/04/进程间的相互通信/">
+
+
+
+
+
+  <title>进程间的相互通信 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2018/04/04/进程间的相互通信/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">进程间的相互通信</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-04T09:19:42+08:00">
+                2018-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="进程创建"><a href="#进程创建" class="headerlink" title="进程创建"></a>进程创建</h1><p>过程创建是通过<code>fork()</code>系统调用实现的。 新创建的进程称为子进程，启动该进程的进程(或执行开始时的进程)称为父进程。</p>
+<p><code>fork()</code>系统调用返回三个值之一 -</p>
+<ul>
+<li>表示错误的负值，即创建子进程失败。</li>
+<li>子进程则返回一个零。</li>
+<li>父进程则返回正值。 该值是新创建的子进程的进程ID。</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">   pid_t pid, mypid, myppid;</span><br><span class="line">   pid = getpid();</span><br><span class="line">   printf(<span class="string">"Before fork: Process id is %d\n"</span>, pid);</span><br><span class="line">   pid = fork();</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      perror(<span class="string">"fork() failure\n"</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">//子进程</span></span><br><span class="line">      printf(<span class="string">"这是子进程\n"</span>);</span><br><span class="line">      mypid = getpid();</span><br><span class="line">      myppid = getppid();</span><br><span class="line">      printf(<span class="string">"子进程的 PID 是 %d and PPID is %d\n"</span>, mypid, myppid);</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123; <span class="comment">// Parent process </span></span><br><span class="line">      sleep(<span class="number">10</span>);</span><br><span class="line">      printf(<span class="string">"这是父进程\n"</span>);</span><br><span class="line">      mypid = getpid();</span><br><span class="line">      myppid = getppid();</span><br><span class="line">      printf(<span class="string">"父进程的PID是 %d and PPID is %d\n"</span>, mypid, myppid);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译执行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc test.c -o <span class="built_in">test</span></span><br><span class="line">$ ./<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<h1 id="子进程监视"><a href="#子进程监视" class="headerlink" title="子进程监视"></a>子进程监视</h1><h2 id="孤儿进程"><a href="#孤儿进程" class="headerlink" title="孤儿进程"></a>孤儿进程</h2><p>如果父进程早于子进程完成其任务，然后退出，会发生什么情况？ 现在谁将是子进程的父进程？ 子进程的父进程是初始进程，它是启动所有任务的第一个进程。(init 1 ,被系统所收留)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">int</span> pid;</span><br><span class="line">   pid = fork();</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Child process</span></span><br><span class="line">   <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">      system(<span class="string">"ps -ef|grep fork"</span>);</span><br><span class="line">      sleep(<span class="number">10</span>);</span><br><span class="line">      system(<span class="string">"ps -ef|grep fork"</span>);</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      sleep(<span class="number">3</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译执行结果:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root      2877  2674  0 09:42 pts/0    00:00:00 ./fork</span><br><span class="line">root      2878  2877  0 09:42 pts/0    00:00:00 ./fork</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">root      2878     1  0 09:42 pts/0    00:00:00 ./fork</span><br></pre></td></tr></table></figure>
+<p>刚开始 创建了子进程 2878 ,其父进程为 2877 ,然而父进程等待3秒后退出,而子进程等待10秒,子进程变成孤儿进程;</p>
+<h2 id="监视子进程"><a href="#监视子进程" class="headerlink" title="监视子进程"></a>监视子进程</h2><p><code>为了避免父进程优先退出,子进程变成孤儿进程这种情况,父进程监视等待子进程</code></p>
+<p>监视子进程的系统调用方式 -</p>
+<ul>
+<li><em>wait()</em>                     <code>wait()</code>系统调用暂停当前进程的执行并无限期地等待，直到其中一个子进程终止。 </li>
+<li><em>waitpid()</em>                <code>waitpid()</code>系统调用暂停当前进程的执行并无限期地等待，直到指定的子项(按照pid值)终止。</li>
+<li><em>waitid()</em></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">int</span> pid;</span><br><span class="line">   <span class="keyword">int</span> status;</span><br><span class="line">   pid = fork();</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Child process</span></span><br><span class="line">   <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">      system(<span class="string">"ps -ef"</span>);</span><br><span class="line">      sleep(<span class="number">10</span>);</span><br><span class="line">      system(<span class="string">"ps -ef"</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">3</span>; <span class="comment">//exit status is 3 from child process</span></span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      sleep(<span class="number">3</span>);</span><br><span class="line">      wait(&amp;status);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"In parent process: exit status from child is decimal %d, hexa %0x\n"</span>, status, status);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>wait 函数等待子进程调用完毕后退出;</p>
+<p><code>wait()</code>系统调用有限制，例如它只能等到下一个子进程退出。 如果需要等待一个特定的子进程，那么使用<code>wait()</code>是不可能的，但是可以使用<code>waitpid()</code>系统调用。</p>
+<h1 id="其他进程"><a href="#其他进程" class="headerlink" title="其他进程"></a>其他进程</h1><h2 id="僵尸进程"><a href="#僵尸进程" class="headerlink" title="僵尸进程"></a>僵尸进程</h2><p>有两个进程，即父进程和子进程。 父进程负责等待子进程，然后清理进程表中的子进程入口。 如果父进程没有准备好等待子进程，同时子进程就完成工作并退出呢？ 这种情况时，<code>子进程</code>将成为僵尸进程。 当然，在父进程准备好之后，僵尸进程就会被清除。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">int</span> pid;</span><br><span class="line">   pid = fork();</span><br><span class="line">   <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">      system(<span class="string">"ps -f"</span>);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"子进程: pid is %d and ppid is %d\n"</span>,getpid(),getppid());</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"父进程: pid is %d and ppid is %d\n"</span>,getpid(),getppid());</span><br><span class="line">      sleep(<span class="number">10</span>);</span><br><span class="line">      system(<span class="string">"ps aux|grep Z"</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译执行结果:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">父进程: pid is 4867 and ppid is 2674</span><br><span class="line">root      2632  2630  0 4月02 pts/0   00:00:00 -bash</span><br><span class="line">root      2673  2632  0 4月02 pts/0   00:00:00 su root</span><br><span class="line">root      2674  2673  0 4月02 pts/0   00:00:00 bash</span><br><span class="line">root      4867  2674  0 10:25 pts/0    00:00:00 ./fork</span><br><span class="line">root      4868  4867  0 10:25 pts/0    00:00:00 ./fork</span><br><span class="line">root      4869  4868  0 10:25 pts/0    00:00:00 ps -f</span><br><span class="line"></span><br><span class="line">子进程: pid is 4868 and ppid is 4867</span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root      4868  0.0  0.0      0     0 pts/0    Z+   10:25   0:00 [fork] &lt;defunct&gt;</span><br><span class="line">root      4914  0.0  0.0 113112  1372 pts/0    S+   10:26   0:00 sh -c ps aux|grep Z</span><br></pre></td></tr></table></figure>
+<h2 id="守护进程"><a href="#守护进程" class="headerlink" title="守护进程"></a>守护进程</h2><p>内核守护进程通常以内核守护进程(ksoftirqd，kblockd，kswapd等)，打印守护进程(cupsd，lpd等)，文件服务守护进程(smbd，nmbd等)的字母“d” ，电子邮件守护进程(sendmail，popd，smtpd等)，远程登录和命令执行守护进程(sshd，in.telnetd等)，引导和配置守护进程(dhcpd等)，管理数据库守护进程(ypbind，ypserv等) ，udevd等)，init进程(init)，cron守护进程，atd守护进程等。</p>
+<p>创建守护进程大概需要五步:</p>
+<p><strong>第1步</strong> - 创建一个子进程。 现在我们有两个进程 - 父进程和子进程。通常流程是:<em>SHELL</em> -&gt; 父进程 -&gt; 子进程</p>
+<p><strong>第2步</strong> - 通过退出终止父进程。 子进程现在成为孤儿进程，由初始(<code>init</code>)进程接管。<br>现在，这个流程层次是:初始(<code>init</code>)进程 -&gt; 子进程。</p>
+<p><strong>第3步</strong> - 如果调用进程不是进程组头，则调用<code>setsid()</code>系统调用会创建一个新的会话。 现在调用进程成为新会话的组头。 这个进程将是这个新的进程组和这个新的进程中唯一的进程。</p>
+<p><strong>第4步</strong> - 将进程组ID和会话ID设置为调用进程的PID。</p>
+<p><strong>第5步</strong> - 关闭终端和外壳现在与应用程序断开连接的过程的默认文件描述符(标准输入，标准输出和标准错误)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">   <span class="keyword">pid_t</span> pid;</span><br><span class="line">   <span class="keyword">int</span> counter;</span><br><span class="line">   <span class="keyword">int</span> fd;</span><br><span class="line">   <span class="keyword">int</span> max_iterations;</span><br><span class="line">   <span class="keyword">char</span> buffer[<span class="number">100</span>];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (argc &lt; <span class="number">2</span>)</span><br><span class="line">   max_iterations = <span class="number">5</span>;</span><br><span class="line">   <span class="keyword">else</span> &#123;</span><br><span class="line">      max_iterations = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">      <span class="keyword">if</span> ( (max_iterations &lt;= <span class="number">0</span>) || (max_iterations &gt; <span class="number">20</span>) )</span><br><span class="line">      max_iterations = <span class="number">10</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   pid = fork();</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 创建子进程失败</span></span><br><span class="line">   <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      perror(<span class="string">"fork error\n"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 子进程</span></span><br><span class="line">   <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">      fd = open(<span class="string">"/tmp/DAEMON.txt"</span>, O_WRONLY|O_CREAT|O_TRUNC, <span class="number">0644</span>);</span><br><span class="line">      <span class="keyword">if</span> (fd == <span class="number">-1</span>) &#123;</span><br><span class="line">         perror(<span class="string">"daemon txt file open error\n"</span>);</span><br><span class="line">         <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"子进程: pid is %d and ppid is %d\n"</span>, getpid(), getppid());</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"\n会话前的子进程\n"</span>);</span><br><span class="line">      <span class="built_in">sprintf</span>(buffer, <span class="string">"ps -ef|grep %s"</span>, argv[<span class="number">0</span>]);</span><br><span class="line">      system(buffer);</span><br><span class="line"></span><br><span class="line">      setsid();</span><br><span class="line"></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"\n成为会话后的子过程\n"</span>);</span><br><span class="line">      <span class="built_in">sprintf</span>(buffer, <span class="string">"ps -ef|grep %s"</span>, argv[<span class="number">0</span>]);</span><br><span class="line">      system(buffer);</span><br><span class="line">      close(STDIN_FILENO);</span><br><span class="line">      close(STDOUT_FILENO);</span><br><span class="line">      close(STDERR_FILENO);</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"父进程: pid is %d and ppid is %d\n"</span>, getpid(), getppid());</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"父进程: Exiting\n"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Executing max_iteration times</span></span><br><span class="line">   <span class="keyword">for</span> (counter = <span class="number">0</span>; counter &lt; max_iterations; counter++) </span><br><span class="line">   &#123;</span><br><span class="line">      <span class="built_in">sprintf</span>(buffer, <span class="string">"守护进程: pid is %d and ppid is %d\n"</span>, getpid(), getppid());</span><br><span class="line">      write(fd, buffer, <span class="built_in">strlen</span>(buffer));</span><br><span class="line">      sleep(<span class="number">2</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">strcpy</span>(buffer, <span class="string">"Done\n"</span>);</span><br><span class="line">   write(fd, buffer, <span class="built_in">strlen</span>(buffer));</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Can't print this as file descriptors are already closed</span></span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">"DoneDone\n"</span>);</span><br><span class="line">   close(fd);</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/24/mysql技巧-不定时更新/" rel="next" title="mysql技巧(不定时更新)">
+                <i class="fa fa-chevron-left"></i> mysql技巧(不定时更新)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/22/vue-基础实例/" rel="prev" title="Vue 基础实例">
+                Vue 基础实例 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程创建"><span class="nav-number">1.</span> <span class="nav-text">进程创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#子进程监视"><span class="nav-number">2.</span> <span class="nav-text">子进程监视</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#孤儿进程"><span class="nav-number">2.1.</span> <span class="nav-text">孤儿进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监视子进程"><span class="nav-number">2.2.</span> <span class="nav-text">监视子进程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他进程"><span class="nav-number">3.</span> <span class="nav-text">其他进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#僵尸进程"><span class="nav-number">3.1.</span> <span class="nav-text">僵尸进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#守护进程"><span class="nav-number">3.2.</span> <span class="nav-text">守护进程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

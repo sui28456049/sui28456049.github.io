@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="随腾龙">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="Blob对象一个 Blob对象表示一个不可变的, 原始数据的类似文件对象。Blob表示的数据不一定是一个JavaScript原生格式。 File 接口基于Blob，继承 blob功能并将其扩展为支持用户系统上的文件。 Blob构造函数1var blob = new Blob(data[, options])) 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。 Blob构造函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Blob 和 canvas 压缩图片">
+<meta property="og:url" content="http://sui28456049.github.io/2019/11/13/Blob 和canvas-压缩图片/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="Blob对象一个 Blob对象表示一个不可变的, 原始数据的类似文件对象。Blob表示的数据不一定是一个JavaScript原生格式。 File 接口基于Blob，继承 blob功能并将其扩展为支持用户系统上的文件。 Blob构造函数1var blob = new Blob(data[, options])) 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。 Blob构造函数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blob 和 canvas 压缩图片">
+<meta name="twitter:description" content="Blob对象一个 Blob对象表示一个不可变的, 原始数据的类似文件对象。Blob表示的数据不一定是一个JavaScript原生格式。 File 接口基于Blob，继承 blob功能并将其扩展为支持用户系统上的文件。 Blob构造函数1var blob = new Blob(data[, options])) 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。 Blob构造函数">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/11/13/Blob 和canvas-压缩图片/">
+
+
+
+
+
+  <title>Blob 和 canvas 压缩图片 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/11/13/Blob 和canvas-压缩图片/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Blob 和 canvas 压缩图片</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-13T10:00:06+08:00">
+                2019-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="Blob对象"><a href="#Blob对象" class="headerlink" title="Blob对象"></a>Blob对象</h1><p>一个 Blob对象表示一个不可变的, 原始数据的类似文件对象。Blob表示的数据不一定是一个JavaScript原生格式。<br> <code>File</code> 接口基于Blob，继承 blob功能并将其扩展为支持用户系统上的文件。</p>
+<h2 id="Blob构造函数"><a href="#Blob构造函数" class="headerlink" title="Blob构造函数"></a>Blob构造函数</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> blob = <span class="keyword">new</span> Blob(data[, options]))</span><br></pre></td></tr></table></figure>
+<p>返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。</p>
+<p>Blob构造函数接受两个参数：</p>
+<p>参数data是一组数据，所以必须是数组，即使只有一个字符串也必须用数组装起来.</p>
+<p>参数options是对这一Blob对象的配置属性，目前也只有一个type也就是相关的MIME需要设置 type的值： ‘text/csv,charset=UTF-8’ 设置为csv格式，并设置编码为UTF-8，’text/html’ 设置成html格式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var blob = new Blob([&apos;啦啦啦啦,我是Blob&apos;],&#123;type: &apos;text/html&apos;&#125;);</span><br><span class="line">	console.log(blob)</span><br><span class="line">	</span><br><span class="line">	Blob &#123;size: 23, type: &quot;text/html&quot;&#125;</span><br><span class="line">	size: 23</span><br><span class="line">	type: &quot;text/html&quot;</span><br><span class="line">	__proto__: Blob</span><br></pre></td></tr></table></figure>
+<h2 id="URL-createObjectURL"><a href="#URL-createObjectURL" class="headerlink" title="URL.createObjectURL()"></a>URL.createObjectURL()</h2><p>URL.createObjectURL() 静态方法会创建一个 DOMString，其中包含一个表示参数中给出的对象的URL。<br>这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的URL 对象表示指定的 File 对象或 Blob 对象。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objectURL = URL.createObjectURL(blob);</span><br></pre></td></tr></table></figure>
+<p>使用URL.createObjectURL()函数可以创建一个Blob URL，参数blob是用来创建URL的File对象或者Blob对象，返回值格式是：blob://URL。</p>
+<h2 id="URL-revokeObjectURL"><a href="#URL-revokeObjectURL" class="headerlink" title="URL.revokeObjectURL()"></a>URL.revokeObjectURL()</h2><p>URL.revokeObjectURL() 静态方法用来释放一个之前通过调用 URL.createObjectURL() 创建的已经存在的 URL 对象。当你结束使用某个 URL 对象时，应该通过调用这个方法来让浏览器知道不再需要保持这个文件的引用了。</p>
+<h2 id="Blob的使用"><a href="#Blob的使用" class="headerlink" title="Blob的使用"></a>Blob的使用</h2><h3 id="使用Blob最简单的方法就是创建一个URL来指向Blob"><a href="#使用Blob最简单的方法就是创建一个URL来指向Blob" class="headerlink" title="使用Blob最简单的方法就是创建一个URL来指向Blob"></a>使用Blob最简单的方法就是创建一个URL来指向Blob</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;a download=<span class="string">"data.txt"</span> id=<span class="string">"BlobEle"</span>&gt;下载&lt;<span class="regexp">/a&gt;   </span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">	var data= 'Hello world!';  </span></span><br><span class="line"><span class="regexp">	var blob = new Blob([data], &#123;   </span></span><br><span class="line"><span class="regexp">	  type: 'text/</span>html,charset=UTF<span class="number">-8</span><span class="string">'   </span></span><br><span class="line"><span class="string">	&#125;);</span></span><br><span class="line"><span class="string">	window.URL = window.URL || window.webkitURL; </span></span><br><span class="line"><span class="string">	document.querySelector("#BlobEle").href = URL.createObjectURL(blob);</span></span><br></pre></td></tr></table></figure>
+<h3 id="Blob-响应"><a href="#Blob-响应" class="headerlink" title="Blob 响应"></a>Blob 响应</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// blob 图片</span></span><br><span class="line">	<span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">	xhr.open(<span class="string">'GET'</span>, <span class="string">'http://127.0.0.1:8848/bootstrap/img/sui.png'</span>, <span class="literal">true</span>);</span><br><span class="line">	xhr.responseType = <span class="string">'blob'</span>;</span><br><span class="line">	xhr.onload = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">	  <span class="keyword">if</span> (<span class="keyword">this</span>.status == <span class="number">200</span>) &#123;</span><br><span class="line">	    <span class="keyword">var</span> blob = <span class="keyword">this</span>.response;</span><br><span class="line">	    <span class="keyword">var</span> img = <span class="built_in">document</span>.createElement(<span class="string">'img'</span>);</span><br><span class="line">	    <span class="keyword">var</span> URL = <span class="built_in">window</span>.URL || <span class="built_in">window</span>.webkitURL;  <span class="comment">//兼容处理</span></span><br><span class="line">		</span><br><span class="line">	    <span class="keyword">var</span> objectUrl = URL.createObjectURL(blob);</span><br><span class="line">	    <span class="comment">// img.onload = function(e) &#123;</span></span><br><span class="line">	    <span class="comment">//   window.URL.revokeObjectURL(img.src); // 释放 url.</span></span><br><span class="line">	    <span class="comment">// &#125;;</span></span><br><span class="line">		<span class="built_in">console</span>.log(objectUrl)</span><br><span class="line">	    img.src = objectUrl;</span><br><span class="line">	    <span class="built_in">document</span>.body.appendChild(img);</span><br><span class="line">	  &#125;</span><br><span class="line">	&#125;;</span><br><span class="line">	</span><br><span class="line">	xhr.send();</span><br></pre></td></tr></table></figure>
+<h2 id="前端图片canvas，file，blob，DataURL等格式转换"><a href="#前端图片canvas，file，blob，DataURL等格式转换" class="headerlink" title="前端图片canvas，file，blob，DataURL等格式转换"></a>前端图片canvas，file，blob，DataURL等格式转换</h2><h3 id="利用URL-createObjectURL"><a href="#利用URL-createObjectURL" class="headerlink" title="利用URL.createObjectURL()"></a>利用URL.createObjectURL()</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>base<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"file"</span> &gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"img"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> $img = <span class="built_in">document</span>.getElementById(<span class="string">'img'</span>)</span></span><br><span class="line"><span class="javascript">        <span class="built_in">document</span>.querySelector(<span class="string">'#file'</span>).onchange = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(e.target.files[<span class="number">0</span>])</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> file = e.target.files[<span class="number">0</span>]</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> fileUrl = <span class="built_in">window</span>.URL.createObjectURL(file)</span></span><br><span class="line"><span class="undefined">            $img.src = fileUrl</span></span><br><span class="line"><span class="javascript">            img.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="comment">// 手动回收</span></span></span><br><span class="line"><span class="undefined">                URL.revokeObjectURL(fileUrl)</span></span><br><span class="line"><span class="undefined">            &#125;</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"> 结果:</span><br><span class="line"> <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"blob:http://127.0.0.1:8848/624ada2a-6138-4dc6-86c1-1348f53820ff"</span> <span class="attr">id</span>=<span class="string">"img"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="利用FileReader-readAsDataURL"><a href="#利用FileReader-readAsDataURL" class="headerlink" title="利用FileReader.readAsDataURL()"></a>利用FileReader.readAsDataURL()</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>base<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"file"</span> &gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"img"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">		<span class="keyword">let</span> $img = <span class="built_in">document</span>.getElementById(<span class="string">'img'</span>)</span></span><br><span class="line"><span class="undefined">		</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.querySelector(<span class="string">'#file'</span>).onchange = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		    <span class="built_in">console</span>.log(e.target.files[<span class="number">0</span>])</span></span><br><span class="line"><span class="javascript">		    <span class="keyword">let</span> file = e.target.files[<span class="number">0</span>]</span></span><br><span class="line"><span class="javascript">				<span class="comment">// 判断是否支持FileReader</span></span></span><br><span class="line"><span class="javascript">			      <span class="keyword">if</span> (!file || !<span class="built_in">window</span>.FileReader) <span class="keyword">return</span></span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 创建一个reader</span></span></span><br><span class="line"><span class="javascript">			      <span class="keyword">var</span> reader = <span class="keyword">new</span> FileReader()</span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 将图片转成base64格式</span></span></span><br><span class="line"><span class="undefined">			      reader.readAsDataURL(file)</span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 读取成功后的回调</span></span></span><br><span class="line"><span class="javascript">			      reader.onloadend = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">					<span class="keyword">let</span> result = <span class="keyword">this</span>.result</span></span><br><span class="line"><span class="undefined">			        $img.src = result</span></span><br><span class="line"><span class="javascript">			        <span class="built_in">console</span>.log(<span class="string">'============未压缩图片==========='</span>)</span></span><br><span class="line"><span class="javascript">					<span class="built_in">console</span>.log(result.length/<span class="number">1000</span>/<span class="number">1000</span> + <span class="string">'M'</span>)</span></span><br><span class="line"><span class="javascript">			        <span class="built_in">console</span>.log(<span class="string">'============未压缩图片==========='</span>)</span></span><br><span class="line"><span class="undefined">				&#125;		    </span></span><br><span class="line"><span class="undefined">		&#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"> 结果: </span><br><span class="line"> <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAFAAfQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDp3gO49etQtAfetcRZJ+tNNv7VXtLFchlrCSvU5FQSwNuzzWysGG9jSyWm4dKpVLMHDQwPKb3pPKOe9a7WmD0pPsvHStFVI5DHMJz1NL5J961Ta89KUW2OcdKbqi9mZLRFVxULRn3rUkhyelMFtntTUxOJmeSTTvJI71pi3A7UpgA5NHtRchmiE9T0pXOwYBq1IOwqrIpqk7iehSlLepqq4PrV51zUJiJ6Ct4uxjIouDULKa0jbHv0o+ze351qpozcWZflMegoFszetahiRevNRtIB0FPnb2FyJblIWgHLUpVI+gzT5HJquxppN7iulsNkkNVnYn1qZgTUZWtIpIiTZWZSaiMZq0RUbCrTIZWKYqNhVhhUZUntVIkrMDUZU1aMZ9KaY/WquFiqVNNINWSgHemFR6UXCxWK00rVgioyKLhYhK00ipitMIp3AhK00ipiKaRQBCRTSKlIppFAWI8UmKkxTSKQWIyKTFPIpCKAGUlPINIQaBjMUlPxSYpDG0lOpKAEpKdSUDEpKWigYlJS4opAJiilooGJSUuKKQCUUUUAKKKBRQB9U+R8xwO9O8gEdKu+SQx+tSLDmvlXI9yxlm29qkWDcOlaPkZ7U5LfB6UuYDJa056VG1rjtW6bbPOKia256U+cLIwjbe1MlgwNoFbhtsAnFV2ttzZxVKoKxhm256Uv2b2ra+yD0pjQY7VXtRcpjm329qrSx1syRe1Vngz2q4yJaMSSM9AKrtbsx6VuNbqOtVpFVa6Iz7GMomV9mA6imNGF9BV2V/SqUmTW0bszdkQOyr0FV5JCaneM+lRGBz2rWKRk2yo7HvUDH2q+bRz2NNNke4rVSRm02ZrDNMKn0rTNqBUbQgdqpTRPKzNMbelMMLelaLjHaoHBNWpMlopGE9zTGiUd6ttGTUZhJqkySoVUdqjY+gq4YPamG39qd0KzKLZqJlNaBt/amGCqUkHKzPK0wrWgYRTDEKfOHKUChphj9qvmMVGUHpRzBylIxGmmI1cK0wg0cwrFQxGmmKrRU+lRlTTuOxXMQppiFTkUw0XYEJQUwoPSpiKYRQBGQKYakK0hWmBEabipSKQrQIiK00rUuKTFAWIttIRUu2k20ARYoxUm2k20AR4pMVJikxSGMxSYp+KTFADcUmKfikxQMbijFLijFADaMUuKMUguIKKcBRTC59jeWNx+tPWEdqeo5NTKtfIHuNkSwe1SCH2qdVp+KtQuQ5EAipDADVnFFaezJ5mUHg7CojbAdq0ioPao3jzUOFilMy3jA6Cq7wk9q1miqF4qnYtO5kPCB1qrJH6Ctp4Krvbj0pqQmYMsRPaqb2rMa6Nrf2qu9qTW0atiHG5zxsfWozZKK32tPaoWtBWyreZDgYZtlHao2hA6CtprVaha2T1q1UIcDGaOoWiraa3jFRNFGOxrRVCHAxGhNQvbk9q3GjXstRmP0WtFVIdMwmtCexqM2Z/u1ush9BUTRtVqqyXTRim0b+7TDaN6VsNEfWoGhPrVKoyeRGWbQ+wqNrX1YVptCaiaE1amLlMxrcf3qiaBfU/lWm0J9KhaH2qlImxmtCnoaiaNR/DWi8PtULRe1WmJooMg/uiomX6flV9oj6VC0J9KpMllFl96iZfc1eaA+lRtAfSqTRJRZDUbIavNCfSmGL2qrhYoFDTDHV4xe1MMVO4WKRSmlKuGOmmOi4WKRSkK1bMdNMdFwsVClNKVaMdNKUXCxVKGk2VZMdNMdO4WK22kK1Z8uk8ui4WK22kK1Y2UmylcdivtpNtWNlJsouFiDbSbam2UbKLhYgK0m2p9lJsouFiDbSban2Um2i4WINtG2pttJtpXCxFtoqUJRTuFj7LAGTUqiogeakVq+Riz2HclFLTQaXNdEJIhi0UUVoIKQ0tIamWwEbVE2KmIqJhXLI0iQOR6VA59hVlkqFkqSyqzH0qFsnvVtlqJlq0wKbJmo2iq4VqMrVpiZSaEGo2txV0r7Uwr7VakTYoNbio2t19K0SvtTCntVqTJaM1rZaia2FabJ7VGU9qtTZPKZjWwqJrb2rUaM+lRtFVqbJcTKa39qiaAelarRe1RNF7VamQ4mU0HtULQe1a7Re1RtF7VamTymO0PtUTQe1bDRD0qJoR6VamLlMZrcelRNbj0rYaAelRNB7VamS4mOYB6VE1uPSthoPaomg9qtTFymM1uPSozCPStdreozb+1Upi5DIaAelRNCPStdrf2qJrf2qlMnkMhofao2h9q12t6ia3NVzi5DIMPtTDD7VrNbmmNbn0pqYuQyTD7Uww+1apt6jaA+lVzi5TLMB9KaYfatMwGozD7U+cOUzjD7U0w1omD2phgo5g5TPMNNMNaBhphhp8wcpQMVNMVXzDTTCaOYfKUDFSGKrpippip8wcpT8ummOrvlU3yqOYOUp+XSGOrhippjouHKUzHSGOrnle1NMftRcOUqFKTy/arZipPK9qVwsVQntRVoRe1FO4WPrbdyacGqvu+Y/Wnhq+OuezyllWqQNmqoY1KDiqUmjOUSfNGah30ger9syeUnzSE0zeKQvmj2rYcopNMNBNNLVLkUkBIphAoLU0mlcuw1lqJlqRmphancdiIoKYYxUxIph+tO4WIGiqMxn0qwaYTVqTFylZo/Y0wp7VbJHcU0hTVqYuUqFKYUq2VB70wrTUxchUKUwpVsj2phWqUxchTKe1MZKuFKYVHpVqYuQotHUbRVfKD0phSqVQXIZ7RVG0Oa0Cg9KYUHpVKoLkM5oaiaGtIoKYYxVqYezM1oKjaCtMxiozEPSnzi9mZbQ1G0FahiFMaIVSqE+zMpoPao2t/atVoaiaEVXtA9mZRg9qjaD2rVaEVE0PtVKoL2ZlNb+1RtB7VqmGmND7VSmL2RktB7VGYPatZoR6VGYR6U1MXszKaD2qM249K1jCPSmGEVSmL2ZktB7VGYK1jCPSmGEVSmHszJMPtTTB7VqGGmGGnzhyGWYPammH2rTMVMMVPnFyGYYfammH2rSMVMMVPmDkM4w+1NMPtWiYvamGL2p84chnmH2phh9q0TH7Uwx+1PmFyGeYfakMXtV8x+1NMYp8wuQoeVSGKr5i9qaYqfMHIUhFxRV0RcUU7i5D6U7n608VTXUrN2O2dDz61YSVHGVZWHsc18rynpk6mnFqj3gCmtKvTI/Op5WIl3Um/NQGdQOo/OgSZ7U+UehaDUbqhEg9KN/tS5RWJt1ITUPmeop3mDFHKwsDU0k0u4GmkinyjuITTCaDIg7iojcR5xuH51SiFx5phpDOv95R+NRmcf3l/OqUWFx5NMJ5pjXKDqV/OoWvYx7/QVSiLmROaaTVY38YPQ4+lAvY29Pzq+Ri5kTk03JpnnjuKhlvI4lLOyoo/iY4FNQYcyLGTSE+1ZUviHTYiQ2oWoPp5gNQjxNpb/d1G2/FsfzqvZyFzo2Tg9qYQKqxXqTKGilSRT3Ugj9Kebg/3RRyMOdEpWo2B9KZ9oPdR+dIbnH8P60crDmQpqMig3PqtMNwP7n61Siw5kDCmEUpnT0NMM6+lUkw5kIajNDTr/dNRm4X+6apRYudCkUwilM6ehqM3Cf3WquVhzICKYwoNwnoaaZ0PrT5WLmQ0imFak8xD600lT3p2HzIiK1GVFTnHrTGZB/FTsK6ICgqNkFWC6etRNLCDzIoPuapJi5kQmOmGOrBZCMg8e1NO31qrMLoqmOmGKrRK1GSPSqSYrorGKmGKrJb/AGaQlfSqSYuZFQxUwxVbOOy1Gc+gqkmJyRUMVMMVXMH+7SFf9mnZi5kUjFTDH7Vf8sGmmIUwuigY/ammL2q+YhTDGKpIV0UDH7Uhi9qumP2pNn+zTsTzIomL2ppj9qvmP2pPK/2aqwroorFxRV9YuOlFOwro7xcqTjj8atRTOnOTVdQNx7c1IThetfKuJ6ty6NXuI/48j0PNSJr4z+8iB/3TWOzH61E/AzWsYtEux0q6zZOOXZP94VaiuoJceXOh+jVw8hbAxQrsta8pFkd/k+pNKCcdTXExXcyY2Sup9mq/Fq14v/LYn6gGpeguU6bJ7k0ZxXPnWbtf+eZ+q1IuuzY+aCM/QkUtGKzN5WPY0rZYcsaw11/HW2/J/wD61TLrsZ6wMP8AgVFkgsy+0dRtHxVY6zCRzFJ+lRNrUC/8spf0ppoTTLRSmmPNVG1yDtDIfyqvJ4gRR8tqxPu+P6VoiXc0TH7U0xcdKxpPEc3/ACztUH+8xP8AhVC41rUJwR5ojB7RjH69aqxJ0U7QW6bppEjX1Y4rGufEFhCSI/MmP+yMD9awZUeVizsWY/xMcmq7wMO1WkJly98T3j5W2jSFezH5m/wrm7yW6vHL3M0krf7RzitMx561E0AraOhLRhNDUZjNbMlt7VA9v7VspGbRmJJNA4eKR0YdCpwa6Cx8balaALcql0nq3DfmKy3tz6VCYKrli9xXaO6tfHGlTjE6zW7f7S7h+YrZt9Tsrxd1vcxyD2b+leUGA0xoTUOiug+ZnsRdO7r+dMLxZ/1i/nXmFlrmo2JUCYyxj+CXkfn1FdFZ+KLK4wtwjW7ep+ZfzqXSaHznV7oieJE/MUGMHuPzrOQRzRiSN1dD0ZTkGkMJFTyj5i+0QHfFRMo9RVX94vRm/OnLLIv3vm+tPlYXJiqnuKjYJ/epfMVx6H3qN4yfemkIQmL++tRSSRIM5yfakeE1C0HrVpITY03kY6q2faojqTA8Q5Hu1SG39qYbcHtVpRFdkMmpuekI/E1Vkvbl+hVfoKvG1HpUZtRVrlJbZnyTXEgw0hx7cVXaEk8itJoVBqN1x0H51aaJdyiqyR/cdl+hp/n3IOfNc496n+oH507ER6sB9arQRD9ruP736CnC8nzkkH8KlEcZ6Op/Gl8lfUUWQXfcZ9tkP8K/lR9sbvGtKY0XqQKjZ419T9BRyoXNIk+15/5ZfrSG5bsgFQGdB0Rqje4c/cXaPpmnyIOZltbj+9GPwp32mDPzZX61kyCWT7zsR6ZqE23tVciFzs3PtFpj/XoPqab9ps8/6+P86wzbe1IbcAc8fWn7NB7Rm8JLZzhZkP0NOKx4++K5ljAp5kTPoDn+VAv/ACcCOSQ+w/8Ar0nGK3YKUn0Ol8pcZyKPKX1Fc2dfmQ48sP7tx/Ko38RXh4SOEe+0/wCNZucV1LSkdSIMjjFH2YntXES6zqTsT9pZf90Bf5VQluruY5luZZP95ycUKd9gt3PSUtWI+7RXmQZj/E35minzPsSe8Y5P1pHOBUzrgmoWFfPqJ6vMQE800k1KVFJjjpWqQnIrSL07U3FWHTpTSlUkRzCInvVhEBHWoVXFWUFTJDUhxQlaYq44NTqKa0eDmosVcj2+1KBipQuRS7APpRYVxFxilaMMKglu7e3ba8nzegGaZPqcUTBY1EnGSQeKTiFyVosDpUMkQx0q1DdQXEZZWxgZOazZ9URXwsLMvqTiqiJjjAM1G0Aoj1KFlO9GRh265qKW/c/6tAB6nmtLkA0Qx0qB4z6cVE885bJc/hU4ulIG9D9RVpktFdo/Wo2iHar2EkGUORUbR4rREMotF6io2hBq+V9qaYhTAzHts9qga19q1Wjx2phUHtVqTFYx2t+2KjNv7VrtDntUTQ+1aKRLRlG2FRtb1qmKojFVKQrFazu7rT33W8rKM8qeVP4V0Nv4lWYBZEWF+5PINYbRVGYabSYjp2nlk+bzCQem08VEwLHkn86wIpJ7c5ikK+3atC31UHC3C4/21/wpcvYLmks06HIckDseatR6iAMPGR9OaqLtkUOjAg9CDQVNLlC5prcCQZTaaaxJ7Vm4x7fSpo5nUYJyPelyjuTtvqB1Y9TUwnBHPFLw/Q09gKm5l4DGmszNVsxDtTDH7U7gUHjJNRGHJ5rRMY71E5jXqy1SkTYomCo2hAqzJcQqD82foKqPeLn5YyfcmrTE0BhHtTHVI+XYL9TUbTzyH5cKPYVBJCNxZn+b19afNYXLcfLeRR8AM59hiqUt/O2diKo+maVkDN87fRRSFMptxhR2o5hqKKhurkt/rj9KkW/ugAcqfqtO2BRhQKYygUc3YfKh41WUdYUb6cU46rIeBbqD2y1V9rHtgetJ5PPP60+di5EJLf3Mhxu2eyiqyxiVyZWduP4mq2IQp+4zAelOFuXbCxEH3qHK5SSRB5UcaYXCj260wEFNoIAHU+tTyQLGB5u4E9sURm3jGVDsw5B6Y/Co5dB3IRBu+58oA71DJFhjnge9XGYs2WOM9TnrUMjrjaKIxZLkik6AZJGT2qHyt3Bq0/JOTTdtdEYmTkRLEMUVZRfl+6aKrlFzHstveLcXM8R25VjtwfvCppECgkkADqT0rmJ4p4pTJbDDKchPNAqtcatfzxbLi1dEHUmXv6EV8pDHUnqj3HhpdDZudYt4jiIeaQeccCq1trS8LOuefvD/AArHtvNnlWKS2NuevmM42/mcU8w4d0LqHQ4KMcHPt61vHE05aXJdCSWx08d1BMFZJFAbgBuKn2jOMVyUTMkhBUMvdTV+N3VvMt3KN3XqK6LnO4m8UA57Uxbu1Emz7RHu9M1hTXNxMpjkkcZ6r2NVlhIPIoBI7KB4503RsGAOOKdLsjUF2C9uTXOWU7QhgHKAjBOaeLyC5nMQuo3l6bQ3X6VjKai9WUotm1JcwwxltysewB61iXVxLcPlzgDoo6UGPY1O27h0qgWhX8sOM9DQMj5WHTpUwXBx2pxUcKw59adgbI1ypz1Bp7RiQUmNpwePQ0oBU8ilYVytJAVPPagHbyOR6VfG10wetVpIjG3Aypq07ksjKh1ytJjAp2CvzLyO9O3Ag55H61exLIVDI26Pr6VajlWXg8N6VDt9OaUDnPQ+tUmSydo8UwoaVZiOG5FPyD0NO4iAx0wxe1WiKaV9qdxlMx+1RslXStRslUmDRSMYJqNovarhQU0rirUiLFFo/ammL2q8VGaRlJHbFWpCsZ7Q+1RNDx0rSINRsg71SkKxTikltmzGxA7jsa04b+KQAPlG/SqjRimGKqumS0bA2sMggj2o21lxu8Z4Jq0l2e+DTt2Jv3LWKcDioVuUPXg04uCOtS7opWZMJcd6jklkYcHA9qiLLyeaY8/Hyj86lloilbaeWJNVXkJ/h/OpXbqTTOCeTgUICuzn+6KjZjjGOas+XuPAGKRok5G3B/2TVXAptn1poAcAc/0q55UY5Csfc00xrx2o5kFiv5AIwm4nPpTWt2A6H+dWNoBwD9TSFcL1Jx6mldjsVREAfnB2+gODU4thsDpAEU/xyN1+lB4OQMn1xTlI375svx0JodwsRpCM5Kq6jqFzgH1qUqpQALhQPl9KieUrhR07LjiomkZRgDk0uSTE2kPMltB8hy7dclagkusgD+EdhUThmOajKGtVSXUzcmPe4aUEDAGMYPNVNgHQkfSpzFxTQhrWMUtiHqQEmTjNKIQPXNSlB6UEMwx0FUSRNAQM8fnTPJI9Kn2mjYWbmmIhCY6UVbWI47/lRTuOx3Nxpn7mRry8z5YDbUfJJ4+XGO9U7zwrLczGeJvKgU/MsblwmBnPfJ9hmqOtRTQJBf3BscQSgTNbxqrBM8DHGe3T8xWXb+L5b67iEqpEsbsQY1MXmA8dfpivjoUo8lt/M+olUXws320MtAkgnuNqj/XJll64/D0q3b2cljEsoZnxjZIYeRz0/pxWXN4u03S0bbJJPcqm2Igkxk9W7/QUrfEdAU+xSctEpMafKofoQxI5wOnXPFQsJzavQHJR6mvJGILvyLuFt20kSooG489ux/rTJEcSvHFYX5dVBH7nGc+/SsBPiHZWqSH7I0kzMSBu5U5JGG/pVX/hIdQ1Foo7JJRHJdebEkXLKc5weh4zWlKFSH2nYyapS1tqddLcWP2Jbl1m2E7MvHkq3ocdD7Gse7m1SC8229rBNDknG4qdvrznj6ZrCuNV1jTNfkkctHMZlIhc5EhycYx1Hb8662K61i3spLqbT4/PMWAkLIecYbhDkAtz6dPWiq6u6KUKb2VjM8RT7FW2eVliAy8tmrOCe6nKgisNbCCMwXttqqRSFgY1lUgjuMnnmuqj1SS6leaXSIeFIkjK4zwPx69KjXSdDmt5UlsEimddm9QVK98gnj8fpXHLFUeZpt/mW6aa0RrW80VxZxSyyR+YVG4q4wT6iptkeAQSM9OOtcHc+GNbtLyU6T5stsWBSRpgWA4PzAcHk4zjtW1D4iutMs44LixRroNtdVRiNxGRgds8dK66NeaSTakvLc55YdSbexvshByB+lIFL4DD8a4q+8SaxdyOtv5sJRiPL8vlTx8vHHWolm8X3UcgUSqqn5t5C5OcfjW08TKG6/EydBXtc7po2QkOOO1IRkeuaw9I1DW7ZT/aEUVzbYyQJArL9PWtWw1PT9UcpbTeVcg4a3m4bPt606WOpy+LT8iZYeS1RKAUHzEf4VMAHXDEFfWo8xSymJZohKOqlsU9IJhtZFyG9OhrdVIN6MycJLdEDwmNiV5U96Zs5z0NXUIdeRjt0qJ4GDdMj2rWMjNorYGSOVb0pNwPDdfWpmGflYDj1o8kMMEc449atNEEPBGDke9AJQ9eKGRoztPIpQFxxx7HvVXAlWUNwak4NVmC56UJKV4J4oAn2j1pjKKduVgCDz3ppOOtK47XGFPamOue1Pz9aYSfSqUgsRFOfSkOBUjMDTDimpBykZIphIqQ/SoyB6VSkLlGnFMOPUU8gZHP5UxwAf8AGqUyeUaceopvDblHDdBj1ppY5wgyaW2WUN5ig5U9T0FKdV20HGCvqDM8ICPy/oRzUcWoKzMCCAvGRyDVmeHfGzMc7upHUDvVBYo8fd2knCr/AHRURry7lujF9C99oZgCMEGmmTcQSprPkkaJyqNtCfeOOKEvCxG5SM9M966IVIyMZU5RLpbI4FNwzY6KB3NQiUN/hTi5KlcgD6VpoZ3ZaRbdEDO7se+B/KnGVW+5BhfV6pKpYna+Me1I6uowZAfxqHG73KUi2XjC7WAJ9ajJVmyGFVgT7D6d6a8rBcEY5z0FHKVzlgjJ4INIyknGCaijuOvWn+YCoYrx1O44o2He4148khulMYckZz9BU8YVui7gOu3JoCJt4Bz64NHMgsVSgYZ74pjIcA4/OrnkhcgMeR19KhMDnhWzxVqSE4sq7eCKbs4qyIpOgU/XFO+xTcZwM9ycVpzpdTPlZS2/hSeUW6AkfStFbeBHKvKhIq61tBGmQQ3fNRKtFFKm2ZENnuyzsFX86srp6b9oUk4z6/yqyIx1JUD0zmpkjjXaWdxkZ9M+1ZSrMtU0iuunw7C4hY4P8Q60jwIuAUjTPtk1LcTs7EKxVP8AeNVWXJ6jHeoUpPdlcqHh41GMk/TFFCJERyGz7UVV0Fjfnv8Aw3PpNxZl3ubiVgyMIX3p0IXpjAB65qlp8U9vHHcaJIkRlOHVkDKduQOeo6jjPeuYZdQlH2zTIbn7P/rI184CQY4PAIyeo6dq3dG8UJqF7A97e3c18sZ8sQonHHTocnPTOD6V4NXDTVpR0t5bntWS0f8AXocDr9jfnVLg3Evn3AdpZ2SPaoJOTg4xWS8UsUeZJdi4+7nJ/KvZNRvbC+tWn1C1knaLgwyptfAHU9Ceexrj2Hhi1juS0V7BO4KpD5a4HUhuRyOnHB96KOJdX3eRprc5alO2qZy1jFKSGWzcqSFVhGSfw/Sui03U7vS7KeQWxV3OA80ZUcNggdx7+4rLe9Wxk+0JOwDAjchBbP1zxx09Kmt2uNQVWSPOQzFdzKeuct/eHGc5710uCupPcinUcdVudRPrU5uor02en3AuNx2mPIRsgg/MB0z1z/SqVnqWtWq3Oq299FbqM74Ewdo3gHjp1APH+Ncfcz3duxeLcg28OQCRxz9Ks6VcX2uy+W0r4jAbeFBb5Bnrj0Hf9aThBJt6GsavM7HXXN5dXFpFINQglvJXEjoqbXAfkEcAdulbGmwao9h5s01tgKdq+YG83AycenUD29sVnWGqWMIa5uLa3uLiWRglxMCzomCdu0n5QWJ5GD75qvqmtxRW0cVoJo5Y3+R2clpCwG/uR1xyK5K1KjPRRN+aEVdM6PQLlsRzWceXwS0Qkxz3PPr/AEFdBPfKLc/b41tN7hAQMbSOme3T/wCtXAT+MLzTHC3l3BchrfgwDJDEk84wP4R17EeuRBbeIYJbCS2uofNG19ga4dig7Acjvzk5+lcNPB1oNyvbXb/gjdWPU7vUo54tsUcrvEcgbfuyA9OVUn26fjiuU1rTdcjjX/RpGV1803AHCnjI45Hbg4+nFZ9j4iXR7XIv5pRw0kJGMY4A69Oc8ceta+nePIJWQ6laRNCGOHJJbPGAR2HB/T8e2nKUm41YXS6ilVhNJbHGR6pqcJktxLP5f+tKpz8wHX+VbEOoabeSWtzrDyWl5H80dxCQN6g8E4H4V2tzo1j4mh8yGW3ELDMSqCoiYjDFQD1zzjIHH41w+p+AdVivZIrWEzRRgfvlGQRgnOCc449xmtOShVXuvVaENSilZ3N/VrS31ue3nt9ShTYoe5lij2l14684J+7+dTJrMekRG2imaRIlAaaSbI3EDIC+nU+2Otc5b6fqugXW27tmEci7ZVlXO4dSePcGtmSzsLo2txYI0caAkGVxIw7llz079azlTcPda06GkPe1tqTp41mjd3udPHlDlSuDkHp7Vo2vii2voikCCObICiQZXJ+lcJdaqLENDcW7SEA72LDLEnPbgYHFV7fUrB4d5hlhffmIiTnA654x3rOVCpUlvy+ZjKa5rOx19z4pk0u4e11iziTA3K8RPzDsR+NaNjrOnXlt5yXG1Tn5WGdv1IyBXMzT2t5p5jvlLRncscx2l1HB4zz3qsngeCeTfp2rxNC68RzMVIBAIzgdfw6VvzSpQvOdvxMnSUnojuvOtzGv+kRMWxtQtyfoaa6LnAyrejCuOv8AwteyvHE2u2sQiwq4Yg49T6//AFq3NP8AtttZJDFf2+o7e0rfMB7Y64/ClHMqatdpomWGu/d0L770IDDjtUec/wAX51VvfFVtpTG0vbN/tW3/AFQjI9+uT/WksvFWgX8Qw01rKeAZk+XIPTNd0MTzR5rOxlKhJOxa3FDwakS4zwaVsTxebE8NxH1DRPkkfTrVGRwD8ucdq0jUjNXi7mXLKO5olgRnNNLnsaz1uip69PWpRch+O9O4ydveoy1MZz/k0wyHODT5h2JGfioixppc+1M3nPT86fMFh+6o2bIxTDLjJzTd+eoNHMKzFDlCSp59atWsyqJFl3FWHXPQ/jVAsN3P61IXJUAcY7mpm01YqK1JpFlEZkCP5b872H3veqoZmcIuSx6AdqGumYLCZG8pTnrwKuLHZi2JjncSqeSRw30qOa25e5RkiUE+ZghCTj1PvVWRS0byPy7dD6AU+4lzJgE4+mBio5H3qCPl4O739h6CrTaBq5GlwGA3g+manWQ9VfIpsUAlDrg8Ln0FI1suAQxTjnvmto4hJ2Zi6LexN55xtPFO3Ec8HnOcdaqZkTABDD16YqbZdSIr7WZWOFPXP0rT6xTtdsy9jK+xM9yxG0KFH0qN7jIK+voMVctNCvbwE/6pQcEuD/QVvWvhnT7cBrt2mfuGOF/AD/GvNxOeYPDuzd35GscJOXkctCPMBUB3fGVVV5PtxWyuhTSRRSI4hfGSroG+ldLFNZW6mOBIkGOiDFVpLtkPzbzubgDA2/8A1vzrwa+e4is7048q9Ttp4WEFrqc5LZ+Io/l2I0R7RME/SmtYamoI+zOSRnlhx+tb7zTuqDzGjI5bZ3/OmhZMZDSbj3JzRDPq8F7yiP6rT7mGLTUVGXtJTkduajPmpkNbyL/vIav6rpmrX2Ft70RQlcOjDlj65/pWF/wjGshmVZIWJP8ArGc4H4YruoZ7GcbzaT+ZDw8ehc8wHjn8BTZYi5VGSTJwQNuau6T4VFqTNfTSXExOVCM0ar+RyfxrpftEycIsYxweSTWVXiKMXanDm+dhLDX3ZxqiK3ZT0Yc/dyaV75XUKzseeBiutE85PLlxn0x+XFKSxwMKD9B/hS/1jj9qm/vKWFXc51LQvGsyyII26Fmxz7+lQSWpADzXaIpH8Csx/lXSPGrfL5W7PHrUbWduzhZLQuD1cAYFVDP6b+JNDeE8znoIdP8Alae7kP8AeULtI/nV0vpEeFijMxI6lsEfngVfm0nTmX/j3KMT/eIqi2hWu4CG5cY+jCt45xhar1m1/XkR9WmtrF+28oQgLbKFHTcQSaKLWyEEOz7TL17HFFQ8fh7/AB/mT7Cr2PPLkvpwt/sdqzxtna29mzj8O/HbtVLQI4CJJW1QWLvkAbCWVgeATx9fwHWunl8R6fqFoGtwbaaKEIFXOw4GdvbB7dce1crpWkXeragsVpaTSJ5mQOg69c/1r6LFWU1ZXXY9GvLlqq2vby+47LbrdvC99fXum30EgPDTqX7AF1xluMD1HGaqT32iPCY7vR7cxuwDuZt8gGf4SvQjPQ/0qOCx03SJ7hZWlSPyxbzwTxEkMSMqrDIJI5HP6V2tpodvc6W72tpdW6RoqwtcW+3evHzAADn868itS5qrbTSXZmc4S6L72cDeeHdF065VNPm8+K42oWnKM2cZIHP+elaenaddLdx2CWElvAVcmUqDnjPUcenU9/atgXlqm+1t7dftUOW/eRkEYOMd8kg9PUCmadrqGxutTvFgRo5PKie4gO1VJb7v8JYHPHPSsHi6knybRWl3v66Eww0VrJq5VfQ5RLkKJrALln2lcnBHQ9cEA9ehpq32k2m2KwhisL4SBndlCq24YIzk4Poeh7jFFnfXuqyyRW1rA5VGdl3qqzZOCQOcAHPAI7VZsriHSkEltYQLf3PCoV3oG4wCd2OOo/OslVn7RpzT/QqMYxlaBxmvWd/fSnUrW0a5tSqtI8EbAM5HzE4yByDxnjFZEH2f+wppDPMbvIIUnHzFsAZIyMAV6sfEX7jzpNBSNHDMSpIVmwMM2wZAJA7dfU5rkYPst4X0+6UiYneDGisdw5xzz+R9ePT0adaFrxs/0MKkFFt23OVtJbKSAxzPJG8UiqyIu5z2JGeK2Gjt7K0hgu9IcebGx8wnDthuMH+E4/pVWfw7arNMNPvJC6rkJKnLkHBOR0/HvxWTd2Vy0aTS3MpjjGCGYttJ+gIHT17VrTnGKdlr5mVOrydNSe5gtTdM9lCy274KmVt2w+hYcevvxSTQ3lo7+WQqkfcVs5GBz79BV+P7MNJkW1keKJUxKZD8rn644OP6VVZ4ntI0iuVM0S8kqQAOuCf8/wCE1aMo+8mn3/4BVSKWq1L2h+INVgmAWaTy1fqvHbj8K9Lt9atrhJdV8qV54I9rxJkqRyTx+NebwxSQyQoig78YdgSox16dxj3rXPiu50a5SEPGsCKCkbMPzOPQgHvzXFWwk5NVNrP7y6NRxV3selW2s2krvIpiCMmV3plsMORz06/pUNtaac88lxbpDK7qFALEIowcBR745ry671xWWaZFDxvwFU7dvrnuB04/lUtn40mhia2klxFHk7HOP4ccYz0x29Kypwrpptu3b+uxrGtC9mdVrfg6DWooRZNFaOoI2Mx2uGPHbqCOc155q/hTV9HuGhmt2kRCP3kZygB4HPrkdK9F0bxZaXMM4kkMdwvygCT5XAGMhj0PH4nir0eqzxQCVpkEGOHlQ5Vs9CenH9RSniJ0Z8s4/P8A4HcqdKM3e55Gba9adk/eI65zvAOCBk8ipoP7VgLrb2078bTKFbAPXrXtMc9rcxJMkisxBIKgbc9cj/644zUU1ikDOWjEyIdx2kBumOvpjH5ViscptxlEz9h5ni9+mtLbLez2k5hJOZJEbacds1jyahdwXXmRNIgPKEkjI7V7G3iOwuIpMXaLj7izc4GTnBHIP1qpeSaRqtli7jhllaJlHlKTJGh44PIXqO/euuM0opOGhE6Gmkjj9O8Ypf2IsddtVuoCMJJna6n6/jUUWg/ZJW2bpkb54mjJJKc9e3/6qnn8EtGkL2f78Hhm3KdmenH0zzk10FnpesaKIjalp4H+UFhgn229vxpqHJf2Onlt/wAMZ8s3pJGHbWtxZ3hk02eWOQNzEScZPT/PvXW2LX6yBNXsW2sMLPGV/Mr+fNXoNZkjdzPpISTG1iqkYU8/mRj3qnql3JdlJbWMQpFzID99R/sg9T/KuaU6jXu6PuaRhHqaraTb7B5kyl8dA2P6fShNEhLbQ7A9grg5/MCuZF2yRhnhuru4Uf6zd8oGcA4U89enqPrThrUlray/Z5nbGArPG4U4OGwT6HHr/OuPmxz+GZtyUl0Oo/smGOEM4nVs4JyrAe/UVBd6XK0cbWBWUjiQSvs/LAP61ztrr4SYRh5BuhLsk+4RZAJPJzn26dvWty0u7bVohC9gEJjDhoxu3A5988YP0pzq46m73b/ESp03sO/sqJpBG1yVfuFwTmohpBhEjXM5AziPy0LEj39Kto0TvHauswITMckSsy/Rs5xVk2uqxuXWaNoFBw25huHPrxnipeMxVvjt8ivY02ZSWFpIivHdTSKSQGSHIODg809dJRRkmcAnAymD+vWqf/CTz21wsUcbK65HkyqQFYjPUDHr1IqW4u4dajBuIhJJEOqzFQPxHJH40TxGNpv3np30/wCAS6dNaF0aLFzl3T08x1GT6YqGLQxPI8f2hEAHBEgY/lj+tRCRY7OWEsYYnHLLKcnI7Fjx+nWsSW0uLKF2t9WvHBbIiba4UexrOni8U7r2lu2gONNK9jbfw/CJhFHqVqT6M3Ip7aFECVOq24K43ZXp6Vy88up6jcNDDDeBSMb0iK7/AHLc/wA62NO0y8gG6V3hBGQCyf0/xrpeJrxS56qv6IyvBv3UWB4ejYuU1S2kcHkIOR+taEGiWCKbeRQZT95mPJ+hqFrSXdteW7YsfmZAgwPz/pTmSKNW3Rl9j875Bk9u4x361jUxdWWntfwGlFdC8dBs4LXZb+V5x6PKc4/DNVIvC2+UGa+Up1IVO31zVe+uZI7cxCGU+YNo3kshGfQVW0u2trPFyhurafBV4vNMsPPfaTn9BWXt8VCDkqn4XD3OxrTaNpqlQjS7kPG5Mhvb0x70r2d8JIzDcxxQp/AtsM/gc0p1CxcANye5jV8/iMHAqaA6ZPuEU5Y98tz9M159StX3m2/XU1jKPQzb21uFvVZ9VlQMQBGeFz781NOg87LXG5wOMHOK0rjSbaYHF1MpxkAYOKoNp1vCP3c0ikHq0QXp7k/rRGaqRTutBty6EsNpJg+VI21hnfg56fpRa2Txrse4edznLM4LVVnS8+Zba7h+bj73J/P/ABqzDZXqCJXWWQjl3c4X2xg1ElLlu2iE7uzRYAmTbsjAHck5xUheb+MBfeop1khj8x969xGgOT9e5qOOd3TJhkXv8ygY/Os3BtXaN1BNFpjsIHLN6AE/oKlRixw3BxnGKotNGsTeezMp6ktmpI7qIQjYpQfwbgwY/h1rKVJWE4JF6MBxkNn8DTdiZ+bGazGuZo1L3jwRRKBtIL7Rk9WckflipJHnS33wxecxPyhI8K4+vYVSw8lZp6PzEkjQVkJ42kDg9KazKV4AJIOMdKx47y+aKYvpkkTdFEe1mP6kD86WxtL6ZIxeXcgaQEBGUDae4PZuorT6vbWUtPv/ACB27moGBX5cHPpTGTcM4yfY04WJWEKpKqPlJHAyB6Z6fTiq0V1YRzGzkvoUuB0jSXkj/Gm42fuO/wAg+ZMYAQSyoAT3FRGIIcZVAPp/kVZuLa3lXZJyo/vN1+uacFh4clAF7jp+A71lzK12ynC5An7pdqIGHXJPWitGJtyZUZHb5cUVnzR63/r5j5UeJWotZnlgtrdpTcFo2ZAWZc9CAeRj+VaejX0/hjVEh1C2lazjkRbhWYqUYcjcAOfXH+TueJNLj0Ke0utDaVxfBnIkZTufOGAOAT19O9P1fw7cXelS6hMRcqqbwZy3mKX24yFGQF5IHoa/S4z9i7XOeT5bOO6JR4ut0/faVA8kCc7DLsWU9MuCDyB26cDgVzt/8RtUn1CYLM8YdgRGHKhcAYxj+Yrnpk1Cztp4beQoIz84IPOfbp6+9a+hW+i2lvbyXcM15qTFiySxlEjBx/D1bj371u8Qormho+tzaOMcuX2dk+rZ0CeJJ9QSOzYzQMy+bcM8YUFhzgZJ7DOeOvqatRWkviBJYbaA3sKryYh1IHBJOCSM9OSciszUtJ0rUMSWoYIsZMaKxHUYI564PTPQD2qnaRzaakF1aXIXYPMUM2CgyRtz/Ec5z+leGpwqNtvYylN83vGlPfSTWZ08WkcFrbSbVaLK89CD+Rzn3zUNza3lnbBBKEtGYLl5vLx7Arjd2I47cUlprWnrE9t5UIt1/wBYI1xuJzkE56H+tVNW1qxaN7KFS0aSZ2t1LZ6+w9vpXPTjOMvdVkL2kLGkmstb2kuwMkqfM5SXzEfkc47H69vqazJb2w1nUk+0u8EquBI8UeGmB+gJJ49hWDqOoXLxmWJZTCjZzEuzBPZj3PFUZfEJlAj+zguqbCwBLMe+T19q6YYZJ80VqyXXW3Q6W9vYPst3Hbi4kZiFIeTAA3cZ5FTeXJdWN15iRywFwjA4G9h90Lg/NgntXPadta03NOUkA37CR8zenPatqDTJLlct5W4bSjsxBzjpwOh5P4Uqso03a5n8ew2e4txoVyrAK4dVjVABn73XA5685rmL+5WSSCSK2EMMbnCqMbjx+nSuqFsscbxTAPtyMp909sg/r0qnf2rzuqDuwYAjIIJOR9a61jub3egpczTRhPqVzJZvGJ2WYNnnPf0qKS9SW2jt5IA7gDdIxy27nvnpzW9eWsSRrbmPyjj+GPk/8Cz1rNsrBJzcxzosYjQSMcH7vPf8ua6YYhTVoyvdETlKOl73RnOxb92ssgK7Q2TkDP8A9epGd/sCfvQwWTO3uTzSSqsVrMElLSlI3ODyo54qlbvM24Io+YgkEZBwamUGvUxu07M04541u1YQhYGHA5A/MH1zzXUWviC5uo4bGa9ZtPjXEcTuQvBORnjB64P/AOquZsdY+wJPGYbeRZcqXkjz8pHGPp6VBbwzLJukYsYzvJJBwPxHfFDhFGqqclmmdfZ309pqQEF5dSQq5eNjxgZ5z9QMZ46VKvjl3uZbuYzLIZNo8ojaRnofw/lVLS9asodPkFv9vjuGBHDAo4xgqRjsDU8YtYtl/wD2UULEMX8vCHrzhvfPtWVXDU2lKW5pKbSTTLXiOey1jS49RiglDnh0jIKk5weByDyPyNc2umXhBt7MXCAbvPMoAVV6gk/TqPpj0rsopGiVYYLaIBcMscLHcc8jcw4bOCMA5GK0dRsJ7jUbK4AaWAxmSRBCwQEZ6D6DHJyfesE3TjboauDlvucZZQeINPlVLeHyty5WUfNkbscZPr2rd1XXJ9E22z25WZF2tIcEjJz2JHXqc898V1WlvaXFu9wqSSPGzRjzVKMwG0sAue2SPrj1p8tno91AVaMETuq/M21iR2Zc8Ywfbj6VFSXuqUlf0NI05Qj7rOHi8dXVsEjMCsJBuaU5IU9SR/gc10MWv6frdtIkksKOEwqMMMz+zdv/AK9bMuiaG+miOXT1hikZl/1wAODjIx16nB59KxdS8MaLP9jtdPvltbqGIgYAYv0IDMSAec8nn8qmWGg9eXl/UbjUWj1RzuvFNJuIn1Etuk3MscDe+ckjjkEDH1PpWPe60ygvBcRptCkNEmCSRkqTgYx+p712TeHdTFvM0tul5EVwxhO8xnplT7enTvWHPowt7VWlhEcMbeXHAyBmKBssx9SSM5/DpxWtOVKTvYxqXu1sjkzfzog+zSYPRkQHO3Hc+vJ/KptI1K4+1LD5cgkY7AAcAd8nOfT6Vs3lroUts9xDJMGD7mtgMA+ucc1hWlk6zSSrbMwY/dOQMHj/ACK6YxhJOxztOLunc7my1j7MVR5/KLNw4b+EjgqoY8dsAYq4PFd/DaZgaRyicq8Hlk8HnBPfB/KuF36tYStOn2iN4o2Xc42so6EDdjqB2zVzStRv7SzjvQpcurKolOMjOPlx3G4nJ/CuWphYSeqR2Ks5O1rHoNr4paKONL2zjDSEltwxjjqf89KuXC6U4Z2EBOR8mwx5bPt/gK4Sz1Qm9ZFspnukPnTRgjHXPBHVeR+P1rUtrq71F1aUTwKu8eY4GTu55z2zn8xXPLDpPcuLjLQ6a317SxK0NwrRRphRKOV9OtVri5up2ll04LPH/CxkUHH0/wA/rVafT7GOZ2uY0V3XZuLFWU5yFA56kcevNZWr6P5QcadePNcLyIXBSUj1B4DYrnjg6a95JBKDSuyxf3viSydWliCJjJAjDYz2JBOKjk8XT20BZ7QPJwuQTjPvmsW28Yy6PItvPHcXL5bf52BgY5GD7Vu2N/oPieWOC4xY5fGVU7XPODk+5FW6UG7Sp/M5Zf3JDbK51rWY5JDMLaDPzBDz+ZHH41pW2gva2ayz3LN5ikyStOVGOoHAPYD861H8GxQMzQ6jGqP90/e9h7U2+0TU44UY3UdxEqg4QZ2fUVEqcHPlT08hxp3SbMMTacZZFFzMXONwJ/8AsRn86u/bbCBmdrEEnlDgZYevSm21vZuJLmeEqD8pIRm3exC//WrL1CG38xZLSWfJUjEykY9MHPT2rX6jSm9y7cvQ3D4ksnQYsJiSOAwABPoT2qE6yPMXy9NiAzkkzMQPyH6VyKXskchSfzZNwwyqvOR0/lV2PWZYUQizkMjNxtiYEj8AKqOV0I7RJ5rnSf8ACXRQAk2Sgr1K5zn2BB/mKB40FwxAtplXOF8yLgis63kutRliFro08bvgb5k4U9/vDFd1ElrYpAsm6RyyqCqDj64HrmsK+Fw1KOsVcuKk9mcsmrq8pY6G0keeJkjAOPwGP1qe28S2TeZvS5t5AMAcsPyrrpbu1jiLoV3DPCnOT6YrMvbqBrGN5rYPcSZ4aHKrzxyW+nTP4VlH6v2X3/0huDRVs9WtprwRfa0w6jG8bc/iRz9Ca6ODT0kt9wCyH1BDD/69c6sSOoNvbwMxxjduBB9h9antp9Rt1P2Z7GNGByFBH8j1zXNWpYab54XRpFSXU1H0mdxhyqjJ4UAEfjVR9LCtlgXK/wAchyB9KgmutUlQxySxx4HDq7Zb8DUBGoXSqh1CMxdCinef/wBdc6o0r7l69WaQjjG4TThXUZ2qOf05qjLpdve+YGhwzD5sMMn6nqPzpi2d5BE5k/fDb8m3gk+/TPesyDQJLi9e5u0u44o2yjC7I3fVV6fjULD04Xadrf1sF1Y2pRNbJFBHEpUADLPwB/WmRyTecYwUOcksFO2myQzRziRZxLCdu1XOSDnBwTVoywLMQQgkxj5pRytcs6dO11qJuJBPG1xH5bxySqxwyqp45/8ArU62022skzBbxwliSdq7c/WrJ1OKNeIyznkbOR+FA1OF1DeUyt6MCMfmKzlFOPuuy7akXjcgLRqhEUBJA7LTY0mZyzAoAfuA7ifxOafBqSSg5RkU9sZPHsKmgv7SS2mEb7GHJ3qRwPfvRSwtSTtFfiO6QiWkTDLRAk9zRUthqH2q3Mgt3TDlfnjIzjuOOlFYSpTi2mx86PJI9R1TU4ra8mQl4Di2CuuIwcZGzsT2OOuPauqvVuLuxNut7ZmOQlpY1nw3TJUjAIyeCcYHXpXM3+jvFqD3M8AluSRM/kgv5ZPIHORjk/0qO5Oq3rraWcbmV3JY8YIPJB/n+FfpFOdKadtTFOMbqomRXHhi5s7SfN88t6QssttbweYFB6KG74yc8jt1rOgg121OybQdQZWw4lSB857EYHB//VWncaVPakRvewBgoMzOcqpPPGAeMEfn71f07V9D0zUEuN6yxrtX/V8RkAZI3dc/Q4Bq40oOPLJ3+RzLV6aIwpZpoYViura+t3Qs0EjxsoUn+Fs/w9asatJrEmuHT7KH7UWiUMYVzleOT6cn8ziujuLjStSvo57eS5twHRv3BOyQknGF/gB2/XJ6DpWdr3jW6tr2WK3tIYAzclVy2e+D6Hr7151WEVK1JX33HKNlaT+45W9sNQ0xVe5QwG4+YAgjJAHHI6jIqpL5tzNbTPIIw643N8oBX3+m38a0/FE95dWdjqBuS5eLAhZM7FAHOT6kk1Lpt9DHbyRTxS+fAu8JNzhgOy8e5x9OtaUpXpqb3Mmney2K0mnajbaZcFUkNpIglDg7gSCOe3H+FZEENtNp15Lc+aLoMiwhMAHJOc8c9K7nStbttRFz58MaSmIgoTtTYWA2j+716Hjmo30C0Nxbm3tpY4JiEZl6xuwwCwODx+XFaurGN7q2v3lJPQ5aytQluy4k84HzAQfugDr+propvPtLJFhnVlfBk+Y/OOp57dxnPen3PgvVI9Qu3tvmtyWMUiqwLDn5cYznH4Vt23gfVZpyySoLVZB5Xn8OQOmVzgAn+VediKsLqUpI0jGfVHOql3eWn2po3a2ib5zHyASOCR1/wNGLeOUBJk+ZdxVjjBPoDya19TtNUj1wadDbTPaWuVR2TywwCg7vpw2D3rnL157VQBYP5Uq+YZtoY4AIB3DIH/6qdNcyTWz2Kk7FwxTT28jeXt2t8ok9O/FOja0it5AYgFfgleDjHQ+xOTWVpktxflIIUklZiF3ZJGT6npng1pzStGfKkiZWUYYOnzA56Hr/AJxWijOOnmTe6MHVNLdDJPak5lAbYoA+X3NRaLPc6dcASOqRyAMr+WGCn6nGOvNdOkTQyKJRtdgcZ/z7VzmpXk0eqiWQxeaoJHU89vb3xXfhMRL2noRH93NSRFPpaR30lu8Ej2yPu85eirgHP5VJNcRTWIis7VnlDjDNLkkDPQdBkYqxpTPfPGLq4gjiOEkWRseaehz74PJqjqE6R36vB5cLRqI3iVfkYrn5q75Rio8y6lSUVT5o9f60NzTLDU/sU0tusbRlcP8AMrOm5ccfNjv0/wAiODXtT0q4l0+5jDT28ys7llzsA4G4Hg8+vfGeKx31++kSG1gIhjGAqqcc+uT710FxpEB0qaO4SMXKxCd5o5CpbjjAON33fT8q0UFNfu+i6m8YcyvSey1v+h3MHiK1vNHj1GSKG1w4WAuAQwXnLKTnsV3A+vFUdU8eX2m34gu5YJ4JhuRPOLAAnHOMdMcZ9Bjqa830vWobUmKaz+0QHAXc3KjuTj/61V45YY9Sa5yXVnISIk8ZztO72/GsavI4cy3e5pPExdNOO7O9sdR1XxtcW0GniOGO2IeSeUlFiIzkZHbJB/D8rAWeK6vNMtLRrx45JLe61JXYeUeSvzMcADnjnIHTmuNF7axWjQ2jXMOqSNsURD90ykkcr1JwcZxUEmparZ2K6VHbTwSq7yyBs4O5Qu72+tYRw0LWe3kRGot5P1/ruaWstq1vL9luGe5VI0dVtWLROem7sQevpz2q/pF1qUenxTWzW8l0v/LBlJkZc4wRj1GSM/hWPo16ulW80+pW9wbp45PLkD5LAqOvoc4wc1dstYuNIgjm1fSJnS5Cq15IrMWjbk4BO3OPxreNGF/e2/IhS9/mb0/LsdCvie51OaL7LciacDLGBPJU4yPu5xkA/U5FdjFNdz2qzz2+7gsktq4dVbbzuXBO7g9uK8pefRoJJJtFmuUeRYxHFMMguWBYEqB0wPzPerFlq8en6YrWmoag17uUzvGxKqeuBx0/M1H1Wm229/wN6dVNvn/4B6Ja6Do8c0jWlrFLI7bpJmIJPB7MfU4wPaq+pRac9zNLc2cbRRgFHV9pyMckZBxz16celYlrqGo3eiR3d3et50MpkgMiNulUdi46HIPHGApNS3l7DqVwx1O1E+0rGJMsHKL97dwOQSfavLq4WVOWs3Z9P+Ca3io6bD9Rn0K5s4ZLuFZ1dSoZnYOBwcLnjHNNg8MaNqErT6FdiC6CbkQy4WPJ5x+BPasoeDDcXYkh1LzraXc6Aliy8A7Xxxnj9ax7rS9T8OxzX2xls45GWK4VsK27oQOvT8iKzeFqvWlN6fNGE5yXvOJvy+GtXW5kiGmxjKCNpkPykbT7D07dDitrw54bmt0aO4tzGrAq4Lh8njG3HJPTv1rkbbx3qiW25AZJFQ/MeR9aZZ+NftM0r3FzJE2CwUcF2PBzjHYn8ay9hiKsXTqaea/4Io1KT66naXtrpt0GQXUsar8vmFc4K87s4/Me56ZrnvEOnf6ua1vHeMAbXV+p9cdquReObK9vbdFuGt7Jots4EQ5znovTHJpuqvZSa5BJNcXKWyYjKNkfKM/OpycDIz0xzTp4GdNq1S68y5RjNaE9polnqDxtNG13domFd+uD6kcH6HpzW9/wi9pDZpDZ26ROu50EoDLkjnkduK46Dxh/wjuoPBLCy24DGNwozIh5Ug98/wCNbGk+P9NS8d5rmQB8DIXKkfTtxXNOhioya10+Zi5RWjINX0/xBbyTLJtitoVDh0Y7VBJ4GPoT7ZrBtdX1W2ldbcy3EkQD/IxB29jg98f5Ndvc+LodQu2U4WGReAPutjP41AumaBrW6FCLME/fiwD8uMYP09K6aVVK3t1fzsQuVvRmda/EEC7MFwElTKiOdBnr3I79fau6syWCXQd7mNhuGBtATJ4A6+nWsNPh34dkfZFdusvUmNx8/Pcd+9Oi0y70ZxLYXDtGE2mIkEFQOPb8fp6Vz4ulCWtGVmbQ5tmbr3OwhIDIu5eGZSNvPXOKyJ47i1mRba/S2MrZbhzu5ycdefcjmnjXPNllS4iRHXlgSDjB6/rT5ri0uVaKWJjG4yHRsH2xXm81elJcy/r0Lui1cX00EkX2m8gKnhRuK7j6Z55/AVM93Ld3AhjlgL7PM8s8Bh0wCO/4VnnT4bx2mQTbwcHeWCv1HYgU9NMNuN9vbxmSNcIuAO/PzYzUyqRa5Zuz+4el7leTUJDdENpdxIqMclScBu3GBWlJfwm3INuTIBgsJFBGQM4IJ5qo8N+QJZUhUBQSEuCpGPcjmktbm4gLXd35ssLjaYDGrKB9evIx0/KrShOOn+Y+cWW6Szg8yysrppJCN4GCT9SSKCkIjE88MkTdNs+Mj6bV/qRUrQ2k1o1zAnloW4VQFOT0GTjH5VBJA93AIybiH5RwJDuPtmnzW1sHMLeztaGLyVfdKw3MytjB9AOlT/2jbKCXeSN2O1NykAn+f6VTKDz0R/MSYAkSCTGSPU9z+dSw27W0LefdSzM53gucY/KsW4jbZYibVJJiZLq0FuvaPP5EkcVYSSfzmAVPLHbeOQPYmq5neONDE0WM53gk4Pt+dSKHXKNJjcOQJc4qZvyFclktLe4AWe1hYEdCRkfhWdB4e0qR2aCOXYHOVVyBx7ZqeFY3DQzXZlw3yoIipX8fSrqXaRjyQ0ir2yeB79Kzc+SNrvUhpMkhtbdY1VYWijH3SgIx9RSTRojkLErAchi/X8Mf59aba3SzSFYQ8m3gtngVJM8UREUhIYDJPPJ/rWOklYNxsMEBnWaSztpdvAd2AKk9SM5qhdnVRqiJpxhe1yN/2gNnHsQMfrV/FxvD5jWDbnPJY/gegqYADOJU4OCCua3pTqQg6aScf6+4Tgm7kkRKpiZUL9yp4oqHylflbuRMcYCL/VTRXO8JN9UjQ8/ubqC2neL7FDbrKSWkUkE9x3GRnJz34qu+pWtrLFJGoVUjUyOoPzZI3Y59ARXF6lrU11eyBirTSSZLQ/eboADjqaZLOv8AZQuJJGeZ5PLEWw9u+c5znt719jTwzSWtjhnVlJto1rbVpr64ZBavPG7BfKEnckDk/lTbyz021tria8tG84DbDGH3YPGScZA6/jWPBdz6RdmYM63M0JRURwzKGxzkfy4IqW0g1K4t7ybyXmbCBmYZCjPH1Pv7V1KlVTdtkYRd7XOn8Pajo2lwaiup28ou7iNEQF8ooJOSMfKCARgGuca5im12YWzBYI5SwkY/PHHnIxk9uBnrT9S0p/LaBLR/tgfa6Qqx2jn5s45HBPr1zT7MWeiw2ly0UF2CxSRgx5Y9RnuNueD6/lpblheOrNea6UTU0+0n1aOG4S9CIkZXzX4IC5+UHGMn0rUg09Ig+6zgMo2ht0e5pGwVIVmAJAAJ/P8ADMsJoriM2MFwEtY22BslmYkMVxjlSpB47g1d8PLJJqNnDqlskjorokgIYMCMoQemSCQOM158pzp81tv0KilsjU8N+ErS2mnvbuCaKBoVRoHYFpSG5x0xnGMfWuss9M0i5QXbQRsuwKqPyYiOQoHbGMdfauW/tuJTK1qqptZGhjXKlWyNy9eM5B69M+ta81xFJYsqxLHh0lYoBuKsxG449Rjn9KwUHWTlJtL5+R0JRS5VuaJ1+3EYgjRcj5tvt0ySOnQ/lisLWvF1rZo4DXHnxyLG0gJwGYHIAOOAMDP5U5b22guF8iNGM+2EpEeQDwrEdiMgf8C+lcbq2jGeHzbljbsQZChR8MzAsSepByAPy6YojgKNPSS3FKfRHT6dfXmp3Edo8mQYXclCqAErwQxHBwehx1HTmrOvWVtb6bBBPZl5/lDRvI4GMEkDBJwcDI6Hg1xuk3lzYyC3MikR4dgkCsxPRQDj6E5POMelT+cb3UBJJLHc27SrFI4lIBBXByee4Jzz19q3WEV1yPbp0BTvZWNyyv7HTYpoLS0ETeW6+WqHyo5M5Uk+2Sc+ntVeHREubg6pd3SlmWTczHDyMxAA29Dg++PyNWrewjtRsneDT2BHlwxbZlk4JL5Zsc/Tp2rM0/xBJLM1tZ/ZmG0wxrtCNtPUgk8fifUjANb1ac1C0ky5bpT+RC3hjy7aR/tks7tErxhI9wUk85bPHftVHU9BRLBLqdkZt3lmNidxwOoOMY6fnXQeHdcaWe60xQ8MPQwwqVknPORuBPGckknGP1tanqFjaWskUcMczkMzkKrOpO7O1jn26e1ZRjVilO2mxLoRceY8rurJrRHDKoXkqyHOOg5/L9PpV+0l0e/00RXqrE5GxZhkYODyeucntjt1rftZtJjsfst5EIwVLyP5g81+RyM8jn86a+maLd6ktnYxSeW20Bd+wnIXGNwwO/PNe1CnKnZyaYRw8qXvaO/mZEt/bzSJY38VnLYwyKibCVYL2AYfUZ/GtG2v7Nl/4l0VutyYePPkO1gpHyEHt8o/Pniq99ZQ6fdm0u7OSKWM7PJlYgHBBYMF7ECq1+LOK2R7G1a2aFyrEMzk8ZPHTjgdvetIYlpNu39dhwxLUW5Jfr8hlit9pV8b27so4Vnc7QqBw7Ej5fTHWunXSkuLB4LGS2tpmldpFkB+fqSQuOBxwx+g6Vkx+J5rzT4rBZFjgjwxDhcBlwxPqM85x64qr/wks7XEaxOyogUkEcMy5wQewyensOKn2vLZRfu/ia0qtGnGzen467lG+e50bX/PlDXLOnyeYrD5DyrDOPwx70XEk+tWaOtvGb6WUR5MgUopO1RjPTJz/wDWro9Nay16WafXbrzhErIqlirhj33Ecj0Geua4wWZt72VZstPE58phIB0PB9D2qvaOMGt4swqTlCL1vGVzrYdJ0fwxaw3OqXEeo3e/MJtZGKoAuTwQAeSB09KranFD4pgj/s6S7byXzK7L8mcE89FDYHQdcms3RNIfU9Xe1u5ptkcTu8UeN3uPm6H3we3FWGs5/CMxdJlkRJws8SSkOVwM57beSoPOSOnSnCr7nK1ZP7w5707ctovr1IpbjULm7huLeYQOieSZokwwUHAOOnPT8u1JJcXsdnFbXUK4aTcVZQpDFhyWHOGGevT8q0dZt4dS1fTpNC06NzNCHmWVxtYqxHfAA4A9/wATVi71uKbU7i41DSvnSIQpBE3AI9gem3jPPQY9anlkpO8jFxnGT5pFqDWtRmshc/2ak1o4ZVijwoABG3AHzYGR83qMVnXviK6u57jTZIpLSFm+6F5AHRMnt2x659az9O0a6ubWS50y+LzbS32bOZM5GQOx45/Ic1nzeYbiQzFIriVlZhKvzE9egHAOaK7k4KM/0sVWrTUEnfU7y01ue7jjtU3SxQJ8xityPlUDIOM4GM8+/wBas3B0XxHDMJZPsaKCGhXMgLDO0kHuAf1rmL+9vLL7LPEbaIxymJHhbKTBcAls8nJ5GfU1Xmmv9a1C0W2tbZbrywBFs2GQDktkYyMDH/165Pq0eZu+rNI1be7LV9jS/wCETvdOiWSS1860iyGuSNqsnPzBc5IwD0/GsWeDT7maVECAoBtf7u5eBwM49f1612mm3kl75sF9qrWSLtEkFzalhuBUEDJODk46c4NRax4Ve+a4vra705L2N23QooRXX5iH4P3iMcYHBqvYyXvImeGbjzU9ihpei2l3ZRRfYoEWPzAzyy5eRwucE9gODirI8PTavfCQPHYafsAiPLtyeoz7n17+2KyIbKW0iaSaQh4ySQis0RwoYk54I5XgA9a25Xvbizt4NMaSZZf9btiwIW2g7f1Ofbtxk8cpzldq1l+RpTvKPK1sVdX8KXF7cmG4mfzYoyBMTujVQwwB37/z4rGs/Bmq2yyb7R2VJNiSEYzk4z6jgj867C11G9EbafLa+eSm0XCMM5wRjtuxmlGtlYh5LRpIjICiAqQrcAEngdu3euaeInHSLuKrSpt3OKjtIIpJbSbzbe4U7ctnaffpTY47iC8Ef2wSKuV3qxCke+K6jUba01czGWPy7xwAsofqewwM47c1jv8ADi/SNJ7O788hSHKfKQxBPOeNowPz7VrGtFxtN2ZyOi07xNfRbq8CL+881Q2UDEnaoJ9Bxzg/Wunm1qdYQfIM5dgTNbtxn9M9K4vQtcTw7DFDc26NcO5GwgllXORn/PeukTxdojReQYGh8jlVwwB9ePXJrzMVTq87ajdHRCokrM0DuvizJDLvZOGCcYJz1P8AnNQWnnWZaJpfP2uVVeQAOO/NEPj7Tb5DbQ4Vh/eOC/bj86dd3ZlSJ0YxhVDBf73qeOPSuePtX7tSNl5jclui1LqhngIVZ7f+BZEPfHJ9x71cge4toyy6ks6Mw2LIM7Rjnn69KzYb2G4kEcqkyS5jDp3Uen+e1XpNLmWcNaTq4zkq5+8PUnj1FYOMOXlWnr/mPme5IuswRzpFcsoJXcQ3fnselasUsUqSISyKO+AQcjtXL39laJH+8tiZ2TamB7+ueOtULKHULSXdDdLKo5ZT0GOn8jzThhYTX7vRj9pZ6nbPb2M5CLdDbnPlt8qhh6Dv2qpLp1+kWLaSMqvzEsOfzFUILmO8y11LGAnUMW2sfpj1962LTUIj88crBRklh8w9wDWc/bU7JovR7GYZG0/bH9ilKEn97Eu459/TvS3N3NfKirZGTAwWng5A79MH9a221BBtYHMb9HI256dvxFOfVIEixcFSh/iA/maiFSpF3cfwYWZzvkT+XGk9qHjxtIRih+uCKsSavp1gVR1ZATxG/PTitxYraeRmW5ZWMe0ZIxg+wqnPoiyRK0kkbjOEJAPPbg5pJqTtLT0ApjW4TDmEidhwAqnj9azDHqmpS+YIpIkYYysm0n071vW+g2VqN4Me9cH91FsU+x5PNaHlPcXB8tGbAxliRj6c1FS6b9nG/wCP5Bo1qUtN0qSyt1zM0kpHznI/kKvfZpEIZnBzjk/w0z7NLDO4GFR/vl33MOP4QeKvJPbRxInlkY/iAwT+dZRpU7uU3ZjvbYwdS/tOCYtblrk4xzt2jp1zg1NajUROHuxALYjcxVSST+Y71utbRXIVJFj8thyH+8ahks4UmUsEMaD5QzkD8hwa6qcHvFhz9CkJA5LJehVzwq7eP0NFSCy0gPIWt4lZmycLjJx16UUnQqt3v+BXOjwa2VLawikZYbOSQ/JINxaRs4JyTwAO4wOg5zxl3V5FNcMGiZgPm8tBtAGR19u/vmizkBgWK5kdkJJ8pQN8Zxy3t0GQeuB04Nad/ZtbCGeyjjkmEOHJT/XA9Rt9QCMjuDntk/ZTag0n1PLSdroddazp9tNERp0IaBAyhI1AcHkgkDrjH5cetavh3VGlvJRHpbSW0rbZlJIDJxyh7kDB9eKpaL4Zl129twYf9BmlVA6gJsUBiytnAGCMep6iuqvdDPhzTLiSzjhuLO0VUN71OevAxgnoMjp61pGMqydnZWOqjh5TvOeiMvXTdafcSnUJiqsrFFDcbVDgqCR0OVrL0axi1W9lbKpapJ88asNrYHGQxAwTz3PBwK0Itd0wi2v9R8y8uQxRo5P9WeR04wR/WtK28SRXMF3us4YbXygroqbCjAbcgjOSMbQPcY615Kr14aQhfuxciTvcsGazvNOsrxbeCznt0eaMEBTtXJ28DkZwR9fasiy1QLqyz2dsPPd/mSNQdwHG7PZeW4FWdMFlq9i1nbSSR/ZPmG8guC2A2MdR1yeKo6JFZS3pMMj7MyO6FREFkQcfKN3HzdM5J+gq03Jtz6afqKpJylcueWbrWrhIGSPyAyxqBu3ZAIJHcnPYdh9a0Z7mzgupnmeVGvFTcSpHCELgdgPxNZKmFd1xHIVldiWkRshSEIGM9eDnHP0rEukubyQwacJl2/69Cc+X0JB7dBWtOMnsKU7I359ahtYxPNOzhiyRrDL8jAc5x0Jzx+HvVHU7y0RZr2S5eSUyLI0ZfDAE56544I/Wsq60XzJLazGpQu6AbVVHI5yxJ2ggZyPwWj7KrCTM9shzlZZPuOvAUKDjOO/t27V2Tpc1tTD2mty5d6WjWttLbRzPaSDeI0iZt5YkYfHU4H65rR0O18jR57eHTbOFbosVubpuRyCo5yAMgjA7kVU0zXJ7eK3a8u7e4hsNzQJHGwVjk5xjGCD9fyqnpVvZapPLM97KrqdyjqMNk9ABjHHbHNa06bvaOrOileUkqerYNdmWNrmTf/aFuxDwBcIBnb908Y9R7/XEen6xb6d+9m0+V0GVETn5DnIPIwTkYH4YrVvNR0uO4t4bXSAt3IgSV0LEOSBhBjpweeOTVDWL+zn06CGx0m789HV3dVY9R/GR34BHHc0p4d7t7FzhKCbbWhdvdahv7V/sjxQO8ZL28AEbMFYhRk5zgEnGcnAqjBdXD2CNcyxIDEAfMI+YKTk+xwcetULfR9ZmkkvWs1ky+1pHLMje4IyB0A/EYroNfTTbSzEdskqTtHgosnmcbTkngYJxgj3GOhAGpzg30L5606bb+FFnRdG8P3UVyj6hKxeAPFHImfL25wW5wRz04qlpd1c2FncN9mjZY3EsbRNhIipJDFep5YenX8sPTbn7bem2RJWVE3SL5pHyjB4zkg84wK201KESRQzK9tEqNumjBId8hgCR3H+cda46jadorUlSSs1oar2732hXGpTT/Z2Z2kWM8L5hxnqSff047VmRW+iWGkXkMouDflSzSsRlWBIGAM8cjPqO4pL3WG1LTxcvbtbzK2E4PzqOnHOTn6daxAb3ULhpEiWaVFOFbdufHVs4Iz+NVRlyq81vuS5xTulfT+mZ91p1klu72TkSorM4kJQkZwNuD29BUWjzxWKn7ZYJPvJOJgeMA4xj3I/KretxXVlHZvc23kmX5k2FcEDHofUjj6etJcJPdaUCl7bu7MAYo8hhjI6kYz2Jz3HWtaU3FpnPGTi7oyre4tWu8ypMke7kBuMdcGtnVNVs7/SoI7S1hS4g4WRECnaAc7sdSc5z7VzqzyFXDcvGCMMOOvOR1qWwWWCeG4eIuICJShTggHJBP4e/Wt1NK8e441GouHc6LRJn8Pairava3ErToAqDcMZIbOercYI7c1Nqtkk9wES3u2S6Zgsatyj9sg9eSo69jVTV/EF9eQreQj94krOCQMglVXI79h7DFP8ABFjr83imGO1i/fyp5rpNJtDR9yT1A5/T2q4VIpuEtV0f/AOmnWgl7F6q+/8AwC1pmg6jqMrSpZpp7WiqitI20yzclVUHgk4z6d+9Q6Dq0djriSz7WvHlMRd3J2Akgj25yM+hrotc8SalYTvpMmlxxXqrsMcbFo9zDCuu3q23GD17e1c/p1tYot1ZavarJfMCkUqK5kicdiMjHPsc9OKttQkuV3G4Rp1FySv18h2tg6PqVzNFqT77sMInRcrIM8hmzkHOPwINYbypHdRC733DxfvJTtYtjrgnrjFdJD4E1bVIQ84klgiT5ZbRPNA6jaTkAYPXPGOaqaHqlvc6d9iFlEj25EjLsDF2Xv2zuxg84wav2bqS7eRnKk5z7dkyGeG81WxeXQrK5l0/iOaMkvk53bgDyB2yP61cW0i060uFupYYtQjCbJop2JCHkhQOOQp/+tVH/hJr+98Qv/ZdvBp6TJ/q4gAFwCSfbnJ9Kkh8NXOq3Uvm31utxCI05m/1gAAIHHHtmhLmV4q719PkNe970E2/wXoadr9t1GCMX5ea1+0rPMRGEkkwM7g2DlBj07nr1rpbrW0vYEuNGdbyNy8MiTYGE4bjPPYjP0xXnDa/qFraW1rPM0sSOCYO2B0yffjj2qG+JmP2uyEdrbyKq4DkZOMHP1IJ/GpjWpx6mkMRGC0uz0u31QpEuma4I44pF3AxsSpUnBOcex4689eTV8LDpMFy+jQsIADIXiXKjOB05wCB2/GuFsvEkT+GmtmtrYTqgAKqCxCspwQR0IBOadeeJreO8T7L5z2UkTBolYoELcEDrnA7+9ZVacYyTp+pvGvGEk1b+u5p3E02sQzXCyXzXOFZorcDgjknHpk/rmslI5rhJdQWJ2gtV3FgwOxMj9Mt2qtd6eNP1i2u9Ou1j0mV9vmXLBjHgDfuUckZJ7dqu61qph3aMl5AdPf/AEmAWz4jjLjlSSOg6YIHHpXLUw6bu9/I5akm25SNNtUl/slLqa3SS0EflLPwWWQg4x346/lVnS9WbTbUqsjHzAGkcHhQwJ5B6t8q8VxyPMYmsLZ454WG93XqB1JyTgdPypqfb7Exu9s8tvIo3B0JUZHr06VwrDJXTM3O+p1eq6Tp2uWLzRu0d6il4WQfebPT6Yyfwrir6xvbIxvJcGZzk8A5DbQSOR15/StSKaS1gN1DK20NtUkjco9D7fSugt9dtdRi+yatboFB3eZgZzjOcfl+QrZTlSilH3kS2p77nD2lvJcXimJHVwQWOMEGuqtri5tsRzghVQuGdvvewOOf06VrXmipMpu9OmimlBB+YnB57gfUgVyl7c3148lvfWjxNuySq8Lj6dMD9KHKNVq6KhFJdzp7fWFcLJuHyEHkY5wT25xzXRWs5SJLvzCSFLFVzg56fh/9avMI45rSNXYEKej8nHoOOhIrftNQubeApNMDAg2oFOffPPc81yVsJFRYapnfyagtzDHFcqBIOrKvQH/6+OnaqFxpU8E+20kE0TYLZ5Kg9OOv/wCv2rnYtZ33UYcl4jkMM4xkfT6VsR3Xk3TNHcHB24w2cAcc+tclTDTjC8BqV9zbFhb29kFnwpOdsnXJ6fh1qaGzjhCmCUhTgsM4yOeKqJqUd7bbJ8PGzE4HX3GK00tYbkoik7id23PtgD6dK8qUqkZLm0f3m0WmJc3aLLGgzFtTLE+uOvtSRahBNMYbva0bAhHC4I7fjVh9NTA3qCBzkk8nn8TUVvptuxAZtpBGCBwea3p4unH4jVEc+n+fcb4bls44IB445/pVuxm1Al4WAcR7cODkkemD3qcJ9lDbmVVBOcds1JDbF5S6MVbHDAYxXLKtGcrW+/T8RpFgTAIwkXawPRs1Il5BtWJpYk3EqAeDTmtp9odyH7E9fxrNuNOt2cSkLwc4J5yaULU5csrohpMvXH7tCkMCEtyjow4xUVvdXUxeOW2kcdRIxyvp0rFmf7NJBFEWjlcFQVOcE9D9Kv2d+cRrO5R0+UkDGa2qXjaSV0SmaElriWOR5Wj3DGUIOD/On3l3DHCnmNvPsu4n9KpPcWjSsZXVpG6chN2fr3qve28cpQm4mijz8uRlQemM/wCc0U50oNR2bHvuXW1CJGxuUAgEbUAHSiljjg8seXOjLjq3U/rxRWrqpO1ylynlFnoc0umJLLqNo0BMT/OgbYjAqyYIyMZHt+RrCt4rpZmuPKHk2+VDg+UJBjBGCSDkL0x/SrekNds6zWz/AGv7QXjUE4ZDnnKZ549O3btSXDalDNLGIVSZ5PMTaQW3jJAweecH8cd6+nqVFKrKb+F/mckXT59mkaWqaqdF0uDS7FFVFCvMrMdwdyDgc4IxgYbPTiufXVtRvtPa0JVIkUsibiEkXdycZxwc8Hjk8U/VtVuZ557VhuSfZJ/qhlCcgjBHXORUMzWsenQySxGCZPlyy4Z1AwDgY7cZPp+FNVG6cX1KeJnbkvoWLowwWEEsdvBLeQKPNlyQrcnAAHXr1P5U+9sm/stb+SSCSzMaM6wlQwJYjAH8IU5y2OpI5rEW8t3ie0hSdbeLLv8AvMD3JGMk9hyOvvUZ17yGBeBI4nQosaO2NhPIx6cAfhmq5GttTGU29S/pmsXljeve2sCiMEASytk9c7T7eoGOtadzqMERuNQt/lNzDhXYckAnPXqQBjP8XXg1hadNb3l9AL3PkJJgIOrL1APTABHXrya6vxTrvhy/g+z2NlBaAA7Z0U/vSdo+6T8uMcEj371bpQauSm3Dc5/TLi8kjmmhiUhBsTzZCpILE8cgc59z1pzOt1Gls91GisfnhjmyXHTb/Fn/ACeKz1trjWNQstOsY1aZogAV+6MZJZse3OatQ6HfxQQajKlvLACSx8pVSPB6MuMnI6Dqc1dKnKUHNLQXLKUbpaIp3TtZhY0jlwzfNG75zk9j0OCPTuaz55ri9vDJIzK+3kSDlj/nNdTb207wwx3sE8cMysYZCAPmx8pU849MZ6YrKguZBcLNcMlzGZN4R35IzjDEde35dKuzT1REua9ja0XRrG204rqrNcS3duWiijkwYCpP3xkDB4I57+tZtzcWentatYoiXURJl3HjK8DHA4Poc9/WrOrrqNus0EKK8JiG6SJfMyu4EL04Axz/APqrIKyXdlcvKBEJXU5bqW53dBnr2FTUupJPSxrK8ZctrNFuytWa1t7+WVknhuQy7sjcFGcgnpwprQutQGrqrW9hCrBcNiMIrnqfu4zjAweD161UsZYbi1SNwsESnyod7Z3P3LY+hz9cVZtRmOctIsl0rqIz5gUFTjPU4x/sj8qxVWVNOMtbv/hi4z93l6Fyz1ed7a+ZCpgdwjwxnDlcYyw7gZyc8ZpqW93Z3NxZzTRMDjLNyvPTByCRz/L0rEu/tto14rpL9okfDxbCejHOCODwRzjvVezurrULuWOS7MUqR/6s5BkAIO3+v4V0JSqWj1LlVlV5Y7s6qxbStCura9EE01t8xVmO3cwbjPrjnv3BqnqTeZc3FzC0DQq/mG3iclVLnGDg59OODVuTS7e6tLa2s1eQxOztvbe7DGcDjGM8gfzrDu9G1LRb6K7l3qlzvQFyUOQOhFOrhHSk5SWo66dOfJLRiaVqsqalueISRhgZIcn7oI4747flW1LPBZhJYBjdy6MDlAc8E984P4VjyMbWFI47dPMJEqlVBJBX5ufTIx+BqvHdSzRtHOyIQoIdxyTnsK4KseboY3Z0rahZXF7DefY47gqAXWQhkIIAICngccE9RxWBEsMErs0IjXkRkksACeTgDn8D6UWN8cGNcCUZVCvHJ9Pem3TRPA5E5E2/5lIOQc/41NK6vEbkpanTv4kgGjyaUtpZtF5KxqskK5DD70pY8/mSaxvFcOhwaR5umSyK2+ONY2k3krtbcw5PXC9MD25rFkd3jbdEVlXCoyfKfy9cU7T4bG1uWe7UToApVHTOTnn8sHvXoQqqXuSS9exv7VTjyyil59jNtp2eJJRIN8Z/iIyOc/5HWt+w1HVhrcATUfsQJETyE5bY3JyMHIrFmmsYxHIkSmVmJdV6HOOo6DvwKm0y6ggimb7OsrHGA/OO3AyOv+cVOi1RyQlytM9I1nUdKhu0nggDX9vKq+aB84AX5WZ2JVuo7dR1HFYd1puo69dT6isYjtLUHe8gChvlDAZ5LHHbJx64rB07xJNBos+kgx7J2ctIc5AKjaGPopyR6Gq+n6rqjkaXBvnE7cRLghiMZ/D5R+VauXM7Pbsu52zrRnp0fRdzpYPE95pEnlWt65t2O5kKbVIJztP4k1h61Y2V3cW11E0irIdsx546EADHXGfUcVc0efSp4bpdajuRNM+BKpA8sAZyM+4wfasm3uYZi0OHlR3LR78AAjgEjp6/nWD542le5z1HJxTbI7+1txcB9OjKRLCpkznPA68nkkVq3U8Or6dHFpZQXkUWZZceU0qAcocH5ick5PPB9ans0huryGO9Z41J4JHJH+c8+9UNQ0yO2ujdaY7m2MLMGC4JOMEAelawxN3KbVospSdnO2j7foZ1tpCX9ndXSXsETW6KxifPzDGeD+FP0mzt5J7ddTaeGykIHnRkkdf05wM0ug6XFeX8kd9dfZ4ih4/vUt/Z6nYafAMlYQx24bup7j9R+FaqMOVSt/X6GaglFTa/r9Czb2dpHrVzAt+tvawkjzSAzN82MYGM5yO/TNZk2211KaJX3pHIVzGwIbnGQPQ9ajN1Jc3YuZWMjyEbgOCT/n+tQzJJaXLY5b735/yNZSa6IlyWyRvQXk0zQRNFui3DDIOVBPUe5x+lbfh+LRr+8uDfW1yY0gfeInVdh3DLnjGBzxzXL2rSOyCT92ZSNoA5yfbr+VPjv7rT7SW1jeJkn5JGC+BwVz1AP9Kzg0pe8VSkr3lsbcFtLDftb21n8rOxjbzColUZwd3TpzV++1CW3tv7OuN0Esiea1u6b9xfA4IOBwB+n1qpFcOmmWk9vfI6zbd1u8oDI2DxjHTiq0huJHEhUTPt+X1BxyDjr3/Cuepo7TWvTsb6KGm/4WNFPDV8bSNbCYXY2b2txncuecnjA4H17VWtIYLq4WzurT7NPtwqtlQoA9+31FVzqGqadPJGGEkkwEe1lww5J/nn8zWpPPDrFnaWsyyjUI8ok45L5J4wTjAzx9KI0ozVr6lRp05R91+8SW9neaZK5t5Gk+fGFbqPUc81tzeQ9sVlspGnbaWkP8S9+/pWBam++3eSTJK0LbRKRtbPJKn8vyrq/sgES+VJuDgBicYA7/SuGu1FXb1MleLuiHTtAj8QwuqrGYVPKqxG44I5U8//AKuops/huR44v3Q/dKSVfhRnP4cZ/IVpwFtMn8mycgBmf5AAWUd/Y46U2LxJJcSwD7QgikBDCRAxAzgDPHHWuJVarkp03ob2izi9Z0S50yXzId0n93YO2euPWmxai9xIrxxsm5QPvZHAA/A/416ZPJZ3ohiNqkrLx5i9Rg9ce/8ASq0vhvTrjVRO2YkVAgiVMZI5B9M55/Grlj4xTVRWIlS7HGwayLLAmjRpAAxH3hjOMHPQ8GtjT/EEd2qL5n75ZdxyfXrTNd8KTNI09q8bDIGCOnYf4n61l2vh7U/tEjx2yxv5n3l+Vcden+RW0J0K8dxOLR29nriXhKyABcFg+Pcrj9MVoQTW6RnbNuHIBY8deK5GKH7JG7XExjWQbUITPP8Ak00tdW8jIoEgxvLA5ABH+c15lTAKS90SqNbnaOBcMqA4Ukc54OOf8K2YlOxVyDwOAK5TS7iOZi+WVSpGAeM5rqbWYbAx27cdQef85rhVJxsr/edCfull5UgU/KW9B0rLu54WVfMLAMvXONv0q9PKGOXIKVz+rTx3CGOBgGJHHfqT/n6Vp7WHOk1oJu2pnz3kazJIsyzEcjb97Gec9q1YryXcymIBMgsCxwB2OP8APaqtnYwRSxkwEuVCg9Pzx71aXZb/ADLGpQnoDyD3PNKtXw7tGFyFfuWGmtXAYo5z8u3aGpZLVS5ZXClSAyKcYHbg0sU0W7G/yzk/Nj0puqXQjliaZC4IH7xFxge5oor2keVptFPQBDlQVjjZT0JXk/pRUlvNYXEIfy589PkY44orb6rNaKP4P/IOZdjw2z8O6nIjSwwGW2lIJhw+/cp5Kjb1AJ464JrqfA+n3WlfbtUutNhmkiIaMXqEMjct8m/HzYGSc9hXSf8ACU3GnW8Gnahax2yvBJJc3MBA+YkrsHHLD2z1Fcv4u8V/brBLedTgHzI9x3bWBwqtnjAHJ75xz1FfWUJKdL291fsQqMacfaNmRrWunxHq8kkkTwyylUWMBgiNgA8DBJG3+fWuY1T5sNHdGdOm9lCjj0BPIod5Di+uZJ42Mny+XjYB6D/61Vp51tlKpNDM7g5YA4VRz1460uTVHJUlzSbRZt0h+xB7zImdwfLWIIrRjocjrz/Ssu/X9+ZdjptkIVM5btgHgfyqSzW91KWYRK8vG6RgpYhcgZ9fSvRrXUfDKWyw6nbfbHt4AqgsyEFVyCqgLjnOSf610xvrqXToucW72scf4Y8Pa1rs1w9t5NtHBgTSTyiNY8kHkZz0zwB2q62iaiulm2/0a5gkLSK3mdOvzZ7YABx9B1NW4fEdncaZNBeFgRIzDbjjgYwAOuBisdtfaKy2WzFFGSjHrIScEdAB1J/EVE3CSj33fqOoqUIJQd2QRXt7orRqoNpMEKsTkZB7nABHH41Y0fUo7m6K3RV7RQWKu4Uk47DOcnpwM1m37ZQyoPMfIdmPA3NzgDHY5rPgkMMTMIiGU/Mx5+nbirpz2e/kZQqODWl126Hpl/rsd9q1iJ7ci3ibETTYO1GAJ4IBIwBzz1/Cufe40jTpCIreJLlSqh2kbcH5LMFHA/H8B1rk7q4V386K5uHdzl/MHfPrnmtC4SF726d42yztJkjjBORj3xRK86jqSY6tWVSXMy1d6/eQ7YpSSVcBGR8YAI6EfjzVi8UX1pFNdXQZ5F3CThTt6fOfXOccZI+orIEljsISMmX+EM2RjnrjvzXRadeQHQhp0qRSJhpJCGyVwcgewPH/ANenCMLNydrfmEIqTbk7fqZHmRW6qqzLKiFivBUbcEDH4fzpkkgmt7cLMHYEorAlcgdM54yOn4j6lYRJczy3CqqEPhUIBAH16celXJrV7iOGWZE8uI+WvlsoUk98jv3x9elR0uzPW5Csl7cX8tqs+9bl9xwu5Qc+h4z2rudI0bSdKhYNaW9xqBQkzyIQAPQKCBXJWdxsMOHBEYwflww9a2rq+lS4DhirY+UD3rsw+keeRMm07I2L29a02NHJbxGRwU2RghOMc46E4I/H2rk/EOpSXESW9zc7gsjOoRjkZxgZPQenXrV+6nvNQsfKtrZvNQ7W2rj5gO57D3ri5La8vGkcQMSGJduwwOh9651ifa023oa8rUu5o2Ms+pX1rEtwR85G0vsG0fNwSf8Ae/8Ar5rdurCfUNAn1CUBruylEUjB93ytkcnHJBx7YNc3daoqqGgMizxkBHBwNmOeOcHk9+5p9teyyW/lSH5Q3mMCOeRxz+NQ3Hlu0bU5xUXFo0LWzke3nnEqtIOGVzhmGR0HXp/KoNjLEbpCd+TwSOSP1P8AnrWjawwNb8vuuJMYbJG0Z6mkaNrZNkqLKo3B5F+YAkgjJ/GuVxl95DSbOfjuZVxli0YPQDINOdxHCO5X8Dj0FXZLJjOcfdc5yz4XPpmo7qzZYo0CSZXkZHGO/NaNa2JkncqeQzMDEFJX5iDztqQ3j28kawxscNv69SBxx2/+vSrYXK5LFwFXJx3Hp+tZ81lNHIqkOGOSVcYwauLT0Zm1Iswz77t7gx7pMlmZuQSffsavWklta3qXNuNk8W7cjOMH1APpWfIfKtgGRg+Tg+uPerVs9sTDLLEnliRVcZJIHOTjP1rWMnzJoqEpKSa3O4tNd07WpxaagkE9v5KxxmYmMwsoLZ3L65P5+1c1q1rbSarqDWojFqsjOmeCibjwOvTOPwNU9SutNuJ2l0+FoHMhVVyArJwF47Hg5JPepk3vCpnAWRhsLBu3XP1/xqq9TmetvU2xFbm0dr90QW808kb+X8xPHqQPbvT7W5voofK8kFkztbO3A6n/AD71oRwSWEWYlR5JAFzkcA9Tx+HSs27uoJJY4oIPLZDhnzySevTp/wDWrlio2aMFsadnsRN4MTSSjay4DDv0rI1aG4lZlaZ2SIkBT0UZ5qaGVIyQXJ9K0pRHIimc53Ln5MYyeOR/+qsKc3Gdu41roc3FZSrEzeTldobK84+mKluolyXnaRWBIZCnzA/QmtiLzYbqByQ6FsgdM4prK0zs4R5GuG3SKOdwyPxznP8A+qt1Ule1hqJl/bEYxiNJfv8AG4bj7du39akvYJ2ugZpTgt8pY89sf0rRGiztepIFtYoi235nHr1I9f09+K1LvSbG0lgezeVxDgNJt434Hzj2OTxW26cuxUYuzfYxzpzWrrdKQMbcqy8A8Zznj/8AXWtZXtpDFHJME2sTu28L6E8Z7fzqWdo1IykgMq/eQnaCBkAg8fxfriqUdqplMYWP5lAUOBwT0+hz/KuKrHm0ZrCb1NNbS1kybCQBWztd2HKY4zkZyeefYetMWSCFwkURLM5DSR43J24z7ge1Q2KzPJ5o2RrApRSuQD149uefzq9KLpVJdWjgLZKxnkEjGcjr0FYc0ov3SrpvzGW9lIJD9klDkfNkk4yM880y4vpoLxI7ZpFjUYeOTnJwM9gPzqO+kmtSGtS0nlsQ+SMg5zye/wCNW4LiS9tUuDFiRODsGGAHT3pKmpNyYO60NS2v5Z7qEiXe0+5Sm04Kjrg+/I/CmX+mX8upMbYmONVwgaQYBz19+3HuKv2WqRRQjAEiqQS7HDcEtx2J689fwNbdh4stLqHHliRY2Ctvx0J689f/AK1Qqfs3+7QJk+j2tzZQW4kEckwUbupOTxwPqR/nmpX1LablX3Oy7nVXTBHrjPTk/TrVwXllJbJeL8w+8gDHbgdcjvjg1JILKXy1eQB5AS+/HIVl49ev+NeZVu3acfU2TaKVveJewuzIImbCjnHPv7e9SKZprhAmCB8rKQB0/mfeqKWjadH5ETG4naTzNzMPxOfT+ZFMlkaJ/OS4QKCWIb7w9eMf5zWOIo0VC9LR9R7jvEWlSXFgFj2RhRuJ/iJ9B6c457CuHN/PbFTtEqxNsdgORz1967KbxEWnKMMq42n5s7cY/nmrhtLK9s5IYwMSgJ5S8MP9rj/PFb0KtSkuVrmuZOKbOd0u9SSQSRttQ53IPWt1NWkiUKhDBgM56j/OKgOjCwSViFWIkY4wc98H3/pSS2exxIFJXuPfHqK5qsYc90zRPlNGbV0FsZJHVd3AUdxWQ4ee9YQ7QhfaRg7uc/kBgU+408wRLcKRNCU3IpX5kPPX8ao6a9xaRvdufNLqWbnPXnoe5qeRRvYxlO7NmK/ubfmSNygJYHGDtBA7+9SNMt0odZeucHoAf/rdazxfm8uAs28MWGcHPJ5/nV4JFNbP5kYGwbiejZ6/5+tc0qUW72sNSuEEl80q+XH5qEdV44HY/WrE1ykm/wC1QuY0AUM3Qgdh69eaispZreIESjahAIPynBz1qxDPZ6lGUBVuMEYxnFSpqm/8ikx9rHp1xCHivbiNQcbTMOO/qPWis5/DEjyu1pNDHFnG2Zm3A456GivSjiaTinzv7yuaR5Nf+KItTnt90S21vBLvEMXGWyOcYwT78VI2rR3kEytZrK7rtRkjRtuT97JUepHOPatWC30E6YmkXVug1F9wfUXIcuwyQfmxhe20VefS9J0Hw+2nwxs+oXcsEa3AiIKLvGWDc49OD3HrXv13Tp8iirttL+vQzlCfLdvQy7PRLcLCbyPH2kyCKeZvlJA5XbxgDjngZPXvWHqGiaUdUWxtdR3JG3lmSNg6Hj5mLdB3+7u6d6lhtb3xDql019eXRjiZnfAMshUchQM4GB6niorrU2sblJ7SxW3BfepfDSMVIBPTC8jsB3reMZK7Urt9DBuOisWnhl0ZIU0xFmtpHMyTeXhmA7cgEAgZ9807X5Dd6nNe2cWxZLYJFFt2lcjDZHQcbz37c1UtpJDK4eR/tMgLJb5IEZyMA+/PA7d/SkuLovbrbqm+7k4wMk9QMAHr/wDXrNxnGopPcpyTVjn3jktiWkhZnYcFgQORwR6/Wm2+mXl5EZ1UJCociSRtqttBJAPf047kV0n9ns13Ems3O3cQjQxjfLgdF4yF9wTkelSazPYGaGCwX7NaWobYrSNIc575x39AK6bytpuY8tzmtMjN/qttZNKsKu43NIRhfU89/avTrTwd4Z+wsLr7edrNF5kigD26DggEcn171y+n6kY9RmkitrNpyzzS3ssYZWUd8v0JYjHcZrKudduVnnMN0589gwjjHDMOnHfqetd1CVGEbzjdnTQnQgn7WN2VLu3fTrq6sVRisUzDLpgnB4OT0z+FS3Mv2pgRAV2JyQcYGO/0H8qgvLC6hvzHfANMp3viTcDuAYZP4j86twWk8dtPdSygrE/lOCu7IbPP04H5iuZ6ttHI7N6bFW9is2si9t9phkxkLIoKOuedpHTB7HPfntVKBpRbzNCSAAN2Ocg8fh1/StCaRZtpj2zRgYbZkEex7n+VaYZdMji8oFY5Ig3lZ2O2RuHHUjJ6+lJ26g9DEtjcMUtzkqmXUDg57Z45rWi0hksxOqF5pWYBc/KhUAkknAXr65/OtLS9TnuYnh1SK4uLbhC7N5j25bIUpu5Bz2Bwe/bFh7K7ks3tLWVGMkrsQMjy8HGBnnkKPc4HrUNqL0BbXZzjsYp1ykiuwDYxnAPQ9c9e3vV5/tGozGVZd4hw4XBy3Tn+fFaNrZfYI83DQl41LIm4FgWUD5iDx9Bz9Kp3NxGGxFAy7U6qOPpg5PWoc52cUxyWl0Psb6Z2IjiZkV18wKCRwRySPcVJ5kdtDfzo6g+UpCnOWJwO/bqfovuaqi2uZZl2XCLBEuGZHIAYdRjvzwPWulF0dQkk+3n7OGGxVYn+EnPbB3E56HoB0qfZWsi03a7OIfS7iWEXMqJbW55WWVggk47A8np2FUogxl+YeijJxxXR67pDyM0hvCkm0ERTRMuQBxg9DxWC6RxhY45fMz789/yraLTVgb1NWB3RlBXKHoM5P04rSWd/JMYj3RKgyrfKcE44x1wayra2nMwGSzjBBH+ea0Lsz206FTH+8+fcmcHk9Qe/+NYtx1SZfoKrwR/Kf3kXAww6jPc1VluJYUCoS0XbceG/2e2KnimcRiNjyTkqRyM9T9atJLbT25MLsXyMgqFDdB36d6xUrLmY7lF52CLM7FGCj92W4zjgAVBKsSRs6pcEucPu5ZfUg8YPXirqqVkLXCYJO1UGCx9884qa++xMVtxOzuuCzFiRz+H4dauG5PxMwZLuRoxHcRgqGDHcuSx7/n396i03UE0jVlna2WVVBByMEEgjI+laElrbAPcSmVlDFTt6u2M4B6Dtzg1mDTp/LhfC5lwevzDJ4/TBroovlXNEmzhJSLVpc6NLqVuLiGS2g8orK+7fufnafYZ25x2BrOuVntrtjFMXRjlWB+8O1XIdJlJmkcofJAHJwCMgd63b2ztjaQNFgNGnKBcdR0JOeRg+wzxmtG+bcl6lXTbiOItJcO4IGNq4Gc9c+h6VduLC0uTJ5assjcphcbTjuc1z9k5tpWBTd/EeMj8a6CxhDsJftDxbfvnPC5/z3rGzTshJHPT2ctvcFSSgXseSa1I7WeDb5gK/LhkY8nPT9DRqA8i580jzIDnJWQEkH0p9rPvljZTuBGCr8k4HT3PT/Oah/H5FpJaioYpkkHz5XjBbJA6n8KkgaWOGWGN9jPgJxk/n9OPxoZZIrkgJmM8grxkdO1JiWyYxIpmhPJ3DJOemD9KUU1LVjRSSS5trhQZRFJnawY9c5+vvWlMl1bkRiTDXC7kRm5xkYB/CoIvsckBedZUIyxIQNuGe3THvV28Sa5+xuCrZiCl2OCME4IyBg4I6VrJRQNG1aW+8okzpGFfaEfBBfGTj6H61n32nyXN0B5gaVVYuqnLLjOMjJJ9ePXtUd5cXFvKn+iiUsuN8nPI759/8+lRpdySXMU0cha6jbJCg7QO3Tv1zispp2stxLRmjZ6O1vJJcyTCIliI5CPk3ddpHt0/CtCS6u9Ra1knQyPwNzDAPrx1HfnFZtvLOlxdG4m+z/aIyqAtxsY5+7jt6fWnzCWxtYGiCDhgzMwQbeMdWHfOO/FZcjXU05kadzpU19dvJbW4J38n5ieOhz37Emqk2nXjrFZW6BGuMhZF5+719MZHP41a0fWb3TxvLqIXDbRtzvyM5DdQBnHXGTitGyuI5rr9w7xs+GjjAOOn3j79enWsJx69S4tN2MK2tJxFNBIiqZJdiysDhVyMnB79Mf41fsf8AQ7l0kANrKcF9u7LAdcn0NbV74oQ28i6naL9nTOApPzkY53de1Z9tpFvqCqlkCkaqGaPB3bSMjkEDoQBXGq9RO01Ypqz0NHSbuCWGFU2HLsdrAAkHOcD1yO/rU2pwl7PfJIzNvBSYkbeS3yjH0Pr0rjr+7NrdSWsbiTG7aEUq646j3HH/AOrnF238RPHpsi35lMLlTGqkBVxwAB65wMex/HWWHc4cy16j5tLM6WwunFpATieSRSYyeqp3JJHGM/lz3qrcJBeKzxIAySclduDjPVR0446cYp2narZ3ageTMiRKI8NjDYOee+ePpVDdbSSTGxikJPVVk3jJHzEkfz/QVjK7VkrMSdiMeZM/mJGsZ4GFOcEDk4/mc1pCNbL7Kba5U7/mEsLYGQMkZPGP/wBVZVrqlhHKYnljWRtoVVUgEHgknvjHT8feuq0ddJuYCYCsfmHy8pwFz7DpnFDahU1iXpM56XXbgTGO6Hm5xsODnlucj8cVuWl1FcRAtMzEg7XX7ox3x1q5No+npE5e6UBySCxxjnIQAdvyrGTRGN1ICwKylcxkHAOO3ryT6dKy5sNXfNKNn/wSGpLYkt9RhE0lsUGeXyDxweCPfkVWvLyyW8dE+VF+Ywp0jBxx6/5/Cq6WDwanGrJKoZW2gN1JGV69en+cVHI5cNHHGEunIcAKACwAG0n6A4OMVSwalZp6A2rFCaQXN7vt8hWYFtpO5fU45961rPU5YrNkd2dRtBzwSQf8APzFV7aSOyI2MqTmPdJAOCpzzjnp3qyktvHbneYnkOSu/wDvcdh16VjXpq6hYyStqSrcrNbwTPKAzlcrGc8nPJz35qaGQ2lwQHzvyMg5GPw6f40WFraxKBIWMWQwjRuXYDhenAz16d6bfxJDcW5tWOwuWl28fMGPHfJ+WuZ01JuNik2tTUtL6FoMyJM75OShGP8A9dFYM+vrHcSL9oeMBjxJEzMfqaK5pYGV3a9vmae0Xc801W/spNSWHTom8iHBkwN/zZ5we49K6bSbPUvEWr28tzqaW9rAonhNwTgOpwN/r0+hrag+GWpW+oajepP/AGZatcyC3jjjy/lbsZHICjb05J6Vz/jLSLvQtbFnDc3Fzb6hD50O/rv56gHHHOT719rKhJpSS26shQdry2DUtB8Rab/aF7cyREyAPcSWkokKp6sFOe30yRSRtrV5qM0Wn3EYsvKGLiXagk4ByT1bHPqBgnA5rLmtbrQLC3vp5JYbqckMqHJePGNpGcYPI9DjjNUk1prTSHsBbzK07A4fgFV9PX0/CnGnGEr2MuruXZJre5eSGOd7wQjf5pAUOR94LxnBz1J/AU0xtZWcs8cqRTybme6kHzgH+BP6kc46cVnxaz5dk9pb26Cadgr7YhwM9Aev/wCqrNpqZsppbm5tjcSyt+8Mzbl/BBwfxrV6sLspafp8jv5pm28M8anI6/mfyqEXZVBsdIm5DSIucgngZ6j8K6j+2p5IUsL+KyMEwVZfKgjGF/uhkweB79qwLrSbePVpDaPM+mrGZy5GWRAcEf7xOFH+8KmL96yYrPqW1upW042pvHlu7lQ/mS5fZEp+Uc9ATz9AOxrPuYEa7g3RF5nIAMe1S3bqOB+VV7e+laW4n8vDsFKKqEsB0AX0UY/SrUaxtES0SQ3PJhdm5I5B465Hb3qtXInc0/ERs7TxVe26BMI25SVB+XAKjnk4GKzrJ1uYblmAjTaD8r/Owz2yRxWfrJa4umneaMlwgJ6nhQPTOMU5L3dZ+WyR+WvACHYX689Mn8fpVSet0TbUhv4ra1dvs8kyMf8AlnIQxIPqV4qtb721CIFgPmHzYzgfj6U+4uGvZFZiwjA2LuY/KPToB61bs7OS9uybdXlSIDeY0ZgoI9unpSBG1YRS2d0006mGI4aMbg28HkH6cZ59O1b99rGlnRTCiobxlXEqDBDdD14YHJPPP3egFcpqF1khB5nyxhsMBw3cHp29qgtiX2rIn7/OAi45GePX8sVjOK5rhzdDqLCztr+2aKS7tvNj58+VioXsOo+Yn9Pem2fhW7tJXv7sKYFYMojI/ejcMYJ4A6cn8jW1p+qQz2tv4emt4kV9pldZlQyZGcggD5lyOD6AVlaXqUEu64mnXyIF+eNwz5PAB78j+nfNdM+VKPW5pJRjazuO1KYLfxySWf2aG2chIQmxAM8AKO/PXJOc9KpaxPagebeQySXTtu67fKyAeVx06ADPbvT9XM86W8tkBP5i7FQZcjknGD1Axjp+WQKbq9vL5kN1dWcwJgXzWkVgGkAx16AcA8/T6Yy1kpIjmM3UZ57u1RVB+8BGUYfLxg9ecdPoe1Y7bYiwjfJUkZbnPatxmhSL5FuLjGAwwFVCeM85H6j+tZd5CNvmrE8cjNkqzA8e3FEYpRsO63KsVzKRtDYPTA9KuS3D3MysshRVXCp1NUthiA3ZwWwSBmrEDxlcEksWPbpUNJO9hpvYsJduknnICJFGQfbHvV1N0y+bkFpsOS2FI6Z/Cs66ljhvAkAYqQJTgfMvHI9xR9ouRbyHe8cbDJ3Zw3PBGOvNRJOS02Jle9kbluivCz5kcnJ3AAjrxx1xU9laiS2mwm8ZDcnhufQjp349Kh0+6lgt1Etq6ztEV3rwHjOcn3OPz6Vo3GnTC2Z4mkQEiRDuCbEPqD2A9STXKuZyaLcbbMzRYibzOSiqd7EtnPr9ODx9KuyRJe3TCBEChCqpHzz357nkVRjKSXYs5bvBDZkMeGDKOhyD71shdNW4WKHPmgblk8zdwAeOO3t7VrLEKDSY7XM8aIEi8y4LxZOAu7JJ45Pfjt/SrrW0VvoKoqlGkJd5tuTg9AR06cj6GmXF7BC9xdOH3B9saE8bSMc84HAzj3pIpZryCQsjbVjDsd2AB2J/76P5mqddyXuoSjFbmXZWNvNMYA0UePulySGBI5P16/hUVzZTkM8BKrIAfk6ZA6dfpWhpkAuJ/OMwRIm+RicY+X+fTFbI0VjJE/mRsgjBkXcAQ33m46se+fbnB4q1NXvfUpJPbY45bPUNqhlWU91ZlOee3OTUNyTEQkLMgUkKcfd55FdjJo2nS27BYZV2nLv0VMZ7evTp/jWO1hHZyyKVZ42AKhn3Hr171futXRElyovWSJc6VHeJAXeOTZJGowTkA5x6Zxx6k+1NeOQW5mVmlGzzF8yPAXnBX6dD+Jqe1vGCeVbqDCwPmOyY8zI9h7AfXNS2k0YLJ5RLFSC7MSAvbAJwPwrObi2RzIoMysIZzuM8ORtjxz6D3ANXV1I29tHEYY0jRNqqEyG5OWyeRyfyFR6dbyGR12Eg5U47DBGcD0yKaYJni8hbiW3dCNxcFf6dSe309eCEmty4u5K9xHdWTTSbYVZMhWyxHQEcdDVWLTUWaR7eNjbxqZMk4+dTgg9z1OK0f3E2nywjcSXUTMCocZ4HUdTmr9npq28UhieYoW2MykHgZJQZ78Zz7ChVL6FNGDDsuLZLc3QURnKqOrc84PH44pdQil+1W6SSRpvR3dUfcvTv6YAz09fWo9Qsrn7WrLbSJa7gU8pgCjAZJ9/y5zUqW7QQxu6NIxdiSeTyuAPYZz168e9NpNWKjG+hHdPcptEsoaKGI4GAFfcmQPYZyT24+lJbamXtonuERZvulkTCZHRfbj27/jVzXNJlW3imtoJJtyiQneSxJ5IA74IKnH90VkRPBLEBMrmPYXIReFPcnpxk1CbUbMUouL1N0f6fYeaGKMjZyP4XAPJGeOKqrqV1p0It0LJBI4XzjzgDnbx+H5VQg1mS4sZUjB8knCpn5jj0P606DzrqRorRZPs5k35nTvjof6Vyzi23fYJO7ujpzYabcWzXW4mbbw2PmJ4HU9O/tXOaxeS3Fwgf5hDF5aqFI3qDnj1wCB+FTRavLZ3PkSwqsbAqTuOwH+9nrnNR3UlreXKRuPPtoQDI4Y46DleRj8vqKqkpQ1TuhqbtZkmkajK2oWwtCCYoirxTcg4HB+uMjHtXXWsaWSZgQLdu+6TcmQGB6f8A1/pSeHxbrpxEzhoGBihlYEuepAbj04z9OcVpTi4hs4w0JgvGZlUZBJUjG48ZGMY9azxDUld3SLV0Zk2mi5u2leNpLneYxvG3OeMjHqO/t7VXjhn0y2uv3UcaBUCuzN8rEHJ6dl780t5tnmbUBM0crk7Ou9ixAAyOgHtVka7PJp02nXUPm3vkP+9iPy7eBnIx71hKq7J77GkbLVFe28SO1ybK54kjxhcHcw44Kj6n1xXYiaK6hjZ4RAYhtTYuenbn6CvPrOXTWvEmhaJHRgihwF2Kp5LHnjrg57ge9btyUu/N1GeIiKRf3Q3HhOvBHB42n8TXPUw66Kyf5lKcZa9TW1ci2gF4iec52qqlRyBxwe3oMVzeq2j/AGkmKNjMueAchT3/AC56d/1v2Vy8duUd3dlY4iQ8IAce/p09/wAac8MttbtIXabzOF+bJGMs3oRgAcVvhYuktWRON15nMX1pLcTW9zAJPMhOxtx4kGOo7ggY/Srsf2g6jtgkLRkpIVz91Ry3P5mr0UcupRSwwho5Ix+8kRDhW5578Yp1j4VvdPv/ADyZbiCT5hsBC5POD6cdDTrSb5pS6GfKaFrPFJcBXiaOMsWRkw2/vkjsMcY/xqqt4bqQyWiF5S5wJSEaRTkdfujr/nvVaznaAtDI0z7yqJuK7FHUjP4Dn0NX7OIi2S3gkJu5WDqWGzA75JwB9KwTjZLluVysv2miJOjtNqRjkV9rK8e7HA6HHIorOg1O8t4zHMjM6sR8g4wDgUVq6+Hi7NbC5Wf/2Q=="</span> <span class="attr">id</span>=<span class="string">"img"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="canvas转为blob对象-canvas生成的图片，如何上传到七牛云或服务器？"><a href="#canvas转为blob对象-canvas生成的图片，如何上传到七牛云或服务器？" class="headerlink" title="canvas转为blob对象 canvas生成的图片，如何上传到七牛云或服务器？"></a>canvas转为blob对象 canvas生成的图片，如何上传到七牛云或服务器？</h3><p>答案是将canvas输出为Blob对象，这样就可以像File对象一样操作它了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> canvas.toBlob(function (name, quality=0.8) &#123;</span><br><span class="line">    console.log(blobObj)</span><br><span class="line">	let url = URL.createObjectURL(blob); // 转化 dataurl 地址</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="获取到的图片是Blob格式的，如何显示在html中？"><a href="#获取到的图片是Blob格式的，如何显示在html中？" class="headerlink" title="获取到的图片是Blob格式的，如何显示在html中？"></a>获取到的图片是Blob格式的，如何显示在html中？</h3><p>答案还是将Blob对象转换为DataUrl的形式。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">canvas.toBlob(function (blobObj) &#123;</span><br><span class="line">    let imgSrc = window.URL.createObjectURL(blobObj)</span><br><span class="line">    document.getElementById(&apos;img&apos;).src = imgSrc</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="blob-dataUrl-格式-转为-base-64"><a href="#blob-dataUrl-格式-转为-base-64" class="headerlink" title="blob dataUrl 格式 转为 base 64"></a>blob dataUrl 格式 转为 base 64</h3><p>创建 img 对象 通过 canvas 操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">let img = new Image();</span><br><span class="line">					</span><br><span class="line">img.src = res.tempFiles[0].path;</span><br><span class="line">img.onload = function () &#123;</span><br><span class="line">	that.test_img = that.getBase64Image(img)</span><br><span class="line">	console.log(that.getBase64Image(img))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">getBase64Image(img) </span><br><span class="line">&#123;</span><br><span class="line">	var canvas = document.createElement(&quot;canvas&quot;);</span><br><span class="line">	canvas.width = img.width;</span><br><span class="line">	canvas.height = img.height;</span><br><span class="line">					</span><br><span class="line">	var ctx = canvas.getContext(&quot;2d&quot;);</span><br><span class="line">	ctx.drawImage(img, 0, 0, img.width, img.height);</span><br><span class="line">					</span><br><span class="line">	var dataURL = canvas.toDataURL(&quot;image/png&quot;);	</span><br><span class="line">	return dataURL</span><br><span class="line">		     // return dataURL.replace(&quot;data:image/png;base64,&quot;, &quot;&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="canvas图片压缩"><a href="#canvas图片压缩" class="headerlink" title="canvas图片压缩"></a>canvas图片压缩</h1><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>base<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"file"</span> &gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">"show_img"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">		<span class="keyword">let</span> $show_img = <span class="built_in">document</span>.getElementById(<span class="string">'show_img'</span>)</span></span><br><span class="line"><span class="undefined">		</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.querySelector(<span class="string">'#file'</span>).onchange = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		    <span class="built_in">console</span>.log(e.target.files[<span class="number">0</span>])</span></span><br><span class="line"><span class="javascript">		    <span class="keyword">let</span> file = e.target.files[<span class="number">0</span>]</span></span><br><span class="line"><span class="javascript">				<span class="comment">// 判断是否支持FileReader</span></span></span><br><span class="line"><span class="javascript">			      <span class="keyword">if</span> (!file || !<span class="built_in">window</span>.FileReader) <span class="keyword">return</span></span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 创建一个reader</span></span></span><br><span class="line"><span class="javascript">			      <span class="keyword">var</span> reader = <span class="keyword">new</span> FileReader()</span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 将图片转成base64格式</span></span></span><br><span class="line"><span class="undefined">			      reader.readAsDataURL(file)</span></span><br><span class="line"><span class="javascript">			      <span class="comment">// 读取成功后的回调</span></span></span><br><span class="line"><span class="javascript">			      reader.onloadend = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">					<span class="keyword">let</span> img = <span class="keyword">new</span> Image();</span></span><br><span class="line"><span class="javascript">					<span class="keyword">let</span> result = <span class="keyword">this</span>.result</span></span><br><span class="line"><span class="undefined">					img.src = result</span></span><br><span class="line"><span class="javascript">			        <span class="built_in">console</span>.log(<span class="string">'============未压缩图片==========='</span>)</span></span><br><span class="line"><span class="javascript">					<span class="built_in">console</span>.log(result.length/<span class="number">1000</span>/<span class="number">1000</span> + <span class="string">'M'</span>)</span></span><br><span class="line"><span class="javascript">			        <span class="built_in">console</span>.log(<span class="string">'============未压缩图片==========='</span>)</span></span><br><span class="line"><span class="undefined">					</span></span><br><span class="line"><span class="javascript">					<span class="comment">//  图片压缩后</span></span></span><br><span class="line"><span class="javascript">					img.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">						<span class="keyword">let</span> data = compress(img)</span></span><br><span class="line"><span class="undefined">						$show_img.src = data</span></span><br><span class="line"><span class="undefined">					&#125;</span></span><br><span class="line"><span class="undefined">					 </span></span><br><span class="line"><span class="undefined">				&#125;		    </span></span><br><span class="line"><span class="undefined">		&#125;</span></span><br><span class="line"><span class="undefined">		</span></span><br><span class="line"><span class="javascript">		<span class="function"><span class="keyword">function</span> <span class="title">compress</span>(<span class="params">img</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">"canvas"</span>);</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> ctx = canvas.getContext(<span class="string">"2d"</span>);</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> initSize = img.src.length;</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> width = img.width;</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> height = img.height;</span></span><br><span class="line"><span class="undefined">		     canvas.width = width;</span></span><br><span class="line"><span class="undefined">		     canvas.height = height;</span></span><br><span class="line"><span class="javascript">		     <span class="comment">// 铺底色</span></span></span><br><span class="line"><span class="javascript">		     ctx.fillStyle = <span class="string">"#fff"</span>;</span></span><br><span class="line"><span class="undefined">		     ctx.fillRect(0, 0, canvas.width, canvas.height);</span></span><br><span class="line"><span class="undefined">		     ctx.drawImage(img, 0, 0, width, height);</span></span><br><span class="line"><span class="undefined">							</span></span><br><span class="line"><span class="javascript">		     <span class="comment">//进行最小压缩</span></span></span><br><span class="line"><span class="javascript">		     <span class="keyword">let</span> ndata = canvas.toDataURL(<span class="string">"image/jpeg"</span>, <span class="number">0.1</span>);</span></span><br><span class="line"><span class="javascript">		     <span class="built_in">console</span>.log(<span class="string">"*******压缩后的图片大小*******"</span>);</span></span><br><span class="line"><span class="javascript">		     <span class="built_in">console</span>.log(ndata.length/<span class="number">1000</span>/<span class="number">1000</span> + <span class="string">'M'</span>);</span></span><br><span class="line"><span class="javascript">			 <span class="built_in">console</span>.log(<span class="string">"*******压缩后的图片大小*******"</span>);</span></span><br><span class="line"><span class="undefined">			 </span></span><br><span class="line"><span class="javascript">			 <span class="comment">// 转为 blob dataUrl 格式</span></span></span><br><span class="line"><span class="javascript">			 <span class="comment">// ndata = window.URL.createObjectURL(convertBase64UrlToBlob(ndata));</span></span></span><br><span class="line"><span class="javascript">		     <span class="keyword">return</span> ndata;</span></span><br><span class="line"><span class="undefined">		   &#125;</span></span><br><span class="line"><span class="undefined">		 </span></span><br><span class="line"><span class="javascript">		 <span class="comment">// Base64 转 blob  </span></span></span><br><span class="line"><span class="javascript">		<span class="function"><span class="keyword">function</span> <span class="title">convertBase64UrlToBlob</span>(<span class="params">urlData</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">			      <span class="keyword">var</span> arr = urlData.split(<span class="string">','</span>),</span></span><br><span class="line"><span class="javascript">			        mime = arr[<span class="number">0</span>].match(<span class="regexp">/:(.*?);/</span>)[<span class="number">1</span>],</span></span><br><span class="line"><span class="undefined">			        bstr = atob(arr[1]),</span></span><br><span class="line"><span class="undefined">			        n = bstr.length,</span></span><br><span class="line"><span class="javascript">			        u8arr = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(n);</span></span><br><span class="line"><span class="javascript">			      <span class="keyword">while</span> (n--) &#123;</span></span><br><span class="line"><span class="undefined">			        u8arr[n] = bstr.charCodeAt(n);</span></span><br><span class="line"><span class="undefined">			      &#125;</span></span><br><span class="line"><span class="javascript">			      <span class="keyword">return</span> <span class="keyword">new</span> Blob([u8arr], &#123;</span></span><br><span class="line"><span class="undefined">			        type: mime</span></span><br><span class="line"><span class="undefined">			      &#125;);</span></span><br><span class="line"><span class="undefined">		&#125;</span></span><br><span class="line"><span class="undefined">		</span></span><br><span class="line"><span class="javascript">		<span class="comment">// Blob to Base64</span></span></span><br><span class="line"><span class="javascript">		<span class="function"><span class="keyword">function</span> <span class="title">blobToDataURL</span>(<span class="params">blob, callback</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		    <span class="keyword">let</span> a = <span class="keyword">new</span> FileReader();</span></span><br><span class="line"><span class="javascript">		    a.onload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123; callback(e.target.result); &#125;</span></span><br><span class="line"><span class="undefined">		    a.readAsDataURL(blob);</span></span><br><span class="line"><span class="undefined">		&#125;</span></span><br><span class="line"><span class="undefined">		</span></span><br><span class="line"><span class="javascript">		<span class="comment">// dataurl blob 格式转化 base 64  </span></span></span><br><span class="line"><span class="javascript">		<span class="comment">//  形如 blob:http://localhost:8000/6c5b1a61-8452-4a4e-9578-7f49c78c556f 转为 base 64</span></span></span><br><span class="line"><span class="javascript">		<span class="comment">//img 对象  </span></span></span><br><span class="line"><span class="undefined">		getBase64Image(img) </span></span><br><span class="line"><span class="undefined">		&#123;</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">var</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">"canvas"</span>);</span></span><br><span class="line"><span class="undefined">		     canvas.width = img.width;</span></span><br><span class="line"><span class="undefined">		     canvas.height = img.height;</span></span><br><span class="line"><span class="undefined">					</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">var</span> ctx = canvas.getContext(<span class="string">"2d"</span>);</span></span><br><span class="line"><span class="undefined">		     ctx.drawImage(img, 0, 0, img.width, img.height);</span></span><br><span class="line"><span class="undefined">					</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">var</span> dataURL = canvas.toDataURL(<span class="string">"image/png"</span>, <span class="number">0.6</span>);</span></span><br><span class="line"><span class="javascript">		     <span class="keyword">return</span> dataURL</span></span><br><span class="line"><span class="javascript">		     <span class="comment">// return dataURL.replace("data:image/png;base64,", "");</span></span></span><br><span class="line"><span class="undefined">		&#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/01/扫盲贴-美国电话号码格式/" rel="next" title="美国电话号码格式以及区号">
+                <i class="fa fa-chevron-left"></i> 美国电话号码格式以及区号
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/20/css-选择器总结/" rel="prev" title="css 选择器总结">
+                css 选择器总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Blob对象"><span class="nav-number">1.</span> <span class="nav-text">Blob对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Blob构造函数"><span class="nav-number">1.1.</span> <span class="nav-text">Blob构造函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URL-createObjectURL"><span class="nav-number">1.2.</span> <span class="nav-text">URL.createObjectURL()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URL-revokeObjectURL"><span class="nav-number">1.3.</span> <span class="nav-text">URL.revokeObjectURL()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Blob的使用"><span class="nav-number">1.4.</span> <span class="nav-text">Blob的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Blob最简单的方法就是创建一个URL来指向Blob"><span class="nav-number">1.4.1.</span> <span class="nav-text">使用Blob最简单的方法就是创建一个URL来指向Blob</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Blob-响应"><span class="nav-number">1.4.2.</span> <span class="nav-text">Blob 响应</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前端图片canvas，file，blob，DataURL等格式转换"><span class="nav-number">1.5.</span> <span class="nav-text">前端图片canvas，file，blob，DataURL等格式转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#利用URL-createObjectURL"><span class="nav-number">1.5.1.</span> <span class="nav-text">利用URL.createObjectURL()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用FileReader-readAsDataURL"><span class="nav-number">1.5.2.</span> <span class="nav-text">利用FileReader.readAsDataURL()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#canvas转为blob对象-canvas生成的图片，如何上传到七牛云或服务器？"><span class="nav-number">1.5.3.</span> <span class="nav-text">canvas转为blob对象 canvas生成的图片，如何上传到七牛云或服务器？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取到的图片是Blob格式的，如何显示在html中？"><span class="nav-number">1.5.4.</span> <span class="nav-text">获取到的图片是Blob格式的，如何显示在html中？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#blob-dataUrl-格式-转为-base-64"><span class="nav-number">1.5.5.</span> <span class="nav-text">blob dataUrl 格式 转为 base 64</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#canvas图片压缩"><span class="nav-number">2.</span> <span class="nav-text">canvas图片压缩</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

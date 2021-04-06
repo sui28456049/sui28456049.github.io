@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis常用操作与总结">
+<meta property="og:url" content="http://sui28456049.github.io/2018/08/18/redis常用操作与总结/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.690Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redis常用操作与总结">
+<meta name="twitter:description" content="Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2018/08/18/redis常用操作与总结/">
+
+
+
+
+
+  <title>redis常用操作与总结 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2018/08/18/redis常用操作与总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">redis常用操作与总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-18T11:50:24+08:00">
+                2018-08-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><blockquote>
+<p>Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了 复制（replication），LUA脚本（Lua scripting）， LRU驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis哨兵（Sentinel）和自动 分区（Cluster）提供高可用性（high availability）。<br>这里是我常用redis一些操作与总结,我都用的是<code>predis</code>这个类库</p>
+</blockquote>
+<p><code>composer require predis/predis</code> 安装,mac图像界面<code>another redis desktop manager</code></p>
+<h1 id="redis常见数据结构"><a href="#redis常见数据结构" class="headerlink" title="redis常见数据结构"></a>redis常见数据结构</h1><ol>
+<li>字符串（strings）</li>
+<li>散列（hashes）</li>
+<li>列表（lists）</li>
+<li>集合（sets）</li>
+<li>有序集合（sorted sets）</li>
+</ol>
+<h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><h2 id="字符串操作"><a href="#字符串操作" class="headerlink" title="字符串操作"></a>字符串操作</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line">$client = <span class="keyword">new</span> Predis\Client();</span><br><span class="line"><span class="comment">// 获取数据</span></span><br><span class="line">$value = $client-&gt;get(<span class="string">'key'</span>);</span><br><span class="line"><span class="keyword">echo</span> $value . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改数据，与创建数据一致，即覆盖数据</span></span><br><span class="line">$client-&gt;set(<span class="string">'key'</span>, <span class="string">'value2'</span>);</span><br><span class="line"><span class="keyword">echo</span> $client-&gt;get(<span class="string">'key'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 追加数据</span></span><br><span class="line">$client-&gt;append(<span class="string">'key'</span>, <span class="string">'_value2'</span>);</span><br><span class="line"><span class="keyword">echo</span> $client-&gt;get(<span class="string">'key'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除数据</span></span><br><span class="line">$client-&gt;del(<span class="string">'key'</span>);</span><br><span class="line"><span class="comment">// $redis-&gt;delete('key');</span></span><br><span class="line">var_dump($client-&gt;get(<span class="string">'key'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建数据，带有效期</span></span><br><span class="line">$client-&gt;setex(<span class="string">'timeout_key'</span>, <span class="number">5</span>, <span class="string">'timeout_value'</span>);</span><br><span class="line"><span class="comment">// 获取数据的有效期</span></span><br><span class="line"><span class="keyword">echo</span> $client-&gt;ttl(<span class="string">'timeout_key'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断是否已经写入，未写入则写入</span></span><br><span class="line">$client-&gt;set(<span class="string">'unique_key'</span>, <span class="string">'unique_value'</span>);</span><br><span class="line"><span class="keyword">if</span> (!$client-&gt;setnx(<span class="string">'unique_key'</span>, <span class="string">'unique_value'</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> $client-&gt;get(<span class="string">'unique_key'</span>) . PHP_EOL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量创建</span></span><br><span class="line">$multi = [<span class="string">'key1'</span> =&gt; <span class="string">'value1'</span>, <span class="string">'key2'</span> =&gt; <span class="string">'value2'</span>, <span class="string">'key3'</span> =&gt; <span class="string">'value3'</span>];</span><br><span class="line">$client-&gt;mset($multi);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量获取</span></span><br><span class="line">$result = $client-&gt;mget(array_keys($multi));</span><br><span class="line">dd($result);</span><br></pre></td></tr></table></figure>
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$redis = <span class="keyword">new</span> \Redis();</span><br><span class="line">$redis-&gt;connect(<span class="string">'127.0.0.1'</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// Redis 没设置密码则不需要这行代码</span></span><br><span class="line"><span class="comment">// $redis-&gt;auth('password');</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 向队列左侧加入元素</span></span><br><span class="line">$redis-&gt;lPush(<span class="string">'lists'</span>, <span class="string">'X'</span>);</span><br><span class="line">$redis-&gt;lPush(<span class="string">'lists'</span>, <span class="string">'X'</span>);</span><br><span class="line"><span class="comment">// 向队列右侧加入元素</span></span><br><span class="line">$redis-&gt;rPush(<span class="string">'lists'</span>, <span class="string">'Z'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将索引为1的数据修改为 Y</span></span><br><span class="line">$redis-&gt;lSet(<span class="string">'lists'</span>, <span class="number">1</span>, <span class="string">'Y'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 list 长度</span></span><br><span class="line">$length = $redis-&gt;lLen(<span class="string">'lists'</span>);</span><br><span class="line"><span class="keyword">echo</span> $length;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍历 list</span></span><br><span class="line">$lists = $redis-&gt;lRange(<span class="string">'lists'</span>, <span class="number">0</span>, $length - <span class="number">1</span>);</span><br><span class="line">dump($lists);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从左侧出队一个元素（获取并删除）</span></span><br><span class="line">$x = $redis-&gt;lPop(<span class="string">'lists'</span>);</span><br><span class="line"><span class="keyword">echo</span> $x . PHP_EOL;</span><br><span class="line"><span class="comment">// 从右侧出队一个元素（获取并删除）</span></span><br><span class="line">$z = $redis-&gt;rPop(<span class="string">'lists'</span>);</span><br><span class="line"><span class="keyword">echo</span> $z . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取左侧第一个元素</span></span><br><span class="line">$y = $redis-&gt;lGet(<span class="string">'lists'</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">echo</span> $y . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除队列</span></span><br><span class="line">$redis-&gt;del(<span class="string">'lists'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$redis = <span class="keyword">new</span> \Redis();</span><br><span class="line">$redis-&gt;connect(<span class="string">'127.0.0.1'</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// Redis 没设置密码则不需要这行代码</span></span><br><span class="line"><span class="comment">// $redis-&gt;auth('password');</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建集合</span></span><br><span class="line">$redis-&gt;sAdd(<span class="string">'sets'</span>, <span class="string">'value1'</span>, <span class="string">'value2'</span>);</span><br><span class="line"><span class="comment">// 以数组形式创建集合</span></span><br><span class="line">$redis-&gt;sAddArray(<span class="string">'sets2'</span>,[<span class="string">'value3'</span>,<span class="string">'value4'</span>,<span class="string">'value1'</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取两个集合的并集</span></span><br><span class="line">$union = $redis-&gt;sUnion(<span class="string">'sets'</span>, <span class="string">'sets2'</span>);</span><br><span class="line"><span class="comment">// 取两个集合的差集</span></span><br><span class="line">$diff = $redis-&gt;sDiff(<span class="string">'sets'</span>, <span class="string">'sets2'</span>);</span><br><span class="line"><span class="comment">// 取两个集合的交集</span></span><br><span class="line">$inter = $redis-&gt;sInter(<span class="string">'sets'</span>, <span class="string">'sets2'</span>);</span><br><span class="line"></span><br><span class="line">$length = $redis-&gt;sCard(<span class="string">'sets'</span>);</span><br><span class="line"><span class="keyword">echo</span> $length.PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取集合中全部元素</span></span><br><span class="line"><span class="comment">// 不推荐使用这种方法获取全部数据，会导致服务器执行超时</span></span><br><span class="line">$sets = $redis-&gt;sMembers(<span class="string">'sets'</span>);</span><br><span class="line">var_dump($sets);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断元素是否是集合中的成员</span></span><br><span class="line">$isMember = $redis-&gt;sIsMember(<span class="string">'sets'</span>, <span class="string">'value2'</span>);</span><br><span class="line">var_dump($isMember);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除集合中的元素</span></span><br><span class="line">$redis-&gt;sRem(<span class="string">'sets'</span>, <span class="string">'value2'</span>);</span><br><span class="line">var_dump($redis-&gt;sMembers(<span class="string">'sets'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 随机获取一个元素</span></span><br><span class="line"><span class="keyword">echo</span> $redis-&gt;sRandMember(<span class="string">'sets'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 随机获取一个元素并从集合中删除</span></span><br><span class="line"><span class="keyword">echo</span> $redis-&gt;sPop(<span class="string">'sets'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除集合</span></span><br><span class="line">$redis-&gt;del(<span class="string">'sets'</span>, <span class="string">'sets2'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="哈希"><a href="#哈希" class="headerlink" title="哈希"></a>哈希</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$redis = <span class="keyword">new</span> \Redis();</span><br><span class="line">$redis-&gt;connect(<span class="string">'127.0.0.1'</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// Redis 没设置密码则不需要这行代码</span></span><br><span class="line"><span class="comment">// $redis-&gt;auth('opG5dGo9feYarUifaLb8AdjKcAAXArgZ');</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 hash 表</span></span><br><span class="line"><span class="comment">// 向名字叫 'hash' 的 hash表 中添加元素 ['key1' =&gt; 'val1']</span></span><br><span class="line">$redis-&gt;hSet(<span class="string">'hash'</span>, <span class="string">'key1'</span>, <span class="string">'val1'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 hash表 中键名是 key1 的值</span></span><br><span class="line"><span class="keyword">echo</span> $redis-&gt;hGet(<span class="string">'hash'</span>, <span class="string">'key1'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 hash表的元素个数</span></span><br><span class="line"><span class="keyword">echo</span> $redis-&gt;hLen(<span class="string">'hash'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 hash表 中所有的键</span></span><br><span class="line">$keys = $redis-&gt;hKeys(<span class="string">'hash'</span>);</span><br><span class="line">var_dump($keys);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 hash表 中所有的值</span></span><br><span class="line">$vals = $redis-&gt;hVals(<span class="string">'hash'</span>);</span><br><span class="line">var_dump($vals);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取 hash表 中所有的键值对</span></span><br><span class="line"><span class="comment">// 不推荐使用这种方法获取全部数据，会导致服务器执行超时</span></span><br><span class="line"><span class="comment">// $all = $redis-&gt;hGetAll('hash');</span></span><br><span class="line"><span class="comment">// var_dump($all);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断 hash 表中是否存在键名是 key2 的元素</span></span><br><span class="line">$bool = $redis-&gt;hExists(<span class="string">'hash'</span>, <span class="string">'key2'</span>);</span><br><span class="line"><span class="keyword">echo</span> $bool ? <span class="string">'存在'</span> : <span class="string">'不存在'</span> . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量添加元素</span></span><br><span class="line">$redis-&gt;hMset(<span class="string">'hash'</span>, [<span class="string">'key2'</span> =&gt; <span class="string">'val2'</span>, <span class="string">'key3'</span> =&gt; <span class="string">'val3'</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量获取元素</span></span><br><span class="line">$hashes = $redis-&gt;hMGet(<span class="string">'hash'</span>, [<span class="string">'key1'</span>, <span class="string">'key2'</span>, <span class="string">'key3'</span>]);</span><br><span class="line">var_dump($hashes);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除 hash表</span></span><br><span class="line">$redis-&gt;delete(<span class="string">'hash'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line">$redis = <span class="keyword">new</span> \Redis();</span><br><span class="line">$redis-&gt;connect(<span class="string">'127.0.0.1'</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// Redis 没设置密码则不需要这行代码</span></span><br><span class="line"><span class="comment">// $redis-&gt;auth('opG5dGo9feYarUifaLb8AdjKcAAXArgZ');</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加成员</span></span><br><span class="line">$redis-&gt;zAdd(<span class="string">'zset'</span>, <span class="number">95</span>, <span class="string">'小明'</span>);</span><br><span class="line">$redis-&gt;zAdd(<span class="string">'zset'</span>, <span class="number">99</span>, <span class="string">'小刚'</span>);</span><br><span class="line">$redis-&gt;zAdd(<span class="string">'zset'</span>, <span class="number">100</span>, <span class="string">'小红'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 统计成员个数</span></span><br><span class="line"><span class="keyword">echo</span> $redis-&gt;zCard(<span class="string">'zset'</span>) . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取某个成员的分数</span></span><br><span class="line">$score = $redis-&gt;zScore(<span class="string">'zset'</span>, <span class="string">'小明'</span>);</span><br><span class="line"><span class="keyword">echo</span> $score . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取某个成员的排名</span></span><br><span class="line">$rank = $redis-&gt;zRank(<span class="string">'zset'</span>, <span class="string">'小明'</span>); <span class="comment">// 从低到高排序的名次</span></span><br><span class="line">$revRank = $redis-&gt;zRevRank(<span class="string">'zset'</span>, <span class="string">'小明'</span>); <span class="comment">// 从高到低排序的名次</span></span><br><span class="line"><span class="keyword">echo</span> $rank . PHP_EOL;</span><br><span class="line"><span class="keyword">echo</span> $revRank . PHP_EOL;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 给指定成员增加分数</span></span><br><span class="line">$redis-&gt;zIncrBy(<span class="string">'zset'</span>, <span class="number">1</span>, <span class="string">'小明'</span>); <span class="comment">// 给小明加一分</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回指定排名范围的成员</span></span><br><span class="line">$range = $redis-&gt;zRange(<span class="string">'zset'</span>, <span class="number">0</span>, <span class="number">9</span>, <span class="keyword">true</span>); <span class="comment">// 返回分数从低到高排序的前10名及分数</span></span><br><span class="line">$revRange = $redis-&gt; zRevRange(<span class="string">'zset'</span>, <span class="number">0</span>, <span class="number">9</span>, <span class="keyword">true</span>); <span class="comment">// 返回分数从高到低排序的前10名及分数</span></span><br><span class="line">var_dump($range);</span><br><span class="line">var_dump($revRange);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除成员</span></span><br><span class="line">$redis-&gt;zRem(<span class="string">'zet'</span>, <span class="string">'小明'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回指定分数范围的成员</span></span><br><span class="line">$rangeByScore = $redis-&gt;zRangeByScore(<span class="string">'zet'</span>, <span class="number">98</span>, <span class="number">100</span>); <span class="comment">// 返回指定分数范围内从低到高排序的成员</span></span><br><span class="line">$revRangeByScore = $redis-&gt;zRevRangeByScore(<span class="string">'zet'</span>, <span class="number">98</span>, <span class="number">100</span>); <span class="comment">// 返回指定分数范围内从高到低排序的成员</span></span><br><span class="line">var_dump($rangeByScore);</span><br><span class="line">var_dump($revRangeByScore);</span><br></pre></td></tr></table></figure>
+<h1 id="redis-存储session"><a href="#redis-存储session" class="headerlink" title="redis 存储session"></a>redis 存储session</h1><h1 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h1><h1 id="限时访问"><a href="#限时访问" class="headerlink" title="限时访问"></a>限时访问</h1><h1 id="排行榜"><a href="#排行榜" class="headerlink" title="排行榜"></a>排行榜</h1><h1 id="tag标签"><a href="#tag标签" class="headerlink" title="tag标签"></a>tag标签</h1><h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><h1 id="抽奖"><a href="#抽奖" class="headerlink" title="抽奖"></a>抽奖</h1>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/04/进程间通信-信号量与共享内存/" rel="next" title="进程间通信--信号量与共享内存">
+                <i class="fa fa-chevron-left"></i> 进程间通信--信号量与共享内存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/27/SEO入门/" rel="prev" title="SEO入门">
+                SEO入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis常见数据结构"><span class="nav-number">1.</span> <span class="nav-text">redis常见数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础操作"><span class="nav-number">2.</span> <span class="nav-text">基础操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串操作"><span class="nav-number">2.1.</span> <span class="nav-text">字符串操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#列表"><span class="nav-number">2.2.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集合"><span class="nav-number">2.3.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哈希"><span class="nav-number">2.4.</span> <span class="nav-text">哈希</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有序集合"><span class="nav-number">2.5.</span> <span class="nav-text">有序集合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-存储session"><span class="nav-number">3.</span> <span class="nav-text">redis 存储session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计数器"><span class="nav-number">4.</span> <span class="nav-text">计数器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#限时访问"><span class="nav-number">5.</span> <span class="nav-text">限时访问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#排行榜"><span class="nav-number">6.</span> <span class="nav-text">排行榜</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tag标签"><span class="nav-number">7.</span> <span class="nav-text">tag标签</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分布式锁"><span class="nav-number">8.</span> <span class="nav-text">分布式锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽奖"><span class="nav-number">9.</span> <span class="nav-text">抽奖</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

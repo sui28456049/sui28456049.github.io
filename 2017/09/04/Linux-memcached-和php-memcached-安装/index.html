@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="注意:这里所有软件都是默认位置,需自行判断软件位置(–prefix=/usr/local)  Linux(memcached安装)libevent 安装memcached 依赖于 libevent wget https://github.com/libevent/libevent/releases/download/release-2.1.8-stable/libevent-2.1.8-sta">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux memcached 和php memcached 安装">
+<meta property="og:url" content="http://sui28456049.github.io/2017/09/04/Linux-memcached-和php-memcached-安装/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="注意:这里所有软件都是默认位置,需自行判断软件位置(–prefix=/usr/local)  Linux(memcached安装)libevent 安装memcached 依赖于 libevent wget https://github.com/libevent/libevent/releases/download/release-2.1.8-stable/libevent-2.1.8-sta">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux memcached 和php memcached 安装">
+<meta name="twitter:description" content="注意:这里所有软件都是默认位置,需自行判断软件位置(–prefix=/usr/local)  Linux(memcached安装)libevent 安装memcached 依赖于 libevent wget https://github.com/libevent/libevent/releases/download/release-2.1.8-stable/libevent-2.1.8-sta">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2017/09/04/Linux-memcached-和php-memcached-安装/">
+
+
+
+
+
+  <title>Linux memcached 和php memcached 安装 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2017/09/04/Linux-memcached-和php-memcached-安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux memcached 和php memcached 安装</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T14:28:35+08:00">
+                2017-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><blockquote>
+<p>注意:这里所有软件都是默认位置,需自行判断软件位置(–prefix=/usr/local)</p>
+</blockquote>
+<h2 id="Linux-memcached安装"><a href="#Linux-memcached安装" class="headerlink" title="Linux(memcached安装)"></a>Linux(memcached安装)</h2><h3 id="libevent-安装"><a href="#libevent-安装" class="headerlink" title="libevent 安装"></a>libevent 安装</h3><p>memcached 依赖于 libevent</p>
+<pre><code>wget https://github.com/libevent/libevent/releases/download/release-2.1.8-stable/libevent-2.1.8-stable.tar.gz
+1. ./configure 
+2.  make &amp;&amp; make test
+3.  make install
+</code></pre><h3 id="memcached-安装"><a href="#memcached-安装" class="headerlink" title="memcached 安装"></a>memcached 安装</h3><h4 id="下载-wget-http-memcached-org-latest"><a href="#下载-wget-http-memcached-org-latest" class="headerlink" title="下载  wget http://memcached.org/latest"></a>下载  wget <a href="http://memcached.org/latest" target="_blank" rel="noopener">http://memcached.org/latest</a></h4><h4 id="1-configure-–prefix-usr-local-memcached"><a href="#1-configure-–prefix-usr-local-memcached" class="headerlink" title="1.   ./configure –prefix=/usr/local/memcached"></a>1.   ./configure –prefix=/usr/local/memcached</h4><h4 id="2-make-amp-amp-make-test"><a href="#2-make-amp-amp-make-test" class="headerlink" title="2.    make &amp;&amp; make test"></a>2.    make &amp;&amp; make test</h4><h4 id="3-sudo-make-install"><a href="#3-sudo-make-install" class="headerlink" title="3.   sudo make install"></a>3.   sudo make install</h4><h3 id="检查状态"><a href="#检查状态" class="headerlink" title="检查状态"></a>检查状态</h3><h4 id="ps-aux-grep-memcached"><a href="#ps-aux-grep-memcached" class="headerlink" title="ps aux | grep memcached"></a>ps aux | grep memcached</h4><h4 id="telnet-localhost-11211"><a href="#telnet-localhost-11211" class="headerlink" title="telnet localhost 11211"></a>telnet localhost 11211</h4><h2 id="Php-memcached扩展安装"><a href="#Php-memcached扩展安装" class="headerlink" title="Php(memcached扩展安装)"></a>Php(memcached扩展安装)</h2><p>php的扩展memcached，因为该扩展是依赖libmemcached的API</p>
+<h3 id="libmemcached-安装"><a href="#libmemcached-安装" class="headerlink" title="libmemcached 安装"></a>libmemcached 安装</h3><h4 id="下载wget-https-launchpad-net-libmemcached-1-0-1-0-18-download-libmemcached-1-0-18-tar-gz"><a href="#下载wget-https-launchpad-net-libmemcached-1-0-1-0-18-download-libmemcached-1-0-18-tar-gz" class="headerlink" title="下载wget https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz"></a>下载wget <a href="https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz" target="_blank" rel="noopener">https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz</a></h4><h4 id="configure-prefix-usr-local-libmemcached-–with-memcached"><a href="#configure-prefix-usr-local-libmemcached-–with-memcached" class="headerlink" title="./configure -prefix=/usr/local/libmemcached –with memcached"></a>./configure -prefix=/usr/local/libmemcached –with memcached</h4><h4 id="make-amp-amp-make-install"><a href="#make-amp-amp-make-install" class="headerlink" title="make  &amp;&amp; make install"></a>make  &amp;&amp; make install</h4><h3 id="memcached-扩展安装"><a href="#memcached-扩展安装" class="headerlink" title="memcached 扩展安装"></a>memcached 扩展安装</h3><h4 id="configure-–with-php-config-usr-bin-php-config-–with-libmemcached-dir-usr-local-libmemcached"><a href="#configure-–with-php-config-usr-bin-php-config-–with-libmemcached-dir-usr-local-libmemcached" class="headerlink" title="./configure –with-php-config=/usr/bin/php-config –with-libmemcached-dir=/usr/local/libmemcached"></a>./configure –with-php-config=/usr/bin/php-config –with-libmemcached-dir=/usr/local/libmemcached</h4><h4 id="make-amp-amp-make-install-1"><a href="#make-amp-amp-make-install-1" class="headerlink" title="make &amp;&amp; make install"></a>make &amp;&amp; make install</h4><h3 id="添加-php-ini"><a href="#添加-php-ini" class="headerlink" title="添加 php.ini"></a>添加 php.ini</h3><h4 id="vim-etc-php-ini-添加-extension-memcached-so"><a href="#vim-etc-php-ini-添加-extension-memcached-so" class="headerlink" title="vim /etc/php.ini 添加 extension=memcached.so"></a>vim /etc/php.ini 添加 extension=memcached.so</h4><h4 id="重启php-fpm-service-php-fpm-restart"><a href="#重启php-fpm-service-php-fpm-restart" class="headerlink" title="重启php-fpm    service php-fpm restart"></a>重启php-fpm    service php-fpm restart</h4><h4 id="查看模块-php-m"><a href="#查看模块-php-m" class="headerlink" title="查看模块       php -m"></a>查看模块       php -m</h4><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h4 id="memcached服务后台运行-memcached-u-test-d"><a href="#memcached服务后台运行-memcached-u-test-d" class="headerlink" title="memcached服务后台运行 memcached -u test -d"></a>memcached服务后台运行 memcached -u test -d</h4><pre><code>$mem  = new Memcached();  
+$mem-&gt;addServer(&apos;127.0.0.1&apos;,11211);
+if( $mem-&gt;add(&quot;mystr&quot;,&quot;this is a memcache test!&quot;,3600)){
+    echo  &apos;原始数据缓存成功!&apos;;
+}else{
+    echo &apos;数据已存在：&apos;.$mem-&gt;get(&quot;mystr&quot;);
+}        
+</code></pre><h2 id="redis-附"><a href="#redis-附" class="headerlink" title="redis (附)"></a>redis (附)</h2><p>Linux redis 客户端:</p>
+<p>Installation<br>    Download, extract and compile Redis with:<br>    $ wget <a href="http://download.redis.io/releases/redis-4.0.1.tar.gz" target="_blank" rel="noopener">http://download.redis.io/releases/redis-4.0.1.tar.gz</a><br>    $ tar xzf redis-4.0.1.tar.gz<br>    $ cd redis-4.0.1<br>    $ make<br>    The binaries that are now compiled are available in the src directory. Run Redis with:<br>    $ src/redis-server</p>
+<p>You can interact with Redis using the built-in client:<br>    $ src/redis-cli<br>    redis&gt; set foo bar<br>    OK<br>    redis&gt; get foo<br>    “bar”</p>
+<p>php扩展redis安装</p>
+<p>下载:wget <a href="https://pecl.php.net/get/redis-3.1.3.tgz" target="_blank" rel="noopener">https://pecl.php.net/get/redis-3.1.3.tgz</a>   </p>
+<p>   find / -name php-config</p>
+<p>编译: ./configure –with-php-config=/usr/bin/php-config<br>      make &amp;&amp; make install</p>
+<p>配置文件: find / -name php.ini<br>         vim /etc/php.ini   添加 extension=redis.so</p>
+<p>重启php :service php-fpm restartis</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/29/MySql高级总结/" rel="next" title="MySql高级总结">
+                <i class="fa fa-chevron-left"></i> MySql高级总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/13/高并发下的抢购、秒杀功能/" rel="prev" title="高并发下的抢购、秒杀功能">
+                高并发下的抢购、秒杀功能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-memcached安装"><span class="nav-number">1.</span> <span class="nav-text">Linux(memcached安装)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#libevent-安装"><span class="nav-number">1.1.</span> <span class="nav-text">libevent 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memcached-安装"><span class="nav-number">1.2.</span> <span class="nav-text">memcached 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#下载-wget-http-memcached-org-latest"><span class="nav-number">1.2.1.</span> <span class="nav-text">下载  wget http://memcached.org/latest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-configure-–prefix-usr-local-memcached"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.   ./configure –prefix=/usr/local/memcached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-make-amp-amp-make-test"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.    make &amp;&amp; make test</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-sudo-make-install"><span class="nav-number">1.2.4.</span> <span class="nav-text">3.   sudo make install</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查状态"><span class="nav-number">1.3.</span> <span class="nav-text">检查状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ps-aux-grep-memcached"><span class="nav-number">1.3.1.</span> <span class="nav-text">ps aux | grep memcached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#telnet-localhost-11211"><span class="nav-number">1.3.2.</span> <span class="nav-text">telnet localhost 11211</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Php-memcached扩展安装"><span class="nav-number">2.</span> <span class="nav-text">Php(memcached扩展安装)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#libmemcached-安装"><span class="nav-number">2.1.</span> <span class="nav-text">libmemcached 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#下载wget-https-launchpad-net-libmemcached-1-0-1-0-18-download-libmemcached-1-0-18-tar-gz"><span class="nav-number">2.1.1.</span> <span class="nav-text">下载wget https://launchpad.net/libmemcached/1.0/1.0.18/+download/libmemcached-1.0.18.tar.gz</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#configure-prefix-usr-local-libmemcached-–with-memcached"><span class="nav-number">2.1.2.</span> <span class="nav-text">./configure -prefix=/usr/local/libmemcached –with memcached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#make-amp-amp-make-install"><span class="nav-number">2.1.3.</span> <span class="nav-text">make  &amp;&amp; make install</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memcached-扩展安装"><span class="nav-number">2.2.</span> <span class="nav-text">memcached 扩展安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#configure-–with-php-config-usr-bin-php-config-–with-libmemcached-dir-usr-local-libmemcached"><span class="nav-number">2.2.1.</span> <span class="nav-text">./configure –with-php-config=/usr/bin/php-config –with-libmemcached-dir=/usr/local/libmemcached</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#make-amp-amp-make-install-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">make &amp;&amp; make install</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加-php-ini"><span class="nav-number">2.3.</span> <span class="nav-text">添加 php.ini</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#vim-etc-php-ini-添加-extension-memcached-so"><span class="nav-number">2.3.1.</span> <span class="nav-text">vim /etc/php.ini 添加 extension=memcached.so</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重启php-fpm-service-php-fpm-restart"><span class="nav-number">2.3.2.</span> <span class="nav-text">重启php-fpm    service php-fpm restart</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看模块-php-m"><span class="nav-number">2.3.3.</span> <span class="nav-text">查看模块       php -m</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试"><span class="nav-number">3.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#memcached服务后台运行-memcached-u-test-d"><span class="nav-number">3.0.1.</span> <span class="nav-text">memcached服务后台运行 memcached -u test -d</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#redis-附"><span class="nav-number">4.</span> <span class="nav-text">redis (附)</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

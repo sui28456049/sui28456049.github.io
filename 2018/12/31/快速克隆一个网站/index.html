@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="前段时间克隆搭建一个好了一个Google 站,今天突发奇想克隆任意站,特此搜寻资料,写此文章.利用的是nginx反向代理技术,发现nginx博大精深,许多好用的第三模块真是很前强大.官方扩展模块地址:http://nginx.org/en/docs/ 搭建环境所需模块: ngx_http_sub_module   (http://nginx.org/en/docs/http/ngx_http_s">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速克隆一个网站">
+<meta property="og:url" content="http://sui28456049.github.io/2018/12/31/快速克隆一个网站/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="前段时间克隆搭建一个好了一个Google 站,今天突发奇想克隆任意站,特此搜寻资料,写此文章.利用的是nginx反向代理技术,发现nginx博大精深,许多好用的第三模块真是很前强大.官方扩展模块地址:http://nginx.org/en/docs/ 搭建环境所需模块: ngx_http_sub_module   (http://nginx.org/en/docs/http/ngx_http_s">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.692Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="快速克隆一个网站">
+<meta name="twitter:description" content="前段时间克隆搭建一个好了一个Google 站,今天突发奇想克隆任意站,特此搜寻资料,写此文章.利用的是nginx反向代理技术,发现nginx博大精深,许多好用的第三模块真是很前强大.官方扩展模块地址:http://nginx.org/en/docs/ 搭建环境所需模块: ngx_http_sub_module   (http://nginx.org/en/docs/http/ngx_http_s">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2018/12/31/快速克隆一个网站/">
+
+
+
+
+
+  <title>快速克隆一个网站 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2018/12/31/快速克隆一个网站/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">快速克隆一个网站</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-31T07:49:49+08:00">
+                2018-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><p>前段时间克隆搭建一个好了一个Google 站,今天突发奇想克隆任意站,特此搜寻资料,写此文章.利用的是nginx反向代理技术,发现nginx博大精深,许多好用的第三模块真是很前强大.官方扩展模块地址:<br><a href="http://nginx.org/en/docs/" target="_blank" rel="noopener">http://nginx.org/en/docs/</a></p>
+<h1 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h1><p>所需模块:</p>
+<p>ngx_http_sub_module   (<a href="http://nginx.org/en/docs/http/ngx_http_sub_module.html" target="_blank" rel="noopener">http://nginx.org/en/docs/http/ngx_http_sub_module.html</a>)</p>
+<p>substitutions4nginx模块   (<a href="https://github.com/yaoweibin/ngx_http_substitutions_filter_module" target="_blank" rel="noopener">https://github.com/yaoweibin/ngx_http_substitutions_filter_module</a>) </p>
+<p>下载编译之</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/nginx_test --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-file-aio --with-http_realip_module --with-http_sub_module  --add-module=../ngx_http_substitutions_filter_module</span><br><span class="line"></span><br><span class="line">sudo make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
+<h1 id="substitutions说明"><a href="#substitutions说明" class="headerlink" title="substitutions说明"></a>substitutions说明</h1><p>这是一个内容替换模块(apache的 mod_substitute模块一样),类似的模块应该还有,这里就不说了</p>
+<p>实例:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line"> subs_filter_types text/html text/css text/xml; </span><br><span class="line"> subs_filter st(\d*).example.com <span class="variable">$1</span>.example.com ir;</span><br><span class="line"> subs_filter a.example.com s.example.com;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Nginx反向代理并替换内容涉及指令： </p>
+<ul>
+<li><p>subs_filter_types</p>
+</li>
+<li><p>subs_filter</p>
+</li>
+</ul>
+<p>subs_filter_types 语法： <em>subs_filter_types mime-type [mime-types] </em></p>
+<p>默认： <em>subs_filter_types text/html</em></p>
+<p>内容： <em>http, server, location</em></p>
+<p><em>subs_filter_types</em> 是用来指定替换文件类型的 默认仅仅替换text/html类型的文件。</p>
+<p><code>*如果您反代的网站出现登录跳转源站之类的问题，请检查这个项目。</code></p>
+<p>proxy_set_header Accept-Encoding “”;</p>
+<p>subs_filter 语法： <em>subs_filter source_str destination_str [gior] </em></p>
+<p>默认： <em>none</em></p>
+<p>内容： <em>http, server, location</em></p>
+<p><em>subs_filter</em> 是用来替换文本的，可以使用正则</p>
+<ul>
+<li><p><em>g</em>（默认）：替换匹配项。</p>
+</li>
+<li><p><em>i</em>：区分大小写的匹配</p>
+</li>
+<li><p><em>o</em>: 只匹配发现的第一个。</p>
+</li>
+<li><p><em>r</em>: 正则。</p>
+</li>
+</ul>
+<h1 id="缓存设置"><a href="#缓存设置" class="headerlink" title="缓存设置"></a>缓存设置</h1><p>nginx.conf的http层</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">proxy_connect_timeout    5;</span><br><span class="line">proxy_read_timeout       60;</span><br><span class="line">proxy_send_timeout       5;</span><br><span class="line">proxy_buffer_size        16k;</span><br><span class="line">proxy_buffers            4 64k;</span><br><span class="line">proxy_busy_buffers_size 128k;</span><br><span class="line">proxy_temp_file_write_size 128k;</span><br><span class="line">proxy_temp_path   /home/cache/temp;</span><br><span class="line"><span class="comment">#临时文件目录</span></span><br><span class="line">proxy_cache_path  /home/cache/path levels=1:2 keys_zone=cache_one:5m inactive=7d max_size=1g;</span><br><span class="line"><span class="comment">#5m为内存占用，1g为最大硬盘占用，cache_one为缓存区名字，如果修改则下文的配置亦要相应修改。</span></span><br></pre></td></tr></table></figure>
+<p>创建缓存目录:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/cache/path </span><br><span class="line">mkdir /home/cache/temp</span><br><span class="line">chmod 777 -R /home/cache</span><br></pre></td></tr></table></figure>
+<p>nginx.conf 文件:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##########################################################</span></span><br><span class="line"></span><br><span class="line">proxy_connect_timeout    5;</span><br><span class="line">proxy_read_timeout       60;</span><br><span class="line">proxy_send_timeout       5;</span><br><span class="line">proxy_buffer_size        16k;</span><br><span class="line">proxy_buffers            4 64k;</span><br><span class="line">proxy_busy_buffers_size 128k;</span><br><span class="line">proxy_temp_file_write_size 128k;</span><br><span class="line">proxy_temp_path   /home/cache/temp;</span><br><span class="line"><span class="comment">#临时文件目录</span></span><br><span class="line">proxy_cache_path  /home/cache/path levels=1:2 keys_zone=cache_one:5m inactive=7d max_size=1g;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">server&#123;</span><br><span class="line"></span><br><span class="line">	listen 80;</span><br><span class="line">	server_name sui1.sadprincess.com;    </span><br><span class="line">	index index.php index.html index.htm;      </span><br><span class="line">	access_log off;   <span class="comment">#off 关闭日志</span></span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line"></span><br><span class="line">	 <span class="keyword">if</span> (<span class="variable">$http_user_agent</span> ~* (baiduspider|360spider|haosouspider|googlebot|soso|bing|sogou|yahoo|sohu-search|yodao|YoudaoBot|robozilla|msnbot|MJ12bot|NHN|Twiceler)) &#123;<span class="built_in">return</span>  403;&#125;</span><br><span class="line">	 </span><br><span class="line">	proxy_cache_key <span class="string">"<span class="variable">$scheme</span>://<span class="variable">$host</span><span class="variable">$request_uri</span>"</span>; <span class="comment">#缓存key规则，用于自动清除缓存。</span></span><br><span class="line">	</span><br><span class="line">	proxy_cache cache_one; <span class="comment">#缓存区名称，与前面定义的相同</span></span><br><span class="line"></span><br><span class="line">	proxy_cache_valid  200 304 3h;</span><br><span class="line">	proxy_cache_valid 301 3d;</span><br><span class="line">	proxy_cache_valid any 10s;</span><br><span class="line">	<span class="comment">#200 304状态缓存3小时 301状态缓存3天 其他状态缓存（如502 404）10秒</span></span><br><span class="line"></span><br><span class="line">	proxy_set_header   X-Real-IP  <span class="variable">$remote_addr</span>;</span><br><span class="line">	proxy_set_header   X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>; <span class="comment">#向后端传递访客ip</span></span><br><span class="line"></span><br><span class="line">	proxy_set_header   Referer http://www.verybeaut.com;    <span class="comment">#强制定义Referer，程序验证判断会用到</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># proxy_set_header   Host $host; # 定义主机头 如果服务器上有许多域名,设置具体的域名</span></span><br><span class="line">	proxy_set_header Host www.verybeaut.com;</span><br><span class="line"></span><br><span class="line">	proxy_pass http://www.verybeaut.com;    <span class="comment">#指定后端ip，可以加端口,多域名主机设置具体的域名</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#proxy_cache_use_stale invalid_header error timeout http_502; #当后端出现错误、超时、502状态时启用过期缓存，慎用。</span></span><br><span class="line">	add_header  Nginx-Cache <span class="string">"<span class="variable">$upstream_cache_status</span>"</span>; <span class="comment"># 增加头信息,观察客户端respoce是否命中</span></span><br><span class="line">    <span class="comment"># proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;# 出现502-504或错误,会跳过此台服务器访问下一台服务器</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">##########################################################</span></span><br></pre></td></tr></table></figure>
+<h1 id="内容替换"><a href="#内容替换" class="headerlink" title="内容替换"></a>内容替换</h1><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">	<span class="comment"># ............</span></span><br><span class="line"></span><br><span class="line"><span class="comment">##########################################################</span></span><br><span class="line"></span><br><span class="line">  			 proxy_connect_timeout    5;</span><br><span class="line">              proxy_read_timeout       60;</span><br><span class="line">              proxy_send_timeout       5;</span><br><span class="line">              proxy_buffer_size        16k;</span><br><span class="line">              proxy_buffers            4 64k;</span><br><span class="line">              proxy_busy_buffers_size 128k;</span><br><span class="line">              proxy_temp_file_write_size 128k;</span><br><span class="line">              proxy_temp_path   /home/cache/temp;</span><br><span class="line">              proxy_cache_path  /home/cache/one levels=1:2 keys_zone=cache_one:3m inactive=7d max_size=1g;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"> listen       80;</span><br><span class="line"> server_name  sui1.sadprincess.com;</span><br><span class="line"> index index.php index.html index.htm;    <span class="comment">#默认首页</span></span><br><span class="line"> </span><br><span class="line">	location / &#123;</span><br><span class="line">	  <span class="comment"># 在响应报文中添加缓存首部字段</span></span><br><span class="line"> 	  add_header X-Cache <span class="string">"<span class="variable">$upstream_cache_status</span> from <span class="variable">$server_addr</span>"</span>;</span><br><span class="line">	  <span class="comment"># subs_filter_types text/html text/css text/xml;</span></span><br><span class="line">	  subs_filter www.verybeaut.com sui1.sadprincess.com gi; <span class="comment">#替换模块。</span></span><br><span class="line"></span><br><span class="line">	  proxy_cache_key <span class="string">"<span class="variable">$scheme</span>://<span class="variable">$host</span><span class="variable">$request_uri</span>"</span>; <span class="comment">#缓存key规则，用于自动清除缓存。</span></span><br><span class="line"></span><br><span class="line">	  proxy_cache cache_one; <span class="comment">#缓存区名称，必须与前面定义的相同</span></span><br><span class="line"></span><br><span class="line">	  proxy_cache_valid  200 304 3h;</span><br><span class="line">	  proxy_cache_valid 301 3d;</span><br><span class="line">	  proxy_cache_valid any 10s;</span><br><span class="line">	 <span class="comment">#200 304状态缓存3小时</span></span><br><span class="line">	 <span class="comment">#301状态缓存3天</span></span><br><span class="line">	 <span class="comment">#其他状态缓存（如502 404）10秒</span></span><br><span class="line"></span><br><span class="line">	  proxy_set_header   X-Real-IP  <span class="variable">$remote_addr</span>;</span><br><span class="line">	  proxy_set_header   X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>; <span class="comment">#向后端传递访客ip</span></span><br><span class="line"></span><br><span class="line">	  proxy_set_header   Referer http://www.verybeaut.com;    <span class="comment">#强制定义Referer，程序验证判断会用到</span></span><br><span class="line"></span><br><span class="line">	  proxy_set_header   Host www.verybeaut.com; <span class="comment">#定义主机头</span></span><br><span class="line"></span><br><span class="line">	  proxy_pass http://www.verybeaut.com;    <span class="comment">#指定后端ip</span></span><br><span class="line"></span><br><span class="line">	  proxy_set_header Accept-Encoding <span class="string">""</span>;    <span class="comment">#清除编码</span></span><br><span class="line"></span><br><span class="line">	  proxy_cache_use_stale invalid_header error timeout http_502;<span class="comment">#当后端出现错误、超时、502状态时启用过期缓存</span></span><br><span class="line">     &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">##########################################################</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="nuster-haproxy"><a href="#nuster-haproxy" class="headerlink" title="nuster/haproxy"></a>nuster/haproxy</h1><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">    nuster cache on data-size 200m</span><br><span class="line"></span><br><span class="line">defaults</span><br><span class="line">  <span class="built_in">log</span>     global</span><br><span class="line">  mode    http</span><br><span class="line">  option  httplog</span><br><span class="line">  option  dontlognull</span><br><span class="line">  retries 3</span><br><span class="line">  option redispatch</span><br><span class="line">  timeout connect  5000</span><br><span class="line">  timeout client  10000</span><br><span class="line">  timeout server  10000</span><br><span class="line"></span><br><span class="line">  <span class="comment">#####################监控页面#############</span></span><br><span class="line">    stats <span class="built_in">enable</span></span><br><span class="line">    stats uri /haproxy?stats</span><br><span class="line">    stats auth admin:password</span><br><span class="line">    stats show-node</span><br><span class="line">  <span class="comment">###########################################</span></span><br><span class="line"></span><br><span class="line">frontend fe</span><br><span class="line"> 	mode http </span><br><span class="line"> 	maxconn 51200</span><br><span class="line">    <span class="built_in">bind</span> :80</span><br><span class="line">    <span class="comment">#bind *:9999</span></span><br><span class="line">    default_backend be</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">backend be</span><br><span class="line">	mode http</span><br><span class="line">    nuster cache on</span><br><span class="line">    nuster rule all</span><br><span class="line">    http-request <span class="built_in">set</span>-header Host www.verybeaut.com</span><br><span class="line">    server s1 www.verybeaut.com:80</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/28/php性能优化方法/" rel="next" title="php性能优化方法">
+                <i class="fa fa-chevron-left"></i> php性能优化方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/03/varnish-Web加速器/" rel="prev" title="varnish Web加速器">
+                varnish Web加速器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建环境"><span class="nav-number">1.</span> <span class="nav-text">搭建环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#substitutions说明"><span class="nav-number">2.</span> <span class="nav-text">substitutions说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存设置"><span class="nav-number">3.</span> <span class="nav-text">缓存设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内容替换"><span class="nav-number">4.</span> <span class="nav-text">内容替换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nuster-haproxy"><span class="nav-number">5.</span> <span class="nav-text">nuster/haproxy</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

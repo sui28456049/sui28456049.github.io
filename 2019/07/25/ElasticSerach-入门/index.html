@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="introElasticSerach（下面简称ES）是一个基于Lucene（一个开源全文搜索引擎）构建的开源、分布式可扩展的实时搜索和分析引擎。它还可以作为一个分布式实时文件存储系统。ES是目前全文搜索引擎的首选，它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 等系统都采用它。ES采用java语言开发，对外提供了 RESTful API 的操作接口，开">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSerach 入门">
+<meta property="og:url" content="http://sui28456049.github.io/2019/07/25/ElasticSerach-入门/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="introElasticSerach（下面简称ES）是一个基于Lucene（一个开源全文搜索引擎）构建的开源、分布式可扩展的实时搜索和分析引擎。它还可以作为一个分布式实时文件存储系统。ES是目前全文搜索引擎的首选，它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 等系统都采用它。ES采用java语言开发，对外提供了 RESTful API 的操作接口，开">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElasticSerach 入门">
+<meta name="twitter:description" content="introElasticSerach（下面简称ES）是一个基于Lucene（一个开源全文搜索引擎）构建的开源、分布式可扩展的实时搜索和分析引擎。它还可以作为一个分布式实时文件存储系统。ES是目前全文搜索引擎的首选，它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 等系统都采用它。ES采用java语言开发，对外提供了 RESTful API 的操作接口，开">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/07/25/ElasticSerach-入门/">
+
+
+
+
+
+  <title>ElasticSerach 入门 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/07/25/ElasticSerach-入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ElasticSerach 入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-25T17:19:01+08:00">
+                2019-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="intro"><a href="#intro" class="headerlink" title="intro"></a>intro</h1><p>ElasticSerach（下面简称ES）是一个基于Lucene（一个开源全文搜索引擎）构建的开源、分布式可扩展的实时搜索和分析引擎。它还可以作为一个分布式实时文件存储系统。<br>ES是目前全文搜索引擎的首选，它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 等系统都采用它。<br>ES采用java语言开发，对外提供了 RESTful API 的操作接口，开箱即用。</p>
+<p>和关系型数据库的对比:</p>
+<p>mysql         Elasticsearch           释义<br>Databases       Indices         索引(名词)即数据库<br>Tables            Types             类型即表名<br>Rows          Documents           文档即每行数据<br>Columns            Fields               字段</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>下载安装文档地地址:</p>
+<p><a href="https://www.elastic.co/cn/downloads/elasticsearch" target="_blank" rel="noopener">https://www.elastic.co/cn/downloads/elasticsearch</a> </p>
+<p>我通过 yum 安装  ps:/etc/elasticsearch/elasticsearch.yml编辑配置</p>
+<p>也可以 docker安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull elasticsearch:7.2.0</span><br><span class="line"></span><br><span class="line">docker run -d --name elasticsearch  -p 9200:9200 -p 9300:9300 -e &quot;discovery.type=single-node&quot; elasticsearch:7.2.0</span><br></pre></td></tr></table></figure>
+<p>这里有个巨坑:<br>/etc/elasticsearch/elasticsearch.yml编辑配置</p>
+<p>http.host: 0.0.0.0<br>原本以为只需要更改network.host，但是更改后无效。尝试使用默认的network.host，增加http.host: 0.0.0.0，可以成功。<br><code>network.host//在集群中节点的网络地址，其它节点通过这个地址与其进行通信</code>,线上要设成具体的 IP</p>
+<h1 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h1><p>使用RESTful API来举例使用ES。一个完整的REST请求包括如下三部分：</p>
+<p>1、操作类型，如GET,PUT,POST,DELETE等<br>2、URL部分，如<a href="http://localhost:9200/blogs/blog/1" target="_blank" rel="noopener">http://localhost:9200/blogs/blog/1</a><br>3、请求正文内容。对于GET请求，没有单独的请求正文内容，请求信息都包含在URL中。对于PUT,POST等操作，可以带正文内容，正文内容采用josn的格式。<br>ES的REST请求的返回内容的格式绝大部分都是JOSN格式的。也就是说请求和响应的内容都是JSON格式，这样有较好的一致性。</p>
+<h2 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT http://120.27.3.185:9200/database/article/1</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"title"</span>: <span class="string">"first article"</span>,</span><br><span class="line">    <span class="attr">"content"</span>: <span class="string">"first article content"</span>,</span><br><span class="line">    <span class="attr">"author"</span>: <span class="string">"first"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的数据:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"_index"</span>: <span class="string">"database"</span>,</span><br><span class="line">    <span class="attr">"_type"</span>: <span class="string">"article"</span>,</span><br><span class="line">    <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">    <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"result"</span>: <span class="string">"created"</span>,</span><br><span class="line">    <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">        <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"_seq_no"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://120.27.3.185:9200/database/article/1</span><br></pre></td></tr></table></figure>
+<p>返回数据:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"_index"</span>: <span class="string">"database"</span>,</span><br><span class="line">    <span class="attr">"_type"</span>: <span class="string">"article"</span>,</span><br><span class="line">    <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">    <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"_seq_no"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"_primary_term"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"found"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"_source"</span>: &#123;</span><br><span class="line">        <span class="attr">"title"</span>: <span class="string">"first article"</span>,</span><br><span class="line">        <span class="attr">"content"</span>: <span class="string">"first article content"</span>,</span><br><span class="line">        <span class="attr">"author"</span>: <span class="string">"first"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="修改数据"><a href="#修改数据" class="headerlink" title="修改数据"></a>修改数据</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT http://120.27.3.185:9200/database/article/1</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"title"</span>: <span class="string">"22222"</span>,</span><br><span class="line">    <span class="attr">"content"</span>: <span class="string">"2"</span>,</span><br><span class="line">    <span class="attr">"author"</span>: <span class="string">"2222"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回结果:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"_index"</span>: <span class="string">"database"</span>,</span><br><span class="line">    <span class="attr">"_type"</span>: <span class="string">"article"</span>,</span><br><span class="line">    <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">    <span class="attr">"_version"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"result"</span>: <span class="string">"updated"</span>,</span><br><span class="line">    <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">        <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"_seq_no"</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，返回的josn内容中，相比插入操作，有这几个字段的内容发生了变化：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">"_version" : 2,</span><br><span class="line">"result" : "updated",</span><br></pre></td></tr></table></figure>
+<p>可以看到，记录的 Id 没变，但是版本（version）从1变成2<br>操作类型（result）从created变成updated<br>created字段变成false( 我的 7.0 版本没有这个字段)，因为这次不是新建记录，而是修改操作。</p>
+<p>ES文档的版本号是有用的，我们在修改数据时，可以传入一个版本号。这样当在一个客户端读取和更新文档的间隔中，有另外客户端更新了数据。<br>如果这个客户端的更新操作传入了版本号（前面读取的版本号），这时因为传入的版本号和当期实际的版本号不一致，就会操作失败。这样就防止可能的数据冲突。<br>这也是ES采用乐观并发控制（OCC）机制的体现。</p>
+<p>加入版本号进行更新，只需在url后面加上version参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT http://120.27.3.185:9200/database/article/1?version=2</span><br></pre></td></tr></table></figure>
+<h2 id="删除操作"><a href="#删除操作" class="headerlink" title="删除操作"></a>删除操作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE  http://120.27.3.185:9200/database/article/1</span><br></pre></td></tr></table></figure>
+<h1 id="搜索操作"><a href="#搜索操作" class="headerlink" title="搜索操作(*)"></a>搜索操作(*)</h1><p>先插入 2 条数据</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PUT  http://120.27.3.185:9200/database/article/1</span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">"title"</span>:<span class="string">"随某人"</span>,</span><br><span class="line">	<span class="attr">"content"</span>:<span class="string">"上海内容...."</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PUT  http://120.27.3.185:9200/database/article/2</span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">"title"</span>:<span class="string">"随某人"</span>,</span><br><span class="line">	<span class="attr">"content"</span>:<span class="string">"杭州内容...."</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面我们来执行根据给定的字符串进行查找，只要数据中有包含给定字符串的内容就认为匹配上:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST  http://120.27.3.185:9200/_search</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"query"</span>: &#123;</span><br><span class="line">        <span class="attr">"query_string"</span>: &#123;</span><br><span class="line">            <span class="attr">"query"</span>: <span class="string">" 随"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回结果:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"took"</span>: <span class="number">170</span>,</span><br><span class="line">    <span class="attr">"timed_out"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">        <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"successful"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"skipped"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"hits"</span>: &#123;</span><br><span class="line">        <span class="attr">"total"</span>: &#123;</span><br><span class="line">            <span class="attr">"value"</span>: <span class="number">2</span>,</span><br><span class="line">            <span class="attr">"relation"</span>: <span class="string">"eq"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"max_score"</span>: <span class="number">0.816944</span>,</span><br><span class="line">        <span class="attr">"hits"</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">"_index"</span>: <span class="string">"database"</span>,</span><br><span class="line">                <span class="attr">"_type"</span>: <span class="string">"article"</span>,</span><br><span class="line">                <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">                <span class="attr">"_score"</span>: <span class="number">0.816944</span>,</span><br><span class="line">                <span class="attr">"_source"</span>: &#123;</span><br><span class="line">                    <span class="attr">"title"</span>: <span class="string">"随某人"</span>,</span><br><span class="line">                    <span class="attr">"content"</span>: <span class="string">"上海内容...."</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">"_index"</span>: <span class="string">"database"</span>,</span><br><span class="line">                <span class="attr">"_type"</span>: <span class="string">"article"</span>,</span><br><span class="line">                <span class="attr">"_id"</span>: <span class="string">"2"</span>,</span><br><span class="line">                <span class="attr">"_score"</span>: <span class="number">0.816944</span>,</span><br><span class="line">                <span class="attr">"_source"</span>: &#123;</span><br><span class="line">                    <span class="attr">"title"</span>: <span class="string">"随某人"</span>,</span><br><span class="line">                    <span class="attr">"content"</span>: <span class="string">"杭州内容...."</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="索指定json字段中的内容"><a href="#索指定json字段中的内容" class="headerlink" title="索指定json字段中的内容"></a>索指定json字段中的内容</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST  http://120.27.3.185:9200/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;query_string&quot;: &#123;</span><br><span class="line">            &quot;query&quot;: &quot;随&quot;,</span><br><span class="line">            &quot;fields&quot;: [&quot;title&quot;]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 字段 title 中含有随,如果是<code>content</code> 则搜索不出.<br>字段通过查询条件中的field参数指定，可以看出，同时可指定多个字段。<br> 对比关系数据库，ES的搜索操作有点类似关系数据库中带like子句的select语句。</p>
+<h1 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h1><h2 id="索引（Index）"><a href="#索引（Index）" class="headerlink" title="索引（Index）"></a>索引（Index）</h2><p>ES数据管理的顶层单位就叫做 Index（索引）。<br>它不是关系数据库中索引的概念，是单个数据库的同义词，即可以把它等价于关系数据库中的单个数据库。<br>Index的名称必须小写。</p>
+<p>既然Index是ES管理数据的顶层单位，肯定先需要有索引，才能进行后续的数据存储等操作，类似关系数据库中得首先有数据库一样。<br>可前面的操作我们并没有看到创建Index的操作。是不是ES启动后有一个默认的Index呢？<br>其实情况是这样的，上面的REST请求 <a href="http://120.27.3.185:9200/database/article/1中的" target="_blank" rel="noopener">http://120.27.3.185:9200/database/article/1中的</a> database就是一个索引名，当我们执行数据插入操作时，如果url中指定的索引不存在，则ES会自动创建该索引。<br>就如我们前面的例子，我们插入数据时，索引database并不存在，所以ES按照默认的设置自动创建了database索引。</p>
+<p>我们可以单独创建一个索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT  http://120.27.3.185:9200/topics</span><br></pre></td></tr></table></figure>
+<p>上面操作通过http的PUT操作，创建了一个名称为topics的索引。<br>操作成功后的响应信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;acknowledged&quot;: true,</span><br><span class="line">    &quot;shards_acknowledged&quot;: true,</span><br><span class="line">    &quot;index&quot;: &quot;topics&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以查看到ES中的所有索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET  http://120.27.3.185:9200/_cat/indices?v</span><br></pre></td></tr></table></figure>
+<p>响应 如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">health status index    uuid                   pri rep docs.count docs.deleted store.size pri.store.size</span><br><span class="line">yellow open   blogs    cK1UOKHHQpyCstKMKqfeOQ   1   1          1            0        5kb            5kb</span><br><span class="line">yellow open   topics   uSVSYQhjR6eCtLFnufMOjA   1   1          0            0       230b           230b</span><br><span class="line">yellow open   database CqRkYbjBRyWKcbAOxt3SaA   1   1          2            0       15kb           15kb</span><br></pre></td></tr></table></figure>
+<p>通过DELETE操作，我们可以删除指定的索引，如下面操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE  http://localhost:9200/topics</span><br></pre></td></tr></table></figure>
+<h2 id="类型（Type）"><a href="#类型（Type）" class="headerlink" title="类型（Type）"></a>类型（Type）</h2><p>在索引中，可以定义一个或多个类型（type），类型是索引的逻辑分区，是同一索引中有公共字段的文档的集合。<br>快被移除了,不用过多精力学习.</p>
+<h2 id="文档（Document）"><a href="#文档（Document）" class="headerlink" title="文档（Document）"></a>文档（Document）</h2><h2 id="文档-Document"><a href="#文档-Document" class="headerlink" title="文档 (Document)"></a>文档 (Document)</h2><p>Document是Index中的单条记录，它就像关系数据库中表中的记录（行）</p>
+<h2 id="字段（Field）"><a href="#字段（Field）" class="headerlink" title="字段（Field）"></a>字段（Field）</h2><p>字段就是Docuemnt对应的json内容的字段。一个Docuemnt可以包括零个或多个字段，字段可以是一个简单的值（如字符串、整数、日期），也可以是一个数组或对象的嵌套结构。<br>每个字段都对应一个数据类型，如整数、字符串、数组、对象等。</p>
+<h2 id="映射（mapping）"><a href="#映射（mapping）" class="headerlink" title="映射（mapping）"></a>映射（mapping）</h2><p>mapping是类似于数据库中的表结构定义，主要作用如下：</p>
+<ul>
+<li>定义index下的字段名</li>
+<li>定义字段类型，比如数值型、浮点型、布尔型等</li>
+<li>定义倒排索引相关的设置，比如是否索引、记录position等。</li>
+<li>设置分词器等</li>
+</ul>
+<p>与表结构不同的是，关系数据库的表的结构必须事先通过create table语句来明确。而映射既可以显示的通过命令来事先定义，也可以在存储文档（插入数据）时由ES来自动识别。如我们上面的例子，并没有显示的去定义Index的mapping信息。<br>可以通过 GET <a href="http://localhost:9200/_mapping" target="_blank" rel="noopener">http://localhost:9200/_mapping</a> 来查看Index的mapping信息。</p>
+<h2 id="主键（ID）"><a href="#主键（ID）" class="headerlink" title="主键（ID）"></a>主键（ID）</h2><p>ES中的每个Document都有一个唯一的ID（在type下唯一），也就是说 index/type/id必须是唯一的。<br>我们可以插入数据时显示的指定ID，如前面的操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT  http://localhost:9200/database/article/1</span><br></pre></td></tr></table></figure></p>
+<p>也可以也ES系统自动生成，注意这时就不能用PUT操作，要用<code>POST</code>操作</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST  http://localhost:9200/database/article</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"title"</span>: <span class="string">"elasticsearch title"</span>,</span><br><span class="line">    <span class="attr">"content"</span>: <span class="string">"elasticsearch content"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="关系数据库对比"><a href="#关系数据库对比" class="headerlink" title="关系数据库对比"></a>关系数据库对比</h1><table><br><thead><br><tr><br><th>ElasticSerach</th><br><th>Mysql</th><br></tr><br></thead><br><tbody><br><tr><br><td>Index</td><br><td>Database</td><br></tr><br><tr><br><td>Type</td><br><td>Table</td><br></tr><br><tr><br><td>Document</td><br><td>Row</td><br></tr><br><tr><br><td>Field</td><br><td>Column</td><br></tr><br><tr><br><td>Mapping</td><br><td>Schema</td><br></tr><br><tr><br><td>Everything is indexed</td><br><td>Index(表的索引)</td><br></tr><br><tr><br><td>ID</td><br><td>Primary Key</td><br></tr><br><tr><br><td>Query DSL</td><br><td>SQL</td><br></tr><br><tr><br><td>PUT/POST  http://….</td><br><td>insert into ….</td><br></tr><br><tr><br><td>GET http://….</td><br><td>select <em> from …</em></td><br></tr><br><tr><br><td>POST http://… (搜索操作)</td><br><td>selcct  from… like …</td><br></tr><br><tr><br><td>PUT  http://….</td><br><td>update …..</td><br></tr><br><tr><br><td>DELETE http://….</td><br><td>delete from…</td><br></tr><br></tbody><br></table>
+
+<h1 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h1><h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><p><a href="https://github.com/mobz/elasticsearch-head#running-with-built-in-server" target="_blank" rel="noopener">https://github.com/mobz/elasticsearch-head#running-with-built-in-server</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># for Elasticsearch 5.x, 6.x, and 7.x: site plugins are not supported. Run as a standalone server</span><br><span class="line">git clone git://github.com/mobz/elasticsearch-head.git</span><br><span class="line">cd elasticsearch-head</span><br><span class="line">npm install</span><br><span class="line">npm run start</span><br><span class="line">open http://localhost:9100/</span><br></pre></td></tr></table></figure>
+<h2 id="中文分词"><a href="#中文分词" class="headerlink" title="中文分词"></a>中文分词</h2><p> 安装分词插件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/elasticsearch/bin/elasticsearch-plugin  install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.0/elasticsearch-analysis-ik-7.2.0.zip</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST http://120.27.3.185:9200/_analyze</span><br><span class="line">&#123;  </span><br><span class="line">	&quot;analyzer&quot;: &quot;ik_max_word&quot;,</span><br><span class="line">    &quot;text&quot;: &quot;春天是一个好季节&quot;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 返回结果:</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"> &#123;</span><br><span class="line">    <span class="attr">"tokens"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"春天"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">2</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"CN_WORD"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">0</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"是"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">2</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">3</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"CN_CHAR"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">1</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"一个"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">3</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"CN_WORD"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">2</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"一"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">3</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">4</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"TYPE_CNUM"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">3</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"个"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">4</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"COUNT"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">4</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"好"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">6</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"CN_CHAR"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">5</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"token"</span>: <span class="string">"季节"</span>,</span><br><span class="line">            <span class="attr">"start_offset"</span>: <span class="number">6</span>,</span><br><span class="line">            <span class="attr">"end_offset"</span>: <span class="number">8</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"CN_WORD"</span>,</span><br><span class="line">            <span class="attr">"position"</span>: <span class="number">6</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  参考地址: <a href="https://www.jianshu.com/p/bb89ad7a7f7d" target="_blank" rel="noopener">参考文章</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/11/记一次破解app过程/" rel="next" title="记一次破解app过程">
+                <i class="fa fa-chevron-left"></i> 记一次破解app过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/10/我不知道的-php/" rel="prev" title="我不知道的 php">
+                我不知道的 php <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro"><span class="nav-number">1.</span> <span class="nav-text">intro</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本操作"><span class="nav-number">3.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入数据"><span class="nav-number">3.1.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询数据"><span class="nav-number">3.2.</span> <span class="nav-text">查询数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改数据"><span class="nav-number">3.3.</span> <span class="nav-text">修改数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除操作"><span class="nav-number">3.4.</span> <span class="nav-text">删除操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搜索操作"><span class="nav-number">4.</span> <span class="nav-text">搜索操作(*)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#索指定json字段中的内容"><span class="nav-number">4.1.</span> <span class="nav-text">索指定json字段中的内容</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#术语"><span class="nav-number">5.</span> <span class="nav-text">术语</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#索引（Index）"><span class="nav-number">5.1.</span> <span class="nav-text">索引（Index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型（Type）"><span class="nav-number">5.2.</span> <span class="nav-text">类型（Type）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档（Document）"><span class="nav-number">5.3.</span> <span class="nav-text">文档（Document）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档-Document"><span class="nav-number">5.4.</span> <span class="nav-text">文档 (Document)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字段（Field）"><span class="nav-number">5.5.</span> <span class="nav-text">字段（Field）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#映射（mapping）"><span class="nav-number">5.6.</span> <span class="nav-text">映射（mapping）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主键（ID）"><span class="nav-number">5.7.</span> <span class="nav-text">主键（ID）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关系数据库对比"><span class="nav-number">6.</span> <span class="nav-text">关系数据库对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插件安装"><span class="nav-number">7.</span> <span class="nav-text">插件安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#监控"><span class="nav-number">7.1.</span> <span class="nav-text">监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中文分词"><span class="nav-number">7.2.</span> <span class="nav-text">中文分词</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

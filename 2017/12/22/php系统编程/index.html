@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="php,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="PHP的进程控制支持实现了Unix方式的进程创建, 程序执行, 信号处理以及进程的中断。 进程控制不能被应用在Web服务器环境，当其被用于Web服务环境时可能会带来意外的结果。  PHP进程新建一个pcntl.php 文件 1234567891011121314151617181920$pid = pcntl_fork();if($pid == -1)&amp;#123;	//错误处理:创建子进程失败">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php守护进程">
+<meta property="og:url" content="http://sui28456049.github.io/2017/12/22/php系统编程/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="PHP的进程控制支持实现了Unix方式的进程创建, 程序执行, 信号处理以及进程的中断。 进程控制不能被应用在Web服务器环境，当其被用于Web服务环境时可能会带来意外的结果。  PHP进程新建一个pcntl.php 文件 1234567891011121314151617181920$pid = pcntl_fork();if($pid == -1)&amp;#123;	//错误处理:创建子进程失败">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.690Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php守护进程">
+<meta name="twitter:description" content="PHP的进程控制支持实现了Unix方式的进程创建, 程序执行, 信号处理以及进程的中断。 进程控制不能被应用在Web服务器环境，当其被用于Web服务环境时可能会带来意外的结果。  PHP进程新建一个pcntl.php 文件 1234567891011121314151617181920$pid = pcntl_fork();if($pid == -1)&amp;#123;	//错误处理:创建子进程失败">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2017/12/22/php系统编程/">
+
+
+
+
+
+  <title>php守护进程 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2017/12/22/php系统编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">php守护进程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-22T18:57:40+08:00">
+                2017-12-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index">
+                    <span itemprop="name">php</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><blockquote>
+<p>PHP的进程控制支持实现了Unix方式的进程创建, 程序执行, 信号处理以及进程的中断。 进程控制不能被应用在Web服务器环境，当其被用于Web服务环境时可能会带来意外的结果。</p>
+</blockquote>
+<h1 id="PHP进程"><a href="#PHP进程" class="headerlink" title="PHP进程"></a>PHP进程</h1><p>新建一个pcntl.php 文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$pid = pcntl_fork();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($pid == <span class="number">-1</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//错误处理:创建子进程失败返回-1</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">die</span>(<span class="string">'cloud not fork'</span>);</span><br><span class="line"></span><br><span class="line">&#125;<span class="keyword">elseif</span> ($pid) &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//父进程会得到子进程号，所以这里是父进程执行的逻辑</span></span><br><span class="line"></span><br><span class="line">	pcntl_wait($status); <span class="comment">//等待子进程中断,防止子进程成为僵尸进程</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">'||||||||||||||'</span>; <span class="keyword">echo</span> <span class="string">"父进程 $pid"</span>;</span><br><span class="line">	</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	 <span class="comment">//子进程得到的$pid为0, 所以这里是子进程执行的逻辑。</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"子进程-------$pid"</span>;</span><br><span class="line">	sleep(<span class="number">100</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看进程情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep pcntl</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root     16931  4875  1 08:55 pts/1    00:00:00 php pcntl.php</span><br><span class="line">root     16932 16931  0 08:55 pts/1    00:00:00 php pcntl.php</span><br><span class="line">root     16934 14333  0 08:55 pts/2    00:00:00 grep --color=auto pcntl</span><br></pre></td></tr></table></figure>
+<h2 id="孤儿进程"><a href="#孤儿进程" class="headerlink" title="孤儿进程"></a>孤儿进程</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//模拟 父进程先退出,子进程变成孤儿进程,被init1 收养</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"本程序的进程pid:"</span>.getmypid().PHP_EOL;</span><br><span class="line"></span><br><span class="line">	$pid = pcntl_fork();</span><br><span class="line">	<span class="keyword">if</span>($pid == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//子进程</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"子进程pid为:"</span>.getmypid().PHP_EOL;</span><br><span class="line">	    system(<span class="string">"ps -ef|grep fork"</span>);</span><br><span class="line">        sleep(<span class="number">10</span>);</span><br><span class="line">        system(<span class="string">"ps -ef|grep fork"</span>);</span><br><span class="line">		</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="comment">//父进程</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"父进程pid为:"</span>.getmypid().PHP_EOL;</span><br><span class="line">		sleep(<span class="number">3</span>);</span><br><span class="line">		<span class="keyword">exit</span>(<span class="number">0</span>);		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="僵尸进程"><a href="#僵尸进程" class="headerlink" title="僵尸进程"></a>僵尸进程</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//模拟 子进程先退出,子进程变成僵尸进程</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"本程序的进程pid:"</span>.getmypid().PHP_EOL;</span><br><span class="line"></span><br><span class="line">	$pid = pcntl_fork();</span><br><span class="line">	<span class="keyword">if</span>($pid == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//子进程</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"子进程pid为:"</span>.getmypid().PHP_EOL;</span><br><span class="line">		 system(<span class="string">"ps -f"</span>);</span><br><span class="line">		 <span class="keyword">exit</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="comment">//父进程</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"父进程pid为:"</span>.getmypid().PHP_EOL;</span><br><span class="line">		<span class="comment"># pcntl_wait($status);</span></span><br><span class="line">		sleep(<span class="number">30</span>);</span><br><span class="line">		<span class="keyword">echo</span> PHP_EOL;</span><br><span class="line">		system(<span class="string">"ps axu|grep Z"</span>);</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="PHP程序守护进程化"><a href="#PHP程序守护进程化" class="headerlink" title="PHP程序守护进程化"></a>PHP程序守护进程化</h1><h2 id="使用-supervisor"><a href="#使用-supervisor" class="headerlink" title="使用 supervisor"></a>使用 supervisor</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install supervisor</span><br></pre></td></tr></table></figure>
+<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p>Supervisor 有两个可执行程序 – supervisord 和 supervisorctl:</p>
+<p><code>supervisord</code> 是后台管理服务器, 用来依据配置文件的策略管理后台守护进程, 它会随系统自动启动<br><code>supervisorctl</code> 用于管理员向后台管理程序发送 启动/重启/停止 等指令;<br>它们之间的关系就相当于 Apache 的 httpd 和 apachectl.</p>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>主配置文件 的路径位于 /etc/supervisor/supervisord.conf, 主配置文件中的末尾两行文本:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="keyword">true</span>) </span><br><span class="line">&#123;    </span><br><span class="line">file_put_contents(<span class="string">'/var/www/log.txt'</span>,date(<span class="string">'Y-m-d H:i:s'</span>,time()).PHP_EOL,FILE_APPEND);</span><br><span class="line">sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[include]</span><br><span class="line">files = /etc/supervisor/conf.d/*.conf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">指明了 Supervisor 会去 /etc/supervisor/conf.d/ 目录下查找以 .conf 结尾的子配置文件, 也就是说, 我们只需在 /etc/supervisor/conf.d/ 目录下为每个后台守护应用新建一个配置文件即可.</span><br><span class="line"></span><br><span class="line">子配置文件示例</span><br><span class="line"></span><br><span class="line">[program:php]</span><br><span class="line">command = /usr/bin/php /home/sui/test.php</span><br></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>注意: 每次 修改主配置文件 或 增改子配置文件 都需要执行 supervisorctl update 使新配置生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 控制所有进程</span></span><br><span class="line">sudo supervisorctl start all</span><br><span class="line">sudo supervisorctl stop all</span><br><span class="line">sudo supervisorctl restart all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定向控制指定进程</span></span><br><span class="line">sudo supervisorctl stop php</span><br><span class="line">sudo supervisorctl start php</span><br><span class="line">sudo supervisorctl restart php</span><br></pre></td></tr></table></figure>
+<h2 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup php test.php &gt; log.txt &amp;</span><br></pre></td></tr></table></figure>
+<p>单独执行 php test.php，当按下ctrl+c时就会中断程序执行，会kill当前进程以及子进程。</p>
+<p>php test.php &amp;，这样执行程序虽然也是转为后台运行，实际上是依赖终端的，当用户退出终端时进程就会被杀掉</p>
+<p>## </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">daemonize</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $pid = pcntl_fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($pid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"fork(1) failed!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> ($pid &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="comment">//让由用户启动的进程退出</span></span><br><span class="line">    <span class="keyword">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//建立一个有别于终端的新session以脱离终端</span></span><br><span class="line">    posix_setsid();</span><br><span class="line"></span><br><span class="line">    $pid = pcntl_fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($pid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"fork(2) failed!\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> ($pid &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//父进程退出, 剩下子进程成为最终的独立进程</span></span><br><span class="line">        <span class="keyword">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">daemonize();</span><br><span class="line">sleep(<span class="number">150</span>);</span><br></pre></td></tr></table></figure>
+<p>改进版:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">Class</span> <span class="title">Daemon</span></span>&#123;  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 初始化一个守护进程 </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception </span></span><br><span class="line"><span class="comment">     */</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">()</span></span>&#123;  </span><br><span class="line">        <span class="comment">//创建一个子进程  </span></span><br><span class="line">        $pid = pcntl_fork();  </span><br><span class="line">          </span><br><span class="line">        <span class="keyword">if</span> ($pid == <span class="number">-1</span>) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">'fork子进程失败'</span>);  </span><br><span class="line">        &#125; <span class="keyword">elseif</span> ($pid &gt; <span class="number">0</span>) &#123;  </span><br><span class="line">            <span class="comment">//父进程退出,子进程变成孤儿进程被1号进程收养，进程脱离终端  </span></span><br><span class="line">            <span class="keyword">exit</span>(<span class="number">0</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">//创建一个新的会话，脱离终端控制，更改子进程为组长进程  </span></span><br><span class="line">        $sid = posix_setsid();  </span><br><span class="line">        <span class="keyword">if</span> ($sid == <span class="number">-1</span>) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">'setsid fail'</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">//修改当前进程的工作目录，由于子进程会继承父进程的工作目录，修改工作目录以释放对父进程工作目录的占用。  </span></span><br><span class="line">        chdir(<span class="string">'/'</span>);  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">/** </span></span><br><span class="line"><span class="comment">         * 通过上一步，我们创建了一个新的会话组长，进程组长，且脱离了终端，但是会话组长可以申请重新打开一个终端，为了避免 </span></span><br><span class="line"><span class="comment">         * 这种情况，我们再次创建一个子进程，并退出当前进程，这样运行的进程就不再是会话组长。 </span></span><br><span class="line"><span class="comment">         */</span>  </span><br><span class="line">        $pid = pcntl_fork();  </span><br><span class="line">        <span class="keyword">if</span> ($pid == <span class="number">-1</span>) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">'fork子进程失败'</span>);  </span><br><span class="line">        &#125; <span class="keyword">elseif</span> ($pid &gt; <span class="number">0</span>) &#123;  </span><br><span class="line">            <span class="comment">//再一次退出父进程，子进程成为最终的守护进程  </span></span><br><span class="line">            <span class="keyword">exit</span>(<span class="number">0</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="comment">//由于守护进程用不到标准输入输出，关闭标准输入，输出，错误输出描述符  </span></span><br><span class="line">        fclose(STDIN);  </span><br><span class="line">        fclose(STDOUT);  </span><br><span class="line">        fclose(STDERR);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">$daemon = <span class="keyword">new</span> Daemon();  </span><br><span class="line">$daemon-&gt;init();  </span><br><span class="line"></span><br><span class="line"><span class="comment">//处理业务代码  </span></span><br><span class="line"><span class="keyword">while</span>(<span class="keyword">true</span>) </span><br><span class="line">&#123;  </span><br><span class="line">    file_put_contents(<span class="string">'/home/sui/test/log.txt'</span>, time().PHP_EOL, FILE_APPEND);  </span><br><span class="line">    sleep(<span class="number">5</span>);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PHP程序需要转为后台运行时，只需要调用一次封装好的函数daemonize()即可</p>
+<h1 id="后台建立简单服务器"><a href="#后台建立简单服务器" class="headerlink" title="后台建立简单服务器"></a>后台建立简单服务器</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 设置不显示任何错误 */</span></span><br><span class="line"><span class="comment">// error_reporting(0);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 脚本超时为无限 */</span></span><br><span class="line">set_time_limit(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 开始固定清除 */</span></span><br><span class="line">ob_implicit_flush();</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 本机的IP和需要开放的端口 */</span></span><br><span class="line">$address = <span class="string">'127.0.0.1'</span>;</span><br><span class="line">$port = <span class="number">10000</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 产生一个Socket */</span></span><br><span class="line"><span class="keyword">if</span> (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"socket_create() failed: reason: "</span> . socket_strerror($sock) . <span class="string">"\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 把IP地址端口进行绑定 */</span></span><br><span class="line"><span class="keyword">if</span> (($ret = socket_bind($sock, $address, $port)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"socket_bind() failed: reason: "</span> . socket_strerror($ret) . <span class="string">"\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 监听Socket连接 */</span></span><br><span class="line"><span class="keyword">if</span> (($ret = socket_listen($sock, <span class="number">5</span>)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"socket_listen() failed: reason: "</span> . socket_strerror($ret) . <span class="string">"\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 永远循环监接受用户连接 */</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (($msgsock = socket_accept($sock)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"socket_accept() failed: reason: "</span> . socket_strerror($msgsock) . <span class="string">"\n"</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 发送提示信息给连接上来的用户 */</span></span><br><span class="line">    $msg = <span class="string">"==========================================\r\n"</span> .</span><br><span class="line"> <span class="string">" Welcome to the PHP Test Server. \r\n\r\n"</span>.</span><br><span class="line">        <span class="string">" To quit, type 'quit'. \r\n"</span> .</span><br><span class="line"> <span class="string">" To shut down the server type 'shutdown'.\r\n"</span> .</span><br><span class="line"> <span class="string">" To get help message type 'help'.\r\n"</span> .</span><br><span class="line"> <span class="string">"==========================================\r\n"</span> .</span><br><span class="line"> <span class="string">"php&gt; "</span>;</span><br><span class="line">    socket_write($msgsock, $msg, strlen($msg));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">false</span> === ($buf = socket_read($msgsock, <span class="number">2048</span>, PHP_NORMAL_READ))) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"socket_read() failed: reason: "</span> . socket_strerror($ret) . <span class="string">"\n"</span>;</span><br><span class="line">            <span class="keyword">break</span> <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!$buf = trim($buf)) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">  <span class="comment">/* 客户端输入quit命令时候关闭客户端连接 */</span></span><br><span class="line">        <span class="keyword">if</span> ($buf == <span class="string">'quit'</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">  <span class="comment">/* 客户端输入shutdown命令时候服务端和客户端都关闭 */</span></span><br><span class="line">        <span class="keyword">if</span> ($buf == <span class="string">'shutdown'</span>) &#123;</span><br><span class="line">            socket_close($msgsock);</span><br><span class="line">            <span class="keyword">break</span> <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">  <span class="comment">/* 客户端输入help命令时候输出帮助信息 */</span></span><br><span class="line">  <span class="keyword">if</span> ($buf == <span class="string">'help'</span>) &#123;</span><br><span class="line">   $msg = <span class="string">" PHP Server Help Message \r\n\r\n"</span>.</span><br><span class="line">   <span class="string">" To quit, type 'quit'. \r\n"</span> .</span><br><span class="line">   <span class="string">" To shut down the server type 'shutdown'.\r\n"</span> .</span><br><span class="line">   <span class="string">" To get help message type 'help'.\r\n"</span> .</span><br><span class="line">   <span class="string">"php&gt; "</span>;</span><br><span class="line">    socket_write($msgsock, $msg, strlen($msg));</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* 客户端输入命令不存在时提示信息 */</span></span><br><span class="line">        $talkback = <span class="string">"PHP: unknow command '$buf'.\r\nphp&gt; "</span>;</span><br><span class="line">        socket_write($msgsock, $talkback, strlen($talkback));</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"$buf\n"</span>;</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="keyword">true</span>);</span><br><span class="line">    socket_close($msgsock);</span><br><span class="line">&#125; <span class="keyword">while</span> (<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 关闭Socket连接 */</span></span><br><span class="line">socket_close($sock);</span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet 127.0.0.1 10000</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/php/" rel="tag"># php</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/18/Linux信号/" rel="next" title="Linux信号">
+                <i class="fa fa-chevron-left"></i> Linux信号
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/27/mongodb的使用/" rel="prev" title="mongodb的使用">
+                mongodb的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PHP进程"><span class="nav-number">1.</span> <span class="nav-text">PHP进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#孤儿进程"><span class="nav-number">1.1.</span> <span class="nav-text">孤儿进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#僵尸进程"><span class="nav-number">1.2.</span> <span class="nav-text">僵尸进程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PHP程序守护进程化"><span class="nav-number">2.</span> <span class="nav-text">PHP程序守护进程化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-supervisor"><span class="nav-number">2.1.</span> <span class="nav-text">使用 supervisor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">2.1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令"><span class="nav-number">2.1.2.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置文件"><span class="nav-number">2.1.3.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">2.1.4.</span> <span class="nav-text">运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nohup"><span class="nav-number">2.2.</span> <span class="nav-text">nohup</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后台建立简单服务器"><span class="nav-number">3.</span> <span class="nav-text">后台建立简单服务器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="openresty是一款结合了nginx和lua的全功能web服务器，既是一个中间件，也结合了一个后端解释器。所以，我们可以在nginx上用lua开发很多“有趣”的东西。  下载安装 需要一个 nginx 第三方内容替换库https://github.com/yaoweibin/ngx_http_substitutions_filter_module 123456789cd /usr/loca">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openresty从入门到放弃">
+<meta property="og:url" content="http://sui28456049.github.io/2019/12/07/openresty从入门到放弃/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="openresty是一款结合了nginx和lua的全功能web服务器，既是一个中间件，也结合了一个后端解释器。所以，我们可以在nginx上用lua开发很多“有趣”的东西。  下载安装 需要一个 nginx 第三方内容替换库https://github.com/yaoweibin/ngx_http_substitutions_filter_module 123456789cd /usr/loca">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openresty从入门到放弃">
+<meta name="twitter:description" content="openresty是一款结合了nginx和lua的全功能web服务器，既是一个中间件，也结合了一个后端解释器。所以，我们可以在nginx上用lua开发很多“有趣”的东西。  下载安装 需要一个 nginx 第三方内容替换库https://github.com/yaoweibin/ngx_http_substitutions_filter_module 123456789cd /usr/loca">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2019/12/07/openresty从入门到放弃/">
+
+
+
+
+
+  <title>openresty从入门到放弃 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2019/12/07/openresty从入门到放弃/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">openresty从入门到放弃</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-07T11:56:45+08:00">
+                2019-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><blockquote>
+<p>openresty是一款结合了nginx和lua的全功能web服务器，既是一个中间件，也结合了一个后端解释器。所以，我们可以在nginx上用lua开发很多“有趣”的东西。</p>
+</blockquote>
+<h1 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h1><p> 需要一个 nginx 第三方内容替换库<br><code>https://github.com/yaoweibin/ngx_http_substitutions_filter_module</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/</span><br><span class="line">git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module</span><br><span class="line">wget https://openresty.org/download/openresty-1.15.8.2.tar.gz #  下载</span><br><span class="line">tar -xzvf openresty-1.15.8.2.tar.gz</span><br><span class="line">cd openresty-1.15.8.2</span><br><span class="line">#  编译安装</span><br><span class="line">./configure --with-http_sub_module --with-pcre-jit --with-ipv6 --add-module=../ngx_http_substitutions_filter_module</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>编译选项介绍 </p>
+<ul>
+<li>-—with-http_sub_module 附带http_sub_module模块，这是nginx自带的一个模块，用来替换返回的http数据包中内容。 </li>
+<li>–with-pcre-jit —with-ipv6 提供ipv6支持 </li>
+<li><p>–add-module=../ngx_http_substitutions_filter_module<br>（此处为你下载的ngx_http_substitutions_filter_module目录） 将刚才下载的http_substitutions_filter_module模块编译进去。<br>http_substitutions_filter_module模块是http_sub_module的加强版，它可以用正则替换，并可以多处替换。</p>
+<p>默认在/usr/local/openresty</p>
+</li>
+</ul>
+<h1 id="反向代理网站"><a href="#反向代理网站" class="headerlink" title="反向代理网站"></a>反向代理网站</h1><h2 id="例子一"><a href="#例子一" class="headerlink" title="例子一"></a>例子一</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">      listen       80;</span><br><span class="line">      server_name  www.sui666.tk;</span><br><span class="line">      index index.html index.htm index.php index;</span><br><span class="line"></span><br><span class="line">      location / &#123;</span><br><span class="line">          proxy_pass https://dst_host; # dst_host为目标网站,eg:www.baidu.com</span><br><span class="line">          proxy_cookie_domain dst_host www.sui666.tk;</span><br><span class="line">          proxy_buffering off;</span><br><span class="line">          proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">          proxy_set_header User-Agent $http_user_agent;</span><br><span class="line">          proxy_set_header referer &quot;https://dst_host$request_uri&quot;;</span><br><span class="line">      &#125;</span><br><span class="line">     </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>proxy_pass 是将请求交给上游处理，而这里的上游就是<a href="https://dst_host" target="_blank" rel="noopener">https://dst_host</a></p>
+</li>
+<li><p>proxy_cookie_domain是将所有cookie中的domain替换掉成自己的domain，达到能够登陆的效果。</p>
+</li>
+<li><p>proxy_buffering off用来关闭内存缓冲区。</p>
+</li>
+<li><p>proxy_set_header是一个重要的配置项，利用这个项可以修改转发时的HTTP头。</p>
+</li>
+<li>比如，在登录网站后，修改资料的时候会验证referer，如果referer来自其它网站是会提示错误的。</li>
+<li>所以我在这里用proxy_set_header将referer设置为上游域名下的地址，从而绕过检查。</li>
+</ul>
+<h2 id="代理百度"><a href="#代理百度" class="headerlink" title="代理百度"></a>代理百度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  www.sui666.tk;</span><br><span class="line">        index index.html index.htm index.php index;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass https://www.baidu.com; # nginx配置中也是可以将https降成http</span><br><span class="line">            proxy_buffering off;</span><br><span class="line">            proxy_cookie_domain www.baidu.com www.sui666.tk;</span><br><span class="line">            proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">            proxy_set_header User-Agent1 $http_user_agent;</span><br><span class="line">            proxy_set_header Sui &apos;sui test&apos;;</span><br><span class="line">            proxy_set_header Accept-Encoding &quot;&quot;; # 重要 在向上层服务器转发数据包的时候，设置proxy_set_header Accept-Encoding ””，这样后端服务器就不会压缩数据包了。</span><br><span class="line">            proxy_set_header referer &quot;https://www.baidu.com$request_uri&quot;;</span><br><span class="line">            subs_filter www.baidu.com www.sui666.tk;</span><br><span class="line">            subs_filter hao123 hao345;</span><br><span class="line">            subs_filter 百度一下 百度一下喽;</span><br><span class="line">			subs_filter &lt;/head&gt; &quot;&lt;script&gt;alert(&apos;suisuissui&apos;);&lt;/script&gt;&lt;/head&gt;&quot; # 前端的数据截取</span><br><span class="line">        &#125;</span><br><span class="line">       </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在反代过程中，我们会常常和gzip打交道。<br>熟悉http协议的同学应该知道，如果浏览器发送的数据包头含有Accept-Encoding: gzip，即告诉服务器：“我可以接受gzip压缩过的数据包”。<br>这时后端就会将返回包压缩后发送，并包含返回头Content-Encoding: gzip，<br>浏览器根据是否含有这个头对返回数据包进行解压显示。<br>但gzip在反代中，会造成很大问题：subs_filter替换内容时，如果内容是压缩过的，明显就不能正常替换了</p>
+<ul>
+<li>所以网上一般处理方式是，在向上层服务器转发数据包的时候，设置proxy_set_header Accept-Encoding ””，这样后端服务器就不会压缩数据包了。</li>
+<li>有时候就算发送Accept-Encoding=””也不管用。各种header头设置缓存也无效</li>
+<li>借助lua，通过lua脚本在数据包返回的时候解压缩gzip数据，并代替subs_filter进行字符串的替换。</li>
+</ul>
+<h2 id="lua进行gzip解压与返回包修改"><a href="#lua进行gzip解压与返回包修改" class="headerlink" title="lua进行gzip解压与返回包修改"></a>lua进行gzip解压与返回包修改</h2><p>openresty在编译安装的时候就加入了lua支持，所以无需再对nginx进行改造。<br>但lua下对gzip进行解压，需要借助一个库：lua-zlib（<a href="https://github.com/brimworks/lua-zlib）" target="_blank" rel="noopener">https://github.com/brimworks/lua-zlib）</a><br>lua是一个和C语言结合紧密的脚本语言，实际上lua-zlib就是一个C语言编写的库，<br>1 .<code>我们现在需要做的就是将其编译成一个动态链接库zlib.so，让lua来引用。</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/brimworks/lua-zlib.git</span><br><span class="line"><span class="built_in">cd</span> lua-zlib</span><br><span class="line">cmake -DLUA_INCLUDE_DIR=/usr/<span class="built_in">local</span>/openresty/luajit/include/luajit-2.1 -DLUA_LIBRARIES=/usr/<span class="built_in">local</span>/openresty/luajit/lib -DUSE_LUAJIT=ON -DUSE_LUA=OFF</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">cp zlib.so /usr/<span class="built_in">local</span>/openresty/lualib/zlib.so</span><br></pre></td></tr></table></figure>
+<p>执行cmake来生成编译配置文件。LUA_INCLUDE_DIR指定luajit的include文件夹，LUA_LIBRARIES指定luajit的lib文件夹。<br>USE_LUAJIT=ON和USE_LUA=OFF指定我们使用的是luajit而不是lua<br>nginx的配置文件 加入，<br>“body_filter_by_lua_file /usr/local/openresty/luasrc/repl.lua; “<br>这句话告诉nginx我需要把返回包的body交给repl.lua处理。<br>….</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://wooyun.js.org/drops/openresty+lua%E5%9C%A8%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E4%B8%AD%E7%9A%84%E7%8E%A9%E6%B3%95.html" target="_blank" rel="noopener">https://wooyun.js.org/drops/openresty+lua%E5%9C%A8%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E4%B8%AD%E7%9A%84%E7%8E%A9%E6%B3%95.html</a></li>
+</ul>
+<h1 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h1><p>少折腾..  nginx 自带 ngxscript也可以运行 js,php,python 虚拟机,用到再说吧.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/05/docker入门之dokcer-compose/" rel="next" title="docker入门之dokcer-compose">
+                <i class="fa fa-chevron-left"></i> docker入门之dokcer-compose
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/23/英语学习/" rel="prev" title="英语学习-词类">
+                英语学习-词类 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#下载安装"><span class="nav-number">1.</span> <span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反向代理网站"><span class="nav-number">2.</span> <span class="nav-text">反向代理网站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子一"><span class="nav-number">2.1.</span> <span class="nav-text">例子一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代理百度"><span class="nav-number">2.2.</span> <span class="nav-text">代理百度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lua进行gzip解压与返回包修改"><span class="nav-number">2.3.</span> <span class="nav-text">lua进行gzip解压与返回包修改</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题外话"><span class="nav-number">4.</span> <span class="nav-text">题外话</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

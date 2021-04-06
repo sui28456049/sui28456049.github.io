@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="mysql,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="mysql 优化方向1.SQL优化a.  sql 优化分析 b.  索引优化 c.  常用sql优化 d.  常用优化技巧 2.优化数据库对象a.  优化表的数据类型 b.  表拆分 c.  逆规范式 d.  使用中间表 3.优化Mysql Servera.  Mysql内存管理优化 b.  log机制优化 c.  调整Mysql并发相关参数 4.应用优化a.   数据库连接池(php-cp(p">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql优化">
+<meta property="og:url" content="http://sui28456049.github.io/2017/09/19/mysql优化/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="mysql 优化方向1.SQL优化a.  sql 优化分析 b.  索引优化 c.  常用sql优化 d.  常用优化技巧 2.优化数据库对象a.  优化表的数据类型 b.  表拆分 c.  逆规范式 d.  使用中间表 3.优化Mysql Servera.  Mysql内存管理优化 b.  log机制优化 c.  调整Mysql并发相关参数 4.应用优化a.   数据库连接池(php-cp(p">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/0924.png">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20190813_01.png">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20190813_02.png">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20190813_03.png">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20190813_04.png">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/20190813_05.png">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql优化">
+<meta name="twitter:description" content="mysql 优化方向1.SQL优化a.  sql 优化分析 b.  索引优化 c.  常用sql优化 d.  常用优化技巧 2.优化数据库对象a.  优化表的数据类型 b.  表拆分 c.  逆规范式 d.  使用中间表 3.优化Mysql Servera.  Mysql内存管理优化 b.  log机制优化 c.  调整Mysql并发相关参数 4.应用优化a.   数据库连接池(php-cp(p">
+<meta name="twitter:image" content="http://sui28456049.github.io/uploads/0924.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2017/09/19/mysql优化/">
+
+
+
+
+
+  <title>mysql优化 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2017/09/19/mysql优化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mysql优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-19T14:30:52+08:00">
+                2017-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h1 id="mysql-优化方向"><a href="#mysql-优化方向" class="headerlink" title="mysql 优化方向"></a>mysql 优化方向</h1><h2 id="1-SQL优化"><a href="#1-SQL优化" class="headerlink" title="1.SQL优化"></a>1.SQL优化</h2><pre><code>a.  sql 优化分析
+b.  索引优化
+c.  常用sql优化
+d.  常用优化技巧
+</code></pre><h2 id="2-优化数据库对象"><a href="#2-优化数据库对象" class="headerlink" title="2.优化数据库对象"></a>2.优化数据库对象</h2><pre><code>a.  优化表的数据类型
+b.  表拆分
+c.  逆规范式
+d.  使用中间表
+</code></pre><h2 id="3-优化Mysql-Server"><a href="#3-优化Mysql-Server" class="headerlink" title="3.优化Mysql Server"></a>3.优化Mysql Server</h2><pre><code>a.  Mysql内存管理优化
+b.  log机制优化
+c.  调整Mysql并发相关参数
+</code></pre><h2 id="4-应用优化"><a href="#4-应用优化" class="headerlink" title="4.应用优化"></a>4.应用优化</h2><pre><code>a.   数据库连接池(php-cp(php-connect-pool)是用php扩展写的一个数据库连接池。)
+b.   使用缓存减少压力
+c.   负载均衡建立集群
+d.   主主同步  主从复制 
+</code></pre><h1 id="Mysql索引"><a href="#Mysql索引" class="headerlink" title="Mysql索引"></a>Mysql索引</h1><h2 id="索引的存储分类"><a href="#索引的存储分类" class="headerlink" title="索引的存储分类"></a>索引的存储分类</h2><ul>
+<li>B-TREE索引: 最常见的索引类型,大部分都支持</li>
+<li>HASH索引: 只有Memory引擎支持,使用场景简单</li>
+<li>R-Tree索引: 空间索引,地址空间类型数据</li>
+<li>Full-text索引:全文索引,myisam的一个特殊索引,innodb 从5.6开始支持</li>
+</ul>
+<h2 id="查看索引"><a href="#查看索引" class="headerlink" title="查看索引"></a>查看索引</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">index</span> <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure>
+<h2 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">index</span> 索引名称 <span class="keyword">on</span> tbl_name</span><br></pre></td></tr></table></figure>
+<h2 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> tbl_name(</span><br><span class="line">字段名称 字段类型 [完整性约束条件],</span><br><span class="line">…,</span><br><span class="line">[<span class="keyword">unique</span>|fulltext|spatial] <span class="keyword">index</span>|<span class="keyword">key</span> [索引名称](字段名称[(长度)] [<span class="keyword">asc</span>|<span class="keyword">desc</span>])</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">test</span>(</span><br><span class="line">    -&gt; <span class="keyword">id</span> tinyint <span class="keyword">unsigned</span>,</span><br><span class="line">    -&gt; username <span class="built_in">varchar</span>(<span class="number">20</span>),</span><br><span class="line">    -&gt; <span class="keyword">index</span> in_id(<span class="keyword">id</span>),</span><br><span class="line">    -&gt; <span class="keyword">key</span> in_username(username)</span><br><span class="line">    -&gt; );</span><br></pre></td></tr></table></figure>
+<h1 id="数据对象优化"><a href="#数据对象优化" class="headerlink" title="数据对象优化"></a>数据对象优化</h1><h2 id="优化表数据类型"><a href="#优化表数据类型" class="headerlink" title="优化表数据类型"></a>优化表数据类型</h2><p>  使用procedure analyse()对当前应用的表进行分析,他会优化建议,用户根据实际情况优化.</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">test</span> <span class="keyword">procedure</span> analyse();</span><br></pre></td></tr></table></figure>
+<h2 id="表拆分"><a href="#表拆分" class="headerlink" title="表拆分"></a>表拆分</h2><ul>
+<li><p>垂直拆分(针对某些列常用,某些列可能不常用)</p>
+</li>
+<li><p>水平拆分(首先表很大.表中数据有独立性,能简单分类,需要把表存放在多种介质.)</p>
+<h2 id="使用中间表"><a href="#使用中间表" class="headerlink" title="使用中间表"></a>使用中间表</h2></li>
+<li><p>数据查询量大</p>
+</li>
+<li>数据统计,数据分析</li>
+</ul>
+<h1 id="调整mysql参数优化"><a href="#调整mysql参数优化" class="headerlink" title="调整mysql参数优化"></a>调整mysql参数优化</h1><h2 id="Myisam-内存优化"><a href="#Myisam-内存优化" class="headerlink" title="Myisam 内存优化"></a>Myisam 内存优化</h2><ul>
+<li><p>key_buffer_size<br>决定MYISAM索引缓存区的大小,直接影响MyISAM表的存取效率,建议1/4内存</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span>  <span class="string">"%key%"</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">GLOBAL</span> <span class="keyword">STATUS</span> <span class="keyword">LIKE</span> <span class="string">'%key_read%'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>read_buffer_size(读缓存)</p>
+</li>
+</ul>
+<h2 id="Innodb-内存优化"><a href="#Innodb-内存优化" class="headerlink" title="Innodb 内存优化"></a>Innodb 内存优化</h2><ul>
+<li>innodb_buffer_pool_size<br>存储引擎表数据和索引数据的最大缓存区大小</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> @@innodb_buffer_pool_size;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>innodb_old_blocks_pct LRU   (决定old sublist 的比例)<br>innodb_old_blocks_time LRU  (数据转移间隔时间)</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">variables</span> <span class="keyword">like</span> %old_blocks%;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql并发参数"><a href="#mysql并发参数" class="headerlink" title="mysql并发参数"></a>mysql并发参数</h2><p><img src="/uploads/0924.png" alt="mysql"></p>
+<h1 id="Mysql应用优化"><a href="#Mysql应用优化" class="headerlink" title="Mysql应用优化"></a>Mysql应用优化</h1><h2 id="使用连接池"><a href="#使用连接池" class="headerlink" title="使用连接池"></a>使用连接池</h2><h2 id="减少对Mysql的真实连接"><a href="#减少对Mysql的真实连接" class="headerlink" title="减少对Mysql的真实连接"></a>减少对Mysql的真实连接</h2><ul>
+<li>避免相同数据的重复执行</li>
+<li>使用Mysql缓存</li>
+<li>增加系统数据cache</li>
+</ul>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><ul>
+<li>LVS分布式</li>
+<li>读写分离,主从复制</li>
+</ul>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><h2 id="8g-内存服务器-mysql-cnf"><a href="#8g-内存服务器-mysql-cnf" class="headerlink" title="8g 内存服务器 mysql.cnf"></a>8g 内存服务器 mysql.cnf</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line"><span class="comment">#password	= your_password</span></span><br><span class="line">port		= 3306</span><br><span class="line">socket		= /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">port		= 3306</span><br><span class="line">socket		= /tmp/mysql.sock</span><br><span class="line">datadir = /www/server/data</span><br><span class="line">default_storage_engine = InnoDB</span><br><span class="line">performance_schema_max_table_instances = 400</span><br><span class="line">table_definition_cache = 400</span><br><span class="line">skip-external-locking</span><br><span class="line">key_buffer_size = 128M</span><br><span class="line">max_allowed_packet = 100G</span><br><span class="line">table_open_cache = 512</span><br><span class="line">sort_buffer_size = 2M</span><br><span class="line">net_buffer_length = 4K</span><br><span class="line">read_buffer_size = 2M</span><br><span class="line">read_rnd_buffer_size = 256K</span><br><span class="line">myisam_sort_buffer_size = 32M</span><br><span class="line">thread_cache_size = 64</span><br><span class="line">query_cache_size = 64M</span><br><span class="line">tmp_table_size = 64M</span><br><span class="line">sql-mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES</span><br><span class="line"></span><br><span class="line">explicit_defaults_for_timestamp = <span class="literal">true</span></span><br><span class="line"><span class="comment">#skip-name-resolve</span></span><br><span class="line">max_connections = 500</span><br><span class="line">max_connect_errors = 100</span><br><span class="line">open_files_limit = 65535</span><br><span class="line"></span><br><span class="line"><span class="built_in">log</span>-bin=mysql-bin</span><br><span class="line">binlog_format=mixed</span><br><span class="line">server-id = 1</span><br><span class="line">expire_logs_days = 10</span><br><span class="line">slow_query_log=1</span><br><span class="line">slow-query-log-file=/www/server/data/mysql-slow.log</span><br><span class="line">long_query_time=3</span><br><span class="line"><span class="comment">#log_queries_not_using_indexes=on</span></span><br><span class="line">early-plugin-load = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">innodb_data_home_dir = /www/server/data</span><br><span class="line">innodb_data_file_path = ibdata1:10M:autoextend</span><br><span class="line">innodb_log_group_home_dir = /www/server/data</span><br><span class="line">innodb_buffer_pool_size = 512M</span><br><span class="line">innodb_log_file_size = 256M</span><br><span class="line">innodb_log_buffer_size = 64M</span><br><span class="line">innodb_flush_log_at_trx_commit = 1</span><br><span class="line">innodb_lock_wait_timeout = 50</span><br><span class="line">innodb_max_dirty_pages_pct = 90</span><br><span class="line">innodb_read_io_threads = 2</span><br><span class="line">innodb_write_io_threads = 2</span><br><span class="line"></span><br><span class="line">[mysqldump]</span><br><span class="line">quick</span><br><span class="line">max_allowed_packet = 500M</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line">no-auto-rehash</span><br><span class="line"></span><br><span class="line">[myisamchk]</span><br><span class="line">key_buffer_size = 128M</span><br><span class="line">sort_buffer_size = 2M</span><br><span class="line">read_buffer = 2M</span><br><span class="line">write_buffer = 2M</span><br><span class="line"></span><br><span class="line">[mysqlhotcopy]</span><br><span class="line">interactive-timeout</span><br></pre></td></tr></table></figure>
+<h2 id="1-2g-服务器推荐配置"><a href="#1-2g-服务器推荐配置" class="headerlink" title="1~2g 服务器推荐配置"></a>1~2g 服务器推荐配置</h2><p><img src="/uploads/20190813_01.png" alt="2g"></p>
+<h2 id="2-4g-配置"><a href="#2-4g-配置" class="headerlink" title="2~4g  配置"></a>2~4g  配置</h2><p><img src="/uploads/20190813_02.png" alt="4g"></p>
+<h2 id="4-8g-配置"><a href="#4-8g-配置" class="headerlink" title="4~8g  配置"></a>4~8g  配置</h2><p><img src="/uploads/20190813_03.png" alt="4g"></p>
+<h2 id="8-16g-配置"><a href="#8-16g-配置" class="headerlink" title="8~16g  配置"></a>8~16g  配置</h2><p><img src="/uploads/20190813_04.png" alt="4g"></p>
+<h2 id="16-32g-配置"><a href="#16-32g-配置" class="headerlink" title="16~32g  配置"></a>16~32g  配置</h2><p><img src="/uploads/20190813_05.png" alt="4g"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/13/高并发下的抢购、秒杀功能/" rel="next" title="高并发下的抢购、秒杀功能">
+                <i class="fa fa-chevron-left"></i> 高并发下的抢购、秒杀功能
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/03/进程基础/" rel="prev" title="进程基础">
+                进程基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql-优化方向"><span class="nav-number">1.</span> <span class="nav-text">mysql 优化方向</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-SQL优化"><span class="nav-number">1.1.</span> <span class="nav-text">1.SQL优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-优化数据库对象"><span class="nav-number">1.2.</span> <span class="nav-text">2.优化数据库对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-优化Mysql-Server"><span class="nav-number">1.3.</span> <span class="nav-text">3.优化Mysql Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-应用优化"><span class="nav-number">1.4.</span> <span class="nav-text">4.应用优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql索引"><span class="nav-number">2.</span> <span class="nav-text">Mysql索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#索引的存储分类"><span class="nav-number">2.1.</span> <span class="nav-text">索引的存储分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看索引"><span class="nav-number">2.2.</span> <span class="nav-text">查看索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除索引"><span class="nav-number">2.3.</span> <span class="nav-text">删除索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建索引"><span class="nav-number">2.4.</span> <span class="nav-text">创建索引</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据对象优化"><span class="nav-number">3.</span> <span class="nav-text">数据对象优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化表数据类型"><span class="nav-number">3.1.</span> <span class="nav-text">优化表数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#表拆分"><span class="nav-number">3.2.</span> <span class="nav-text">表拆分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用中间表"><span class="nav-number">3.3.</span> <span class="nav-text">使用中间表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调整mysql参数优化"><span class="nav-number">4.</span> <span class="nav-text">调整mysql参数优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Myisam-内存优化"><span class="nav-number">4.1.</span> <span class="nav-text">Myisam 内存优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Innodb-内存优化"><span class="nav-number">4.2.</span> <span class="nav-text">Innodb 内存优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql并发参数"><span class="nav-number">4.3.</span> <span class="nav-text">mysql并发参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql应用优化"><span class="nav-number">5.</span> <span class="nav-text">Mysql应用优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用连接池"><span class="nav-number">5.1.</span> <span class="nav-text">使用连接池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少对Mysql的真实连接"><span class="nav-number">5.2.</span> <span class="nav-text">减少对Mysql的真实连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡"><span class="nav-number">5.3.</span> <span class="nav-text">负载均衡</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">6.</span> <span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8g-内存服务器-mysql-cnf"><span class="nav-number">6.1.</span> <span class="nav-text">8g 内存服务器 mysql.cnf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2g-服务器推荐配置"><span class="nav-number">6.2.</span> <span class="nav-text">1~2g 服务器推荐配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4g-配置"><span class="nav-number">6.3.</span> <span class="nav-text">2~4g  配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-8g-配置"><span class="nav-number">6.4.</span> <span class="nav-text">4~8g  配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-16g-配置"><span class="nav-number">6.5.</span> <span class="nav-text">8~16g  配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-32g-配置"><span class="nav-number">6.6.</span> <span class="nav-text">16~32g  配置</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

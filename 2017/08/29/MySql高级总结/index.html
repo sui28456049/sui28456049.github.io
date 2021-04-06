@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Mysql,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1">
+
+
+
+
+
+
+<meta name="description" content="触发器 触发器是一个特殊的存储过程，不同的是存储过程要用CALL来调用，而触发器不需要使用CALL 也不需要手工启动，只要当一个预定义的事件发生的时候，就会被MYSQL自动调用。  注意:mysql语法以;为结束符,先修mysql定界符DELIMITER $记得最后修改回来 DELIMITER; 语法查看触发器SHOW TRIGGERS 删除触发器1DROP TRIGGER 创建触发器12345">
+<meta name="keywords" content="Mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql高级总结">
+<meta property="og:url" content="http://sui28456049.github.io/2017/08/29/MySql高级总结/index.html">
+<meta property="og:site_name" content="随某人博客">
+<meta property="og:description" content="触发器 触发器是一个特殊的存储过程，不同的是存储过程要用CALL来调用，而触发器不需要使用CALL 也不需要手工启动，只要当一个预定义的事件发生的时候，就会被MYSQL自动调用。  注意:mysql语法以;为结束符,先修mysql定界符DELIMITER $记得最后修改回来 DELIMITER; 语法查看触发器SHOW TRIGGERS 删除触发器1DROP TRIGGER 创建触发器12345">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://sui28456049.github.io/uploads/0903_4.jpg">
+<meta property="og:updated_time" content="2021-04-06T09:29:30.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySql高级总结">
+<meta name="twitter:description" content="触发器 触发器是一个特殊的存储过程，不同的是存储过程要用CALL来调用，而触发器不需要使用CALL 也不需要手工启动，只要当一个预定义的事件发生的时候，就会被MYSQL自动调用。  注意:mysql语法以;为结束符,先修mysql定界符DELIMITER $记得最后修改回来 DELIMITER; 语法查看触发器SHOW TRIGGERS 删除触发器1DROP TRIGGER 创建触发器12345">
+<meta name="twitter:image" content="http://sui28456049.github.io/uploads/0903_4.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sui28456049.github.io/2017/08/29/MySql高级总结/">
+
+
+
+
+
+  <title>MySql高级总结 | 随某人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">随某人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://sui28456049.github.io/2017/08/29/MySql高级总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Sui">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随某人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySql高级总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-29T10:31:01+08:00">
+                2017-08-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script src="/assets/js/APlayer.min.js"> </script><h2 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h2><blockquote>
+<p>触发器是一个特殊的存储过程，不同的是存储过程要用CALL来调用，而触发器不需要使用CALL</p>
+<p>也不需要手工启动，只要当一个预定义的事件发生的时候，就会被MYSQL自动调用。</p>
+</blockquote>
+<p>注意:mysql语法以;为结束符,先修mysql定界符<br>DELIMITER $<br>记得最后修改回来 DELIMITER;</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><h4 id="查看触发器"><a href="#查看触发器" class="headerlink" title="查看触发器"></a>查看触发器</h4><p><code>SHOW TRIGGERS</code></p>
+<h4 id="删除触发器"><a href="#删除触发器" class="headerlink" title="删除触发器"></a>删除触发器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DROP TRIGGER</span><br></pre></td></tr></table></figure>
+<h4 id="创建触发器"><a href="#创建触发器" class="headerlink" title="创建触发器"></a>创建触发器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TRIGGER &lt;触发器名称&gt;  --触发器必须有名字，最多64个字符，可能后面会附有分隔符.它和MySQL中其他对象的命名方式基本相象.</span><br><span class="line">&#123; BEFORE | AFTER &#125;  --触发器有执行的时间设置：可以设置为事件发生前或后。</span><br><span class="line">&#123; INSERT | UPDATE | DELETE &#125;  --同样也能设定触发的事件：它们可以在执行insert、update或delete的过程中触发。</span><br><span class="line">ON &lt;表名称&gt;  --触发器是属于某一个表的:当在这个表上执行插入、 更新或删除操作的时候就导致触发器的激活. 我们不能给同一张表的同一个事件安排两个触发器。</span><br><span class="line">FOR EACH ROW  --触发器的执行间隔：FOR EACH ROW子句通知触发器 每隔一行执行一次动作，而不是对整个表执行一次。</span><br><span class="line">&lt;触发器SQL语句&gt;  --触发器包含所要触发的SQL语句：这里的语句可以是任何合法的语句， 包括复合语句，但是这里的语句受的限制和函数的一样。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER $</span><br><span class="line">CREATE TRIGGER first </span><br><span class="line">AFTER INSERT </span><br><span class="line">ON tab1</span><br><span class="line">FOR EACH ROW</span><br><span class="line">BEGIN</span><br><span class="line">insert into tab2(tab2_id) value(new.tab1_id);</span><br><span class="line">END$</span><br><span class="line">DELIMITER;</span><br></pre></td></tr></table></figure>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><h4 id="新建表"><a href="#新建表" class="headerlink" title="新建表"></a>新建表</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_a`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">smallint</span>(<span class="number">1</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`username`</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`groupid`</span> mediumint(<span class="number">8</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=MyISAM AUTO_INCREMENT=<span class="number">16</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=latin1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_b`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">smallint</span>(<span class="number">1</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`username`</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`groupid`</span> mediumint(<span class="number">8</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=MyISAM AUTO_INCREMENT=<span class="number">57</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=latin1;</span><br></pre></td></tr></table></figure>
+<h4 id="insert-操作"><a href="#insert-操作" class="headerlink" title="insert 操作"></a>insert 操作</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> t1</span><br><span class="line"><span class="keyword">after</span> </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">on</span> t_a </span><br><span class="line"><span class="keyword">for</span> <span class="keyword">each</span> <span class="keyword">row</span></span><br><span class="line"><span class="keyword">begin</span> </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> t_b <span class="keyword">set</span> username = new.username,groupid=new.groupid;</span><br><span class="line"><span class="keyword">end</span>$</span><br></pre></td></tr></table></figure>
+<h4 id="update-操作"><a href="#update-操作" class="headerlink" title="update 操作"></a>update 操作</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Trigger触发后，当t_a表groupid,username数据有更改时，对t_b表同步一条更新后的数据</span><br><span class="line">   <span class="keyword">create</span> <span class="keyword">trigger</span> t2</span><br><span class="line">   <span class="keyword">after</span></span><br><span class="line">   <span class="keyword">update</span> <span class="keyword">on</span> t_a</span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span> <span class="keyword">row</span> </span><br><span class="line">   <span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">if</span> new.groupid !=old.groupid <span class="keyword">or</span> old.username != new.username <span class="keyword">then</span></span><br><span class="line">         <span class="keyword">update</span> <span class="string">`t_b`</span> <span class="keyword">set</span> groupid=new.groupid,username = new.username <span class="keyword">where</span> username=old.username <span class="keyword">and</span> groupid=old.groupid;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">if</span>;</span><br><span class="line">   <span class="keyword">end</span>$</span><br></pre></td></tr></table></figure>
+<h4 id="delete-操作"><a href="#delete-操作" class="headerlink" title="delete 操作"></a>delete 操作</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> t3</span><br><span class="line">  <span class="keyword">after</span></span><br><span class="line">  <span class="keyword">delete</span> <span class="keyword">on</span> t_a</span><br><span class="line">  <span class="keyword">for</span> <span class="keyword">each</span> <span class="keyword">row</span> </span><br><span class="line">  <span class="keyword">begin</span> </span><br><span class="line">   <span class="keyword">delete</span> <span class="keyword">from</span> <span class="string">`t_b`</span> <span class="keyword">where</span> username=old.username <span class="keyword">and</span> groupid=old.groupid; </span><br><span class="line">   <span class="keyword">insert</span> <span class="keyword">into</span> <span class="string">`t_b`</span> (<span class="string">`username`</span>,<span class="string">`groupid`</span>) <span class="keyword">values</span> (old.username,<span class="string">'5555'</span>);</span><br><span class="line">  <span class="keyword">end</span>$</span><br></pre></td></tr></table></figure>
+<h2 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h2><blockquote>
+<p>存储过程和函数是在数据库中定义一些SQL语句的集合，然后直接调用这些存储过程和函数来执行已经定义好的SQL语句。存储过程和函数可以避免开发人员重复的编写相同的SQL语句。而且，存储过程和函数是在MySQL服务器中存储和执行的，可以减少客户端和服务器端的数据传输。</p>
+</blockquote>
+<h3 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h3><h4 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">show procedure status; //存储过程 </span><br><span class="line"></span><br><span class="line">show function status; //函数 </span><br><span class="line"></span><br><span class="line">查看存储过程或函数的创建代码 </span><br><span class="line">show create procedure proc_name; </span><br><span class="line">show create function func_name;</span><br></pre></td></tr></table></figure>
+<h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> p1 () </span><br><span class="line"><span class="keyword">begin</span> </span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">concat</span>(<span class="string">'查找东西.....'</span>); </span><br><span class="line"><span class="keyword">end</span>;   </span><br><span class="line">``` </span><br><span class="line">存储过程用<span class="keyword">create</span> <span class="keyword">procedure</span> 创建， 业务逻辑和<span class="keyword">sql</span>写在<span class="keyword">begin</span>和<span class="keyword">end</span>之间。mysql中可用<span class="keyword">call</span> porcedureName ();来调用过程。</span><br><span class="line">#### 执行</span><br><span class="line"></span><br><span class="line">```SQL</span><br><span class="line"><span class="comment">-- 调用过程 </span></span><br><span class="line"><span class="keyword">call</span> p1;</span><br></pre></td></tr></table></figure>
+<h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop procedure if exists p1;</span><br></pre></td></tr></table></figure>
+<h3 id="in-out-inout-不常用"><a href="#in-out-inout-不常用" class="headerlink" title="in/out/inout(不常用)"></a>in/out/inout(不常用)</h3><h4 id="in"><a href="#in" class="headerlink" title="in"></a>in</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> p3(<span class="keyword">in</span> n <span class="built_in">int</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"> <span class="keyword">declare</span> total <span class="built_in">int</span> <span class="keyword">default</span> <span class="number">0</span>;</span><br><span class="line"> <span class="keyword">declare</span> <span class="keyword">num</span> <span class="built_in">int</span> <span class="keyword">default</span> <span class="number">0</span>;</span><br><span class="line">while(num &lt; n) do</span><br><span class="line">	<span class="keyword">set</span> <span class="keyword">num</span>=<span class="keyword">num</span>+<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">set</span> total = <span class="keyword">num</span>+total;</span><br><span class="line"><span class="keyword">end</span> <span class="keyword">while</span>;</span><br><span class="line"><span class="keyword">select</span> total;</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line">call p3(100); #5050</span><br></pre></td></tr></table></figure>
+<h5 id="out"><a href="#out" class="headerlink" title="out"></a>out</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> p5(<span class="keyword">in</span> pid <span class="built_in">int</span>, <span class="keyword">out</span> <span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">20</span>))</span><br><span class="line"> <span class="keyword">begin</span></span><br><span class="line"><span class="keyword">select</span> username <span class="keyword">into</span> <span class="keyword">name</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">id</span> = pid;</span><br><span class="line"> <span class="keyword">end</span></span><br><span class="line"><span class="keyword">call</span> p5(<span class="number">1</span>,@sui)</span><br><span class="line"><span class="keyword">select</span> @sui;</span><br></pre></td></tr></table></figure>
+<h2 id="游标"><a href="#游标" class="headerlink" title="游标"></a>游标</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  # declare 声明变量,set赋值变量</span><br><span class="line"><span class="comment">-- 一条sql,对应N条结果集的资源,取出资源的接口/句柄,就是游标.</span></span><br><span class="line"><span class="comment">-- 沿着游标,可以一次取出一行.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">-- declare 声明;  declare 游标名 cursor for select select_statement</span></span><br><span class="line">    <span class="comment">-- open 打开;     open 游标名</span></span><br><span class="line">    <span class="comment">-- fetch 取值;    fetch 游标名;   into var1,var2[,.....]</span></span><br><span class="line">    <span class="comment">-- close 关闭;    close 游标名</span></span><br></pre></td></tr></table></figure>
+<h3 id="NOT-FOUND-事件触发-exit"><a href="#NOT-FOUND-事件触发-exit" class="headerlink" title="NOT FOUND 事件触发[exit]"></a>NOT FOUND 事件触发[exit]</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> p9()</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">	<span class="keyword">declare</span> row_gid <span class="built_in">int</span>;</span><br><span class="line">	<span class="keyword">declare</span> row_num <span class="built_in">int</span>;</span><br><span class="line">    <span class="keyword">declare</span> row_name <span class="built_in">varchar</span>(<span class="number">20</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">declare</span> you <span class="built_in">int</span> <span class="keyword">default</span> <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">declare</span> getgoods <span class="keyword">cursor</span> <span class="keyword">for</span> <span class="keyword">select</span> gid,<span class="keyword">num</span>,<span class="keyword">name</span> <span class="keyword">from</span> goods;</span><br><span class="line">	<span class="keyword">declare</span> <span class="keyword">exit</span> <span class="keyword">handler</span> <span class="keyword">for</span> <span class="keyword">NOT</span> <span class="keyword">FOUND</span> <span class="keyword">set</span> you = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	open getgoods;</span><br><span class="line">	epeat</span><br><span class="line">	    fetch getgoods into row_gid,row_num,row_name;</span><br><span class="line">	    <span class="keyword">select</span> row_num,row_name;</span><br><span class="line">	until you=0 <span class="keyword">end</span> <span class="keyword">repeat</span>;</span><br><span class="line"></span><br><span class="line">	close getgoods;</span><br><span class="line"><span class="keyword">end</span>;$</span><br></pre></td></tr></table></figure>
+<h3 id="NOT-FOUND-事件触发-continue"><a href="#NOT-FOUND-事件触发-continue" class="headerlink" title="NOT FOUND 事件触发[continue]"></a>NOT FOUND 事件触发[continue]</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> p10()</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">     <span class="keyword">declare</span> row_gid <span class="built_in">int</span>;</span><br><span class="line">     <span class="keyword">declare</span> row_num <span class="built_in">int</span>;</span><br><span class="line">     <span class="keyword">declare</span> row_name <span class="built_in">varchar</span>(<span class="number">20</span>);</span><br><span class="line">     		</span><br><span class="line">     <span class="keyword">declare</span> you <span class="built_in">int</span> <span class="keyword">default</span> <span class="number">1</span>;</span><br><span class="line">     <span class="keyword">declare</span> getgoods <span class="keyword">cursor</span> <span class="keyword">for</span> <span class="keyword">select</span> gid,<span class="keyword">num</span>,<span class="keyword">name</span> <span class="keyword">from</span> goods;</span><br><span class="line">     <span class="keyword">declare</span> continue <span class="keyword">handler</span> <span class="keyword">for</span> <span class="keyword">NOT</span> <span class="keyword">FOUND</span> <span class="keyword">set</span> you := <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">     open getgoods;</span><br><span class="line">       fetch getgoods into row_gid,row_num,row_name;</span><br><span class="line">       	</span><br><span class="line">     repeat</span><br><span class="line">     	<span class="keyword">select</span> row_num,row_name;</span><br><span class="line">     	fetch getgoods into row_gid,row_num,row_name;</span><br><span class="line">     until you=0 <span class="keyword">end</span> <span class="keyword">repeat</span>;</span><br><span class="line"></span><br><span class="line">     close getgoods;</span><br><span class="line"></span><br><span class="line"><span class="keyword">end</span>;$</span><br></pre></td></tr></table></figure>
+<h2 id="mysql权限管理"><a href="#mysql权限管理" class="headerlink" title="mysql权限管理"></a>mysql权限管理</h2><h3 id="mysql-user表"><a href="#mysql-user表" class="headerlink" title="mysql.user表"></a>mysql.user表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#创建test用户授权所有数据库和表</span><br><span class="line"> <span class="keyword">grant</span> all <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="keyword">test</span>@localhost <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">'Myd*d123456'</span>;</span><br><span class="line"> # 刷新权限表</span><br><span class="line"> <span class="keyword">flush</span> <span class="keyword">privileges</span>;</span><br><span class="line"> # 修改密码</span><br><span class="line"> <span class="keyword">SET</span> <span class="keyword">PASSWORD</span> <span class="keyword">FOR</span> <span class="string">'username'</span>@<span class="string">'host'</span> = <span class="keyword">PASSWORD</span>(<span class="string">'newpassword'</span>);</span><br><span class="line"> # 撤销授权</span><br><span class="line"> <span class="keyword">REVOKE</span> privilege <span class="keyword">ON</span> databasename.tablename <span class="keyword">FROM</span> <span class="string">'username'</span>@<span class="string">'host'</span>;</span><br><span class="line"> #查看用户授权</span><br><span class="line">  <span class="keyword">show</span> <span class="keyword">grants</span> <span class="keyword">for</span> <span class="keyword">test</span>@localhost;</span><br><span class="line"> #删除用户</span><br><span class="line">  <span class="keyword">DROP</span> <span class="keyword">USER</span> <span class="string">'test'</span>@<span class="string">'localhost'</span></span><br></pre></td></tr></table></figure>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service <span class="comment">#停止firewall</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld.service <span class="comment">#禁止firewall开机启动</span></span><br></pre></td></tr></table></figure>
+<h3 id="主服务器-192-168-2-135-vim-etc-my-conf"><a href="#主服务器-192-168-2-135-vim-etc-my-conf" class="headerlink" title="主服务器(192.168.2.135)(vim /etc/my.conf)"></a>主服务器(192.168.2.135)(vim /etc/my.conf)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 这个101是唯一标识你这个mysql服务器的，一般取你电脑ip的最后几位，以便好区分。</span><br><span class="line">   server-id = 135</span><br><span class="line"># 注意mysql-bin是一个存放二进制log文件的路径，我这里指定了一个mysql当前安装目录的mysql-bin文件夹 如这种格式 mysql-bin.000**(/var/lib/mysql/mysql.bin.0000001)</span><br><span class="line">   log-bin=mysql-bin     </span><br><span class="line"># 二进制日志的文件格式 mixed/row/statement</span><br><span class="line">   binlog-format=mixed</span><br></pre></td></tr></table></figure>
+<p>查看主服服务器状态:show master status</p>
+<h3 id="从服务器-192-168-2-136-vim-etc-my-conf"><a href="#从服务器-192-168-2-136-vim-etc-my-conf" class="headerlink" title="从服务器(192.168.2.136)(vim /etc/my.conf)"></a>从服务器(192.168.2.136)(vim /etc/my.conf)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server-id = 135</span><br><span class="line">log-bin=mysql-bin     </span><br><span class="line">binlog-format=mixed</span><br><span class="line">relay-log=mysql-relay</span><br></pre></td></tr></table></figure>
+<p>查看从服务器状态:show slave status</p>
+<h3 id="主从关联"><a href="#主从关联" class="headerlink" title="主从关联"></a>主从关联</h3><h4 id="授权-读取主服务器二进制文件"><a href="#授权-读取主服务器二进制文件" class="headerlink" title="授权(读取主服务器二进制文件)"></a>授权(读取主服务器二进制文件)</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">replication</span> <span class="keyword">client</span>,<span class="keyword">replication</span> <span class="keyword">slave</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> repl@<span class="string">'192.168.2.%'</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">'MyPassSui666*'</span>;</span><br><span class="line"><span class="keyword">flush</span> <span class="keyword">privileges</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="从服务器操作"><a href="#从服务器操作" class="headerlink" title="从服务器操作"></a>从服务器操作</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">change</span> <span class="keyword">master</span> <span class="keyword">to</span> master_host=<span class="string">'192.168.2.135'</span>,</span><br><span class="line">master_user=<span class="string">'repl'</span>,</span><br><span class="line">master_password=<span class="string">'MyPassSui666*'</span>,</span><br><span class="line">master_log_file=<span class="string">'mysql-bin.000001'</span>,</span><br><span class="line">master_log_pos=<span class="number">1392</span>;</span><br></pre></td></tr></table></figure>
+<p>   启动:start slave;(一定要启动!!!!!)<br>   查看状态:show slave status \G;</p>
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><blockquote>
+<p>Fatal error: The slave I/O thread stops because master and slave have equal MySQL server UUIDs; these UUIDs must be different for replication to work.</p>
+</blockquote>
+<p>mysql5.6后的复制引入了uuid的概念，各个复制结构中的server_uuid得保证不一样，但是查看到直接copy  data文件夹后server_uuid是相同的，<br>‘show variables like ‘%server_uuid%’;</p>
+<p>解决方法：</p>
+<p>找到data文件夹下的auto.cnf文件，修改里面的uuid值，保证各个db的uuid不一样，重启db即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name auto.cnf</span><br></pre></td></tr></table></figure></p>
+<p><img src="/uploads/0903_4.jpg" alt="tcp"><br>出现2个yes主从成功,主服务器操作同步到从服务器;</p>
+<h3 id="放一首灵感音乐-哈哈哈"><a href="#放一首灵感音乐-哈哈哈" class="headerlink" title="(放一首灵感音乐,哈哈哈)"></a>(放一首灵感音乐,哈哈哈)</h3><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=819491&auto=1&height=66"></iframe>
+
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>纵有疾风起,人生不言弃！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixin.jpg" alt="Mr Sui WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Mr Sui Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/25/对于Php堆栈的理解/" rel="next" title="对于Php堆栈的理解">
+                <i class="fa fa-chevron-left"></i> 对于Php堆栈的理解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/04/Linux-memcached-和php-memcached-安装/" rel="prev" title="Linux memcached 和php memcached 安装">
+                Linux memcached 和php memcached 安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Mr Sui">
+          <p class="site-author-name" itemprop="name">Mr Sui</p>
+           
+              <p class="site-description motion-element" itemprop="description">行尽天涯,静默山水间</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">85</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://user.qzone.qq.com/28456049" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/qq28456049" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.sina.com.cn/u/5236969925" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.cnblogs.com/boundless-sky" target="_blank" title="博客园">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  博客园
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#触发器"><span class="nav-number">1.</span> <span class="nav-text">触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#语法"><span class="nav-number">1.1.</span> <span class="nav-text">语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看触发器"><span class="nav-number">1.1.1.</span> <span class="nav-text">查看触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除触发器"><span class="nav-number">1.1.2.</span> <span class="nav-text">删除触发器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建触发器"><span class="nav-number">1.1.3.</span> <span class="nav-text">创建触发器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例"><span class="nav-number">1.2.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#新建表"><span class="nav-number">1.2.1.</span> <span class="nav-text">新建表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-操作"><span class="nav-number">1.2.2.</span> <span class="nav-text">insert 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#update-操作"><span class="nav-number">1.2.3.</span> <span class="nav-text">update 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#delete-操作"><span class="nav-number">1.2.4.</span> <span class="nav-text">delete 操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储过程"><span class="nav-number">2.</span> <span class="nav-text">存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本语法"><span class="nav-number">2.1.</span> <span class="nav-text">基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看"><span class="nav-number">2.1.1.</span> <span class="nav-text">查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建"><span class="nav-number">2.1.2.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除"><span class="nav-number">2.1.3.</span> <span class="nav-text">删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#in-out-inout-不常用"><span class="nav-number">2.2.</span> <span class="nav-text">in/out/inout(不常用)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#in"><span class="nav-number">2.2.1.</span> <span class="nav-text">in</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#out"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">out</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#游标"><span class="nav-number">3.</span> <span class="nav-text">游标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">3.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NOT-FOUND-事件触发-exit"><span class="nav-number">3.2.</span> <span class="nav-text">NOT FOUND 事件触发[exit]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NOT-FOUND-事件触发-continue"><span class="nav-number">3.3.</span> <span class="nav-text">NOT FOUND 事件触发[continue]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql权限管理"><span class="nav-number">4.</span> <span class="nav-text">mysql权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-user表"><span class="nav-number">4.1.</span> <span class="nav-text">mysql.user表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制"><span class="nav-number">5.</span> <span class="nav-text">主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关闭防火墙"><span class="nav-number">5.1.</span> <span class="nav-text">关闭防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主服务器-192-168-2-135-vim-etc-my-conf"><span class="nav-number">5.2.</span> <span class="nav-text">主服务器(192.168.2.135)(vim /etc/my.conf)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从服务器-192-168-2-136-vim-etc-my-conf"><span class="nav-number">5.3.</span> <span class="nav-text">从服务器(192.168.2.136)(vim /etc/my.conf)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主从关联"><span class="nav-number">5.4.</span> <span class="nav-text">主从关联</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#授权-读取主服务器二进制文件"><span class="nav-number">5.4.1.</span> <span class="nav-text">授权(读取主服务器二进制文件)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从服务器操作"><span class="nav-number">5.4.2.</span> <span class="nav-text">从服务器操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意"><span class="nav-number">5.4.3.</span> <span class="nav-text">注意</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#放一首灵感音乐-哈哈哈"><span class="nav-number">5.5.</span> <span class="nav-text">(放一首灵感音乐,哈哈哈)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Sui</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link">随某人</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
